@@ -4,8 +4,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 # 运行方法 
-# １．进入 examples 目录：cd examples
-# ２．运行：uvicorn "fastapi_demo:app" --reload --port 8080
+# 1．进入 examples 目录：cd examples
+# 2．运行：uvicorn "fastapi_demo:app" --reload --port 8080
 
 app = FastAPI()
 
