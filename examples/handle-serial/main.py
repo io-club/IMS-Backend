@@ -1,12 +1,20 @@
 import time
 import serial
 from coordinator import GasSensor, LightSensor, TAndHSensor, decode_uart_msg
+import logging
+from dotenv import dotenv_values
 
+# 加载环境变量
+config = dotenv_values(".env")
+
+# 设置日志基本
+LOGLEVEL = config.get('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(level=LOGLEVEL)
 
 def main():
     # 数据位 8, 停止位 1, 校验位 None
-    with serial.Serial('/dev/ttyUSB0', 9600, timeout=2) as ser, open("./data", "a+") as f:
-        print(ser.name)
+    with serial.Serial(config.get("UART_DEVICE", '/dev/ttyUSB0'), 9600, timeout=2) as ser, open(config.get("SAVE_PATH", "./data"), "a+") as f:
+        logging.info(ser.name)
 
         before = time.time()
         while True:
@@ -14,9 +22,9 @@ def main():
             # 读取一行
             try:
                 x = ser.read_until(b"\n").decode('ascii')
+                # x = ser.readline() # \0 #.decode('ascii'),
             except:
                 continue
-            # x = ser.readline() # \0 #.decode('ascii'),
 
             # 写入日志
             if x != None and len(x) != 0:
@@ -28,19 +36,19 @@ def main():
             if uart_msg is None:
                 continue
 
-            print(f"终端：{uart_msg.terminal_id}", end=" ")
+            logging.debug(f"终端：{uart_msg.terminal_id}", end=" ")
 
             # 根据传感器类型做不同的处理
             sensor = uart_msg.sensor
             if isinstance(sensor, TAndHSensor):
-                print(f"温度： {sensor.temperature} 湿度： {sensor.humidity}")
+                logging.debug(f"温度： {sensor.temperature} 湿度： {sensor.humidity}")
                 pass
             elif isinstance(sensor, GasSensor):
-                print("气体：", sensor.data)
+                logging.debug("气体：", sensor.data)
             elif isinstance(sensor, LightSensor):
-                print("光敏：", sensor.data)
+                logging.debug("光敏：", sensor.data)
             else:
-                print("Unknown:", sensor.data)
+                logging.debug("Unknown:", sensor.data)
 
             # # 计算间隔时间
             # current = time.time()
@@ -53,15 +61,5 @@ def main():
             # before = current
 
 
-def test():
-    # match int("1"):
-    #     case 1:
-    #         print("num")
-    #     case "1":
-    #         print("str")
-    pass
-
-
 if __name__ == "__main__":
     main()
-    # test()
