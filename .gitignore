@@ -5,8 +5,6 @@
 .fleet
 .pycharm
 
-.env.production
-
 /build
 /target
 .cache
@@ -133,7 +131,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-# .env
+.env
 .env.development
 .env.production
 .venv
