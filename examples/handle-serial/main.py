@@ -1,19 +1,21 @@
 import time
 import serial
-from coordinator import GasSensor, LightSensor, TAndHSensor, UnknownSensor, decode_uart_msg
-import json
+from coordinator import GasSensor, LightSensor, TAndHSensor, decode_uart_msg
 
 
 def main():
     # 数据位 8, 停止位 1, 校验位 None
-    with serial.Serial('/dev/ttyUSB1', 9600, timeout=2) as ser, open("./data", "a+") as f:
+    with serial.Serial('/dev/ttyUSB0', 9600, timeout=2) as ser, open("./data", "a+") as f:
         print(ser.name)
 
         before = time.time()
         while True:
 
             # 读取一行
-            x = ser.read_until(b"\n").decode('ascii')
+            try:
+                x = ser.read_until(b"\n").decode('ascii')
+            except:
+                continue
             # x = ser.readline() # \0 #.decode('ascii'),
 
             # 写入日志

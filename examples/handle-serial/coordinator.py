@@ -1,4 +1,3 @@
-
 from typing import Union
 from enum import Enum
 from pydantic import BaseModel
@@ -39,7 +38,6 @@ class UnknownSensor(BaseModel):
 
 class UartMsg:
     """串口返回数据对应的类"""
-    
     terminal_id: str
     sensor: Union[TAndHSensor, GasSensor, LightSensor, UnknownSensor]
 
