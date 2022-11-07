@@ -51,20 +51,23 @@ def decode_uart_msg(msg: str) -> Union[UartMsg, None]:
 
     res = UartMsg()
 
-    msg_parts = msg.split(":")
+    try:
+        msg_parts = msg.split(":")
 
-    res.terminal_id = msg_parts[0]
+        res.terminal_id = msg_parts[0]
 
-    data = msg_parts[2]
-    sensor_type = SensorType(int(msg_parts[1]))
-    if sensor_type == SensorType.TAndH:
-        [temperature, humidity] = data.split()
-        res.sensor = TAndHSensor(temperature=int(
-            temperature), humidity=int(humidity))
-    elif sensor_type == SensorType.Gas:
-        res.sensor = GasSensor(data=int(data))
-    elif sensor_type == SensorType.Light:
-        res.sensor = LightSensor(data=int(data))
-    else:
-        res.sensor = UnknownSensor(data=data)
-    return res
+        data = msg_parts[2]
+        sensor_type = SensorType(int(msg_parts[1]))
+        if sensor_type == SensorType.TAndH:
+            [temperature, humidity] = data.split()
+            res.sensor = TAndHSensor(temperature=int(
+                temperature), humidity=int(humidity))
+        elif sensor_type == SensorType.Gas:
+            res.sensor = GasSensor(data=int(data))
+        elif sensor_type == SensorType.Light:
+            res.sensor = LightSensor(data=int(data))
+        else:
+            res.sensor = UnknownSensor(data=data)
+        return res
+    except:
+        return None
