@@ -1,9 +1,10 @@
+import uvicorn
 from typing import Union
 
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-# 运行方法 
+# 运行方法
 # 1．进入 examples 目录：cd examples
 # 2．运行：uvicorn "fastapi_demo:app" --reload --port 8080
 
@@ -28,3 +29,5 @@ def read_item(item_id: int, q: Union[str, None] = None):
 @app.put("/items/{item_id}")
 def update_item(item_id: int, item: Item):
     return {"item_name": item.name, "item_id": item_id}
+
+uvicorn.run(app, host="127.0.0.1", port=5000, log_level="info")

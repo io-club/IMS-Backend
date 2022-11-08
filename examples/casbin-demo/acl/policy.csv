@@ -1,0 +1,4 @@
+p, admin, data1, write
+p, admin, data1, read
+
+p, user, data1, read

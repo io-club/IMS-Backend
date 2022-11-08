@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-from dotenv import dotenv_values
 from typing import List
 from pydantic import BaseModel, Field
 import uuid
@@ -10,11 +9,9 @@ class Book(BaseModel):
     author: str = Field(...)
     synopsis: str = Field(...)
 
-config = dotenv_values("../.env")
+mongodb_client = MongoClient("mongodb://192.168.1.128:27017")
 
-mongodb_client = MongoClient(config["ATLAS_URI"])
-
-database = mongodb_client[config["DB_NAME"]]
+database = mongodb_client.get_database("pymongo_tutorial")
 
 books = database.get_collection("books")
 
