@@ -11,6 +11,7 @@ config = dotenv_values(".env")
 LOGLEVEL = config.get('LOG_LEVEL', 'INFO').upper()
 logging.basicConfig(level=LOGLEVEL)
 
+
 def main():
     # 数据位 8, 停止位 1, 校验位 None
     with serial.Serial(config.get("UART_DEVICE", '/dev/ttyUSB0'), 9600, timeout=2) as ser, open(config.get("SAVE_PATH", "./data"), "a+") as f:
@@ -36,19 +37,19 @@ def main():
             if uart_msg is None:
                 continue
 
-            logging.debug(f"终端：{uart_msg.terminal_id}", end=" ")
-
             # 根据传感器类型做不同的处理
             sensor = uart_msg.sensor
             if isinstance(sensor, TAndHSensor):
-                logging.debug(f"温度： {sensor.temperature} 湿度： {sensor.humidity}")
+                logging.debug(
+                    f"终端：{uart_msg.terminal_id} 温度： {sensor.temperature} 湿度： {sensor.humidity}")
                 pass
             elif isinstance(sensor, GasSensor):
-                logging.debug("气体：", sensor.data)
+                logging.debug("终端：{uart_msg.terminal_id} 气体：", sensor.data)
             elif isinstance(sensor, LightSensor):
-                logging.debug("光敏：", sensor.data)
+                logging.debug("终端：{uart_msg.terminal_id} 光敏：", sensor.data)
             else:
-                logging.debug("Unknown:", sensor.data)
+                logging.debug(
+                    "终端：{uart_msg.terminal_id} Unknown:", sensor.data)
 
             # # 计算间隔时间
             # current = time.time()
