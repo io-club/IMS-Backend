@@ -13,6 +13,7 @@ logging.basicConfig(level=LOGLEVEL)
 
 
 def main():
+    logging.info(f"日志等级：{LOGLEVEL}")
     # 数据位 8, 停止位 1, 校验位 None
     with serial.Serial(config.get("UART_DEVICE", '/dev/ttyUSB0'), 9600, timeout=2) as ser, open(config.get("SAVE_PATH", "./data"), "a+") as f:
         logging.info(ser.name)
@@ -39,17 +40,18 @@ def main():
 
             # 根据传感器类型做不同的处理
             sensor = uart_msg.sensor
+            t_id = uart_msg.terminal_id
             if isinstance(sensor, TAndHSensor):
                 logging.debug(
-                    f"终端：{uart_msg.terminal_id} 温度： {sensor.temperature} 湿度： {sensor.humidity}")
+                    f"终端：{t_id} 温度： {sensor.temperature} 湿度： {sensor.humidity}")
                 pass
             elif isinstance(sensor, GasSensor):
-                logging.debug("终端：{uart_msg.terminal_id} 气体：", sensor.data)
+                logging.debug(f"终端：{t_id} 气体：{sensor.data}")
             elif isinstance(sensor, LightSensor):
-                logging.debug("终端：{uart_msg.terminal_id} 光敏：", sensor.data)
+                logging.debug(f"终端：{t_id} 光敏：{sensor.data}")
             else:
                 logging.debug(
-                    "终端：{uart_msg.terminal_id} Unknown:", sensor.data)
+                    f"终端：{t_id} Unknown: {sensor.data}")
 
             # # 计算间隔时间
             # current = time.time()
