@@ -10,11 +10,6 @@ class SensorType(Enum):
     Light = 3
 
 
-"""
-每个传感器都对应一个单独的类
-"""
-
-
 class TAndHSensor(BaseModel):
     """温湿度传感器"""
     temperature: int

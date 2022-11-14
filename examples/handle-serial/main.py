@@ -1,7 +1,8 @@
+import logging
 import time
+
 import serial
 from coordinator import GasSensor, LightSensor, TAndHSensor, decode_uart_msg
-import logging
 from dotenv import dotenv_values
 
 # 加载环境变量

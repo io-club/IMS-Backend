@@ -9,6 +9,7 @@ class Animal():
     name: str
     age: int
 
+
 a = Animal(name="Dog", age=2)
 print(a.name, a.age)
 
@@ -16,6 +17,7 @@ print(a.name, a.age)
 # 自动生成 __init__ 方法
 def get_random_age():
     return random.randint(1, 9)
+
 
 class Person(BaseModel):
     name: str
@@ -25,5 +27,6 @@ class Person(BaseModel):
     #     self.name = name
     #     self.age = age
 
-p = Person(name = "aa")
+
+p = Person(name="aa")
 print(p.name, p.age)

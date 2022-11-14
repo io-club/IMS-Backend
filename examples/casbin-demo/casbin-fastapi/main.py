@@ -1,11 +1,14 @@
+'''
+casbin 和 fasapi 集成
+'''
+
 from fastapi import Depends, FastAPI, HTTPException, status, Request, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from starlette.responses import PlainTextResponse, RedirectResponse
-from pydantic import BaseModel
+from starlette.responses import RedirectResponse
 import uvicorn
 import casbin
 
-from utils import ItemsDAO, UsersDAO, UserInDB, User
+from utils import ItemsDAO, UsersDAO, User
 from utils import Item
 
 
