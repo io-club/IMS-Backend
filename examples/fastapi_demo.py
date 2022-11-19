@@ -1,5 +1,5 @@
-'''
-'''
+"""
+"""
 
 from typing import Union
 
@@ -15,7 +15,8 @@ app = FastAPI()
 
 
 class Item(BaseModel):
-    '''Item is a model.'''
+    """Item is a model."""
+
     name: str
     price: float
     is_offer: Union[bool, None] = None

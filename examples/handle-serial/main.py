@@ -9,14 +9,16 @@ from dotenv import dotenv_values
 config = dotenv_values(".env")
 
 # 设置日志基本
-LOGLEVEL = config.get('LOG_LEVEL', 'INFO').upper()
+LOGLEVEL = config.get("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(level=LOGLEVEL)
 
 
 def main():
     logging.info(f"日志等级：{LOGLEVEL}")
     # 数据位 8, 停止位 1, 校验位 None
-    with serial.Serial(config.get("UART_DEVICE", '/dev/ttyUSB0'), 9600, timeout=2) as ser, open(config.get("SAVE_PATH", "./data"), "a+") as f:
+    with serial.Serial(
+        config.get("UART_DEVICE", "/dev/ttyUSB0"), 9600, timeout=2
+    ) as ser, open(config.get("SAVE_PATH", "./data"), "a+") as f:
         logging.info(ser.name)
 
         before = time.time()
@@ -24,7 +26,7 @@ def main():
 
             # 读取一行
             try:
-                x = ser.read_until(b"\n").decode('ascii')
+                x = ser.read_until(b"\n").decode("ascii")
                 # x = ser.readline() # \0 #.decode('ascii'),
             except:
                 continue
@@ -44,15 +46,15 @@ def main():
             t_id = uart_msg.terminal_id
             if isinstance(sensor, TAndHSensor):
                 logging.debug(
-                    f"终端：{t_id} 温度： {sensor.temperature} 湿度： {sensor.humidity}")
+                    f"终端：{t_id} 温度： {sensor.temperature} 湿度： {sensor.humidity}"
+                )
                 pass
             elif isinstance(sensor, GasSensor):
                 logging.debug(f"终端：{t_id} 气体：{sensor.data}")
             elif isinstance(sensor, LightSensor):
                 logging.debug(f"终端：{t_id} 光敏：{sensor.data}")
             else:
-                logging.debug(
-                    f"终端：{t_id} Unknown: {sensor.data}")
+                logging.debug(f"终端：{t_id} Unknown: {sensor.data}")
 
             # # 计算间隔时间
             # current = time.time()

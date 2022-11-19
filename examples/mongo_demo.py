@@ -1,6 +1,6 @@
-'''
+"""
 mongodb 使用 demo
-'''
+"""
 import uuid
 
 from pydantic import BaseModel, Field
@@ -8,9 +8,10 @@ from pymongo import MongoClient
 
 
 class Book(BaseModel):
-    '''
+    """
     book model
-    '''
+    """
+
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     title: str = Field(...)
     author: str = Field(...)
@@ -26,6 +27,6 @@ books = database.get_collection("books")
 resp = books.find(limit=100)
 
 for book in resp:
-    print(book['_id'])
+    print(book["_id"])
 
 mongodb_client.close()

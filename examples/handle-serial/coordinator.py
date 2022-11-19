@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 class SensorType(Enum):
     """将 int 转为传感器类型"""
+
     TAndH = 1
     Gas = 2
     Light = 3
@@ -12,27 +13,32 @@ class SensorType(Enum):
 
 class TAndHSensor(BaseModel):
     """温湿度传感器"""
+
     temperature: int
     humidity: int
 
 
 class GasSensor(BaseModel):
     """气体传感器"""
+
     data: int
 
 
 class LightSensor(BaseModel):
     """光照强度传感器"""
+
     data: int
 
 
 class UnknownSensor(BaseModel):
     """未知传感器"""
+
     data: str
 
 
 class UartMsg:
     """串口返回数据对应的类"""
+
     terminal_id: str
     sensor: Union[TAndHSensor, GasSensor, LightSensor, UnknownSensor]
 
@@ -55,8 +61,9 @@ def decode_uart_msg(msg: str) -> Union[UartMsg, None]:
         sensor_type = SensorType(int(msg_parts[1]))
         if sensor_type == SensorType.TAndH:
             [temperature, humidity] = data.split()
-            res.sensor = TAndHSensor(temperature=int(
-                temperature), humidity=int(humidity))
+            res.sensor = TAndHSensor(
+                temperature=int(temperature), humidity=int(humidity)
+            )
         elif sensor_type == SensorType.Gas:
             res.sensor = GasSensor(data=int(data))
         elif sensor_type == SensorType.Light:

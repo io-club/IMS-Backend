@@ -14,7 +14,7 @@ class UserInDB(User):
     hashed_password: str
 
 
-class UsersDAO():
+class UsersDAO:
     def __init__(self):
         self.users_db = {
             "johndoe": {
@@ -22,15 +22,15 @@ class UsersDAO():
                 "full_name": "John Doe",
                 "email": "johndoe@example.com",
                 "hashed_password": "fakehashedsecret",
-                "disabled": False
+                "disabled": False,
             },
             "alice": {
                 "username": "alice",
                 "full_name": "Alice Wonderson",
                 "email": "alice@example.com",
                 "hashed_password": "fakehashedsecret2",
-                "disabled": False
-            }
+                "disabled": False,
+            },
         }
 
     def get_user(self, username: str):
@@ -53,12 +53,12 @@ class Item(BaseModel):
     item_name: str
 
 
-class ItemsDAO():
+class ItemsDAO:
     def __init__(self):
         self.items_db = [
             Item(id=1, item_name="Foo"),
             Item(id=2, item_name="Bar"),
-            Item(id=3, item_name="Baz")
+            Item(id=3, item_name="Baz"),
         ]
 
     def create_item(self, item):
@@ -71,8 +71,7 @@ class ItemsDAO():
                 return item.dict()
 
     def delete_item(self, item_id):
-        self.items_db[:] = filterfalse(
-            lambda x: x.id == item_id, self.items_db)
+        self.items_db[:] = filterfalse(lambda x: x.id == item_id, self.items_db)
 
     def get_all_items(self):
         items = [i.dict() for i in self.items_db]

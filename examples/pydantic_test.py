@@ -5,7 +5,7 @@ import random
 
 # 自动生成 __init__ 方法
 @dataclass
-class Animal():
+class Animal:
     name: str
     age: int
 
