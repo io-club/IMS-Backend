@@ -1,3 +1,9 @@
+pkgs/go-demo
+pkgs/pnpm-vite-react-demo
+
+pkgs/gin-vue-admin
+pkgs/biz-demo
+
 .venv
 
 .idea
