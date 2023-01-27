@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-RUN_NAME="easy_noteuser"
+RUN_NAME="fish_netuser"
 
 mkdir -p output/bin
 cp script/* output/

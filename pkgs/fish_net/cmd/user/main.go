@@ -1,7 +1,7 @@
 package main
 
 import (
-	demouser "easy_note/kitex_gen/demouser/userservice"
+	demouser "fish_net/kitex_gen/demouser/userservice"
 	"log"
 )
 

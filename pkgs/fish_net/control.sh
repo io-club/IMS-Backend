@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-default_module="easy_note"
+default_module="fish_net"
 
 set -eu
 

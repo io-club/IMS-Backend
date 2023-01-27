@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	demouser "easy_note/kitex_gen/demouser"
+	demouser "fish_net/kitex_gen/demouser"
 )
 
 // UserServiceImpl implements the last service interface defined in the IDL.
