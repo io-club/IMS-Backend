@@ -1,4 +1,4 @@
-module easy_note
+module fish_net
 
 go 1.19
 
