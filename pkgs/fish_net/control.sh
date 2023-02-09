@@ -22,15 +22,14 @@ USAGE:
   ./control <command> [OPTIONS] [INPUT]...
 
 options:
-    -h, --help                Print this usage information.
-    -v, --version             Print this version information.
+    -h, --help                 Print this usage information.
+    -v, --version              Print this version information.
 commands:
-    start                     Start project
-    stop                      Stop project
-    new <rpc | api> <name>  Create a new rpc or api service
-                                rpc : create rpc service
-                                api : create api service
-                                name: service name
+    start                      Start project
+    stop                       Stop project
+    api <new | update>         Create or Update hertz api service
+    rpc <new | update> <name>  Create or update a kitex rpc service
+
 EndOfMessage
 }
 
@@ -73,10 +72,11 @@ case $1 in
 "stop")
   stop_and_clean
   ;;
-"new")
-  [ $# -gt 2 ] || exit_with_usage
+"rpc")
+  [ $# -gt 1 ] || exit_with_usage
   case $2 in
-  "rpc")
+  "new")
+    [ $# -gt 2 ] || exit_with_usage
     name=$3
     # execute in the project root directory
     kitex \
@@ -85,15 +85,26 @@ case $1 in
       idl/"$name".thrift
 
     # execute in cmd/user
-    mkdir "cmd/$name" && cd "cmd/$name" && kitex \
+    mkdir -p "cmd/$name" && cd "cmd/$name" && kitex \
       --thrift-plugin validator \
       -module "$default_module" \
       -service "${default_module}$name" \
       -use "$default_module"/kitex_gen \
       ../../idl/"$name".thrift
     ;;
-  "api")
+  "update")
     #
+    ;;
+  esac
+  ;;
+"api")
+  [ $# -gt 1 ] || exit_with_usage
+  case $2 in
+  "new")
+    hz new -mod "$default_module" -idl ../../idl/api.thrift
+    ;;
+  "update")
+	  hz update -mod "$default_module" -idl ../../idl/api.thrift
     ;;
   esac
   ;;
