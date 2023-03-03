@@ -1,5 +1,6 @@
 from typing import Union
 from enum import Enum
+
 from pydantic import BaseModel
 
 
