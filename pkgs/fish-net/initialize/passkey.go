@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"demo/glb"
+	"fishnet/glb"
 
 	"os"
 

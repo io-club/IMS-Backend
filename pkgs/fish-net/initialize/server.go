@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"demo/glb"
+	"fishnet/glb"
 
-	"demo/middleware"
+	"fishnet/middleware"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"

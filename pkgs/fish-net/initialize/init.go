@@ -9,13 +9,20 @@ import (
 func InitAll() {
 	gob.Register(webauthn.SessionData{})
 
+	// load config
 	initViper()
+	// init logger
 	initLogger()
 
-	// initDB()
+	// db
+	initDB()
+
+	// server
 	initServer()
+	// router
 	initRouter()
 
+	// passkey webauthn
 	initAuth()
 
 }

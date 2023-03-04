@@ -1,12 +1,12 @@
 package initialize
 
 import (
-	"demo/glb"
+	"fishnet/glb"
 	"flag"
 	"fmt"
 	"os"
 
-	"demo/initialize/internal"
+	"fishnet/initialize/internal"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gin-gonic/gin"

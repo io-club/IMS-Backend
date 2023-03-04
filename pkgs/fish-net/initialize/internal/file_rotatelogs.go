@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"demo/glb"
+	"fishnet/glb"
 	"os"
 	"path"
 	"time"

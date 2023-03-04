@@ -1,11 +1,14 @@
-package api
+package http
 
 import (
-	"demo/glb"
-	"demo/model"
 	"encoding/binary"
+	"fishnet/domain"
+	"fishnet/glb"
+	"fishnet/user/usecase"
+	"fishnet/util"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-contrib/sessions"
@@ -13,6 +16,12 @@ import (
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/go-webauthn/webauthn/webauthn"
 )
+
+var _userUsecase domain.UserUsecase
+
+func init() {
+	_userUsecase = usecase.NewUserUsecase()
+}
 
 const SESSION_DATA_KEY = "registeration"
 
@@ -45,17 +54,18 @@ func RegisterBegin(c *gin.Context) {
 	}
 	glb.LOG.Info("RegisterBegin username: " + userName)
 
-	if model.UserDB().TestUser(userName) {
+	if user, _ := _userUsecase.GetByUsername(userName); user != nil {
+		util.PrettyLog(user)
 		glb.LOG.Info("user exists")
 		c.JSON(http.StatusNotAcceptable, gin.H{
 			"failed": true,
-			"msg":    "user exists",
+			"msg":    "user exists: " + fmt.Sprint(user.ID),
 		})
 		return
 	}
 
 	glb.LOG.Info("Creating user: " + userName)
-	user, err := model.UserDB().CreateUser(userName)
+	user, err := _userUsecase.Save(userName)
 	if err != nil {
 		glb.LOG.Warn("USER CREATION ERROR: " + err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -107,10 +117,12 @@ func RegisterFinish(c *gin.Context) {
 		return
 	}
 
-	user, err := model.UserDB().GetUser(idString)
+	idUint, err := strconv.ParseUint(idString, 10, 32)
 
-	// var user model.User
-	// err := glb.DB.Where(&model.User{AuthName: userName}).First(&user).Error // Find the user
+	user, err := _userUsecase.GetByID(uint(idUint))
+
+	// var user domain.User
+	// err := glb.DB.Where(&domain.User{AuthName: userName}).First(&user).Error // Find the user
 	if err != nil {
 		glb.LOG.Warn("user not exists" + err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{

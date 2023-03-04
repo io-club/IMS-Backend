@@ -1,29 +1,30 @@
 package initialize
 
 import (
-	"demo/glb"
+	"fishnet/glb"
+	userApi "fishnet/user/http"
 	"net/http"
-
-	"demo/api"
 
 	"github.com/gin-gonic/gin"
 )
 
 func initRouter() {
-	glb.G.GET("/ping", func(c *gin.Context) {
+	g := glb.G
+
+	g.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
 
-	g := glb.G
-	v1 := g.Group("/auth")
+	v1 := g.Group("/v1")
 	{
-		v1.GET("/register/play", api.Play)
-		v1.GET("/register/begin/:username", api.RegisterBegin)
-		v1.POST("/register/finish/:id", api.RegisterFinish)
-		// v1.PUT("/:id", updateTodo)
-		// v1.DELETE("/:id", deleteTodo)
+		// auth
+		auth := v1.Group("/auth")
+		auth.GET("/play", userApi.Play)
+		auth.GET("/register/begin/:username", userApi.RegisterBegin)
+		auth.POST("/register/finish/:id", userApi.RegisterFinish)
+		// user
 	}
 
 }

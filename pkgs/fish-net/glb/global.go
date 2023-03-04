@@ -1,7 +1,7 @@
 package glb
 
 import (
-	"demo/config"
+	"fishnet/config"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-webauthn/webauthn/webauthn"

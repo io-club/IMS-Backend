@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"demo/glb"
+	"fishnet/glb"
 	"net/http"
 
-	"demo/config"
+	"fishnet/config"
 
 	"github.com/gin-gonic/gin"
 )

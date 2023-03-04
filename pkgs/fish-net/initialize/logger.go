@@ -2,9 +2,9 @@ package initialize
 
 import (
 	"bytes"
-	"demo/glb"
-	"demo/initialize/internal"
-	"demo/utils"
+	"fishnet/glb"
+	"fishnet/initialize/internal"
+	"fishnet/util"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -95,7 +95,7 @@ func DefaultLogger() gin.HandlerFunc {
 }
 
 func initLogger() {
-	if ok, _ := utils.PathExists(glb.CONFIG.Zap.Director); !ok { // 判断是否有 Director 文件夹
+	if ok, _ := util.PathExists(glb.CONFIG.Zap.Director); !ok { // 判断是否有 Director 文件夹
 		fmt.Printf("create %v directory\n", glb.CONFIG.Zap.Director)
 		_ = os.Mkdir(glb.CONFIG.Zap.Director, os.ModePerm)
 	}

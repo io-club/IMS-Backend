@@ -1,7 +1,7 @@
-package utils
+package util
 
 import (
-	"demo/glb"
+	"fishnet/glb"
 	"errors"
 	"os"
 
