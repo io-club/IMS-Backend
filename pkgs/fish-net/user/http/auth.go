@@ -54,7 +54,8 @@ func RegisterBegin(c *gin.Context) {
 	}
 	glb.LOG.Info("RegisterBegin username: " + userName)
 
-	if user, _ := _userUsecase.GetByUsername(userName); user != nil {
+	user, err := _userUsecase.GetByUsername(userName)
+	if err == nil {
 		util.PrettyLog(user)
 		glb.LOG.Info("user exists")
 		c.JSON(http.StatusNotAcceptable, gin.H{
@@ -65,7 +66,7 @@ func RegisterBegin(c *gin.Context) {
 	}
 
 	glb.LOG.Info("Creating user: " + userName)
-	user, err := _userUsecase.Save(userName)
+	user, err = _userUsecase.Save(userName)
 	if err != nil {
 		glb.LOG.Warn("USER CREATION ERROR: " + err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
