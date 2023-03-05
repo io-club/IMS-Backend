@@ -24,6 +24,8 @@ func initRouter() {
 		auth.GET("/play", userApi.Play)
 		auth.GET("/register/begin/:username", userApi.RegisterBegin)
 		auth.POST("/register/finish/:id", userApi.RegisterFinish)
+		auth.GET("/login/begin/:username", userApi.LoginBegin)
+		auth.POST("/login/finish/:id", userApi.LoginFinish)
 		// user
 	}
 

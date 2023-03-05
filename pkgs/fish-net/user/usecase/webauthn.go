@@ -7,12 +7,12 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
-var _webAuthnCredentialUsecase *webAuthnCredentialUsecase
+var _webAuthnCredentialUsecase domain.WebAuthnCredentialUsecase
 
 type webAuthnCredentialUsecase struct {
 }
 
-func NewWebAuthnCredentialUsecase() *webAuthnCredentialUsecase {
+func NewWebAuthnCredentialUsecase() domain.WebAuthnCredentialUsecase {
 	if _webAuthnCredentialUsecase == nil {
 		_webAuthnCredentialUsecase = &webAuthnCredentialUsecase{}
 	}
