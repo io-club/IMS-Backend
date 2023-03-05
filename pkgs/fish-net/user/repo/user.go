@@ -4,7 +4,7 @@ import (
 	"fishnet/domain"
 	"fishnet/glb"
 
-	"gorm.io/gorm"
+	"go.uber.org/zap"
 )
 
 type userRepo struct {
@@ -19,35 +19,66 @@ func NewUserRepo() domain.UserRepo {
 	return _userRepo
 }
 
-func (u *userRepo) Save(username string) (user *domain.User, err error) {
-	defaultIcon := "https://pics.com/avatar.png"
-	user = &domain.User{
-		Username: username,
-		Nickname: username,
-		Icon:     defaultIcon,
-		// Credentials: []webauthn.Credential{},
+func (u *userRepo) CreateUser(users []*domain.User) error {
+	if err := glb.DB.Create(users).Error; err != nil {
+		return err
 	}
-	err = glb.DB.Save(user).Error
-	return
+	return nil
 }
 
-func (u *userRepo) Delete(id uint) (err error) {
-	err = glb.DB.Delete(&domain.User{}, id).Error
-	return
+func (u *userRepo) DeleteUser(userId int64) error {
+	return glb.DB.Where("id = ?", userId).Delete(domain.User{}).Error
 }
 
-func (u *userRepo) Update(user *domain.User) (err error) {
-	err = glb.DB.Save(user).Error
-	return
+func (u *userRepo) UpdateUser(userID int64, nickName *string, icon *string) error {
+	params := map[string]interface{}{}
+	if nickName != nil {
+		params["nickname"] = *nickName
+	}
+	if icon != nil {
+		params["icon"] = *icon
+	}
+	return glb.DB.Model(&domain.User{}).Where("id = ?", userID).Updates(params).Error
 }
 
-func (u *userRepo) GetByID(id uint) (user *domain.User, err error) {
-	user = &domain.User{Model: gorm.Model{ID: id}}
-	err = glb.DB.First(&user).Error
-	return
+// QueryNote query list of note info
+func (u *userRepo) QueryUser(userName *string, limit, offset int) ([]*domain.User, int64, error) {
+	var total int64
+	var res []*domain.User
+	conn := glb.DB.Model(&domain.User{})
+
+	if userName != nil {
+		conn = conn.Where("username like ?", "%"+*userName+"%")
+	}
+
+	if err := conn.Count(&total).Error; err != nil {
+		return res, total, err
+	}
+
+	if err := conn.Limit(limit).Offset(offset).Find(&res).Error; err != nil {
+		return res, total, err
+	}
+
+	return res, total, nil
 }
 
-func (u *userRepo) GetByUsername(username string) (user *domain.User, err error) {
-	err = glb.DB.Where(&domain.User{Username: username}).First(&user).Error
-	return
+func (u *userRepo) MGetUsers(userIDs []int64) ([]*domain.User, error) {
+	glb.LOG.Info("field to query", zap.Int64s("userIDs", userIDs))
+
+	var res []*domain.User
+	if len(userIDs) == 0 {
+		return res, nil
+	}
+
+	if err := glb.DB.Where("id in ?", userIDs).Find(&res).Error; err != nil {
+		return nil, err
+	}
+	userNames := (func(users []*domain.User) (ret []string) {
+		for _, user := range users {
+			ret = append(ret, user.Username)
+		}
+		return
+	})(res)
+	glb.LOG.Info("query result", zap.Strings("userNames", userNames))
+	return res, nil
 }

@@ -5,7 +5,6 @@ import (
 	"fishnet/domain"
 	"fishnet/glb"
 	"fishnet/user/usecase"
-	"fishnet/util"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -15,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/go-webauthn/webauthn/webauthn"
+	"go.uber.org/zap"
 )
 
 var _userUsecase domain.UserUsecase
@@ -54,29 +54,36 @@ func RegisterBegin(c *gin.Context) {
 	}
 	glb.LOG.Info("RegisterBegin username: " + userName)
 
-	user, err := _userUsecase.GetByUsername(userName)
-	if err == nil {
-		util.PrettyLog(user)
+	// 没有用户就新建
+	users, count, err := _userUsecase.QueryUser(&userName, 1, 0)
+	if err != nil || count == 0 {
+		glb.LOG.Info("Creating user: " + userName)
+		user := &domain.User{
+			Username: userName,
+			Nickname: userName,
+			Icon:     "https://pics.com/avatar.png",
+		}
+		err = _userUsecase.CreateUser([]*domain.User{user})
+		if err != nil {
+			glb.LOG.Warn("USER CREATION ERROR: " + err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"failed": true,
+				"msg":    "user not created",
+			})
+			return
+		}
+	} else {
 		glb.LOG.Info("user exists")
-		c.JSON(http.StatusNotAcceptable, gin.H{
-			"failed": true,
-			"msg":    "user exists: " + fmt.Sprint(user.ID),
-		})
-		return
 	}
 
-	glb.LOG.Info("Creating user: " + userName)
-	user, err = _userUsecase.Save(userName)
-	if err != nil {
-		glb.LOG.Warn("USER CREATION ERROR: " + err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"failed": true,
-			"msg":    "user not created",
-		})
-		return
-	}
+	users, count, err = _userUsecase.QueryUser(&userName, 1, 0)
+	user := users[0]
 
-	options, sessionData, err := glb.Auth.BeginRegistration(user)
+	// 检查用户已经注册的设备，不允许重复注册
+	registerOptions := func(credCreationOpts *protocol.PublicKeyCredentialCreationOptions) {
+		credCreationOpts.CredentialExcludeList = user.CredentialExcludeList()
+	}
+	options, sessionData, err := glb.Auth.BeginRegistration(user, registerOptions)
 	if err != nil {
 		glb.LOG.Warn("SESSION ERROR: " + err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -104,6 +111,9 @@ func RegisterBegin(c *gin.Context) {
 	// return the options generated
 	c.JSON(http.StatusOK, gin.H{
 		"options": options,
+		"user": map[string]any{
+			"id": user.ID,
+		},
 	})
 	// options.publicKey contain our registration options
 }
@@ -117,20 +127,18 @@ func RegisterFinish(c *gin.Context) {
 		})
 		return
 	}
-
-	idUint, err := strconv.ParseUint(idString, 10, 32)
-
-	user, err := _userUsecase.GetByID(uint(idUint))
-
-	// var user domain.User
-	// err := glb.DB.Where(&domain.User{AuthName: userName}).First(&user).Error // Find the user
-	if err != nil {
+	idUint, err := strconv.ParseInt(idString, 10, 64)
+	glb.LOG.Info("field to query", zap.Int64("idUint", idUint))
+	users, err := _userUsecase.MGetUsers([]int64{idUint})
+	if err != nil || len(users) == 0 {
 		glb.LOG.Warn("user not exists" + err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "user not exists " + idString,
 		})
 		return
 	}
+	user := users[0]
+
 	// Get the session data stored from the function above
 	// using gorilla/sessions it could look like this
 	session := sessions.Default(c)

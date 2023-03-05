@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fishnet/glb"
 
+	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"gorm.io/gorm"
 )
@@ -16,22 +17,29 @@ type User struct {
 	Credentials []webauthn.Credential `gorm:"-"`
 }
 
-// UserUsecase represent the User's usecases
-type UserUsecase interface {
-	Save(username string) (user *User, err error)
-	Delete(id uint) (err error)
-	Update(user *User) error
-	GetByID(id uint) (user *User, err error)
-	GetByUsername(username string) (user *User, err error)
-}
-
 // UserRepository represent the User's repository contract
 type UserRepo interface {
-	Save(username string) (*User, error)
-	Delete(id uint) error
-	Update(u *User) error
-	GetByID(id uint) (*User, error)
-	GetByUsername(username string) (*User, error)
+	CreateUser(users []*User) error
+	DeleteUser(userID int64) error
+	UpdateUser(userID int64, nickName *string, icon *string) error
+	QueryUser(userName *string, limit, offset int) ([]*User, int64, error)
+	MGetUsers(userIDs []int64) ([]*User, error)
+}
+
+// UserUsecase represent the User's usecases
+type UserUsecase interface {
+	CreateUser(users []*User) error
+	DeleteUser(userID int64) error
+	UpdateUser(userID int64, nickName *string, icon *string) error
+	QueryUser(userName *string, limit, offset int) ([]*User, int64, error)
+	MGetUsers(userIDs []int64) ([]*User, error)
+}
+
+type Credential struct {
+	gorm.Model
+	UserID       int64
+	CredentialID int64
+	PublicKey    string
 }
 
 // go-webauthn implementation
@@ -67,4 +75,20 @@ func (u *User) AddWebAuthnCredential(cred webauthn.Credential) {
 // WebAuthnCredentials returns credentials owned by the user
 func (u *User) WebAuthnCredentials() []webauthn.Credential {
 	return u.Credentials
+}
+
+// CredentialExcludeList returns a CredentialDescriptor array filled
+// with all a user's credentials
+func (u User) CredentialExcludeList() []protocol.CredentialDescriptor {
+
+	credentialExcludeList := []protocol.CredentialDescriptor{}
+	for _, cred := range u.Credentials {
+		descriptor := protocol.CredentialDescriptor{
+			Type:         protocol.PublicKeyCredentialType,
+			CredentialID: cred.ID,
+		}
+		credentialExcludeList = append(credentialExcludeList, descriptor)
+	}
+
+	return credentialExcludeList
 }

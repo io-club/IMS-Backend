@@ -2,7 +2,10 @@ package usecase
 
 import (
 	"fishnet/domain"
+	"fishnet/glb"
 	"fishnet/user/repo"
+
+	"go.uber.org/zap"
 )
 
 type UserUsecase struct {
@@ -20,32 +23,39 @@ func NewUserUsecase() domain.UserUsecase {
 	return _userUsecase
 }
 
-// Delete implements domain.UserUsecase
-func (u *UserUsecase) Delete(id uint) (err error) {
-	err = u.r.Delete(id)
-	return
-}
-
-// GetByID implements domain.UserUsecase
-func (u *UserUsecase) GetByID(id uint) (user *domain.User, err error) {
-	user, err = u.r.GetByID(id)
-	return
-}
-
-// GetByUsername implements domain.UserUsecase
-func (u *UserUsecase) GetByUsername(username string) (user *domain.User, err error) {
-	user, err = u.r.GetByUsername(username)
-	return
-}
-
 // Save implements domain.UserUsecase
-func (u *UserUsecase) Save(username string) (user *domain.User, err error) {
-	user, err = u.r.Save(username)
+func (u *UserUsecase) CreateUser(users []*domain.User) (err error) {
+	err = u.r.CreateUser(users)
+	return
+}
+
+// Delete implements domain.UserUsecase
+func (u *UserUsecase) DeleteUser(id int64) (err error) {
+	err = u.r.DeleteUser(id)
 	return
 }
 
 // Update implements domain.UserUsecase
-func (u *UserUsecase) Update(user *domain.User) (err error) {
-	err = u.r.Update(user)
+func (u *UserUsecase) UpdateUser(id int64, nickName *string, icon *string) (err error) {
+	err = u.r.UpdateUser(id, nickName, icon)
 	return
+}
+
+// GetByID implements domain.UserUsecase
+func (u *UserUsecase) QueryUser(userName *string, limit, offset int) ([]*domain.User, int64, error) {
+	userModels, total, err := u.r.QueryUser(userName, limit, offset)
+	if err != nil {
+		return nil, 0, err
+	}
+	return userModels, total, nil
+}
+
+// GetByUsername implements domain.UserUsecase
+func (u *UserUsecase) MGetUsers(userIDs []int64) ([]*domain.User, error) {
+	glb.LOG.Info("field to query", zap.Int64s("userIDs", userIDs))
+	users, err := u.r.MGetUsers(userIDs)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }
