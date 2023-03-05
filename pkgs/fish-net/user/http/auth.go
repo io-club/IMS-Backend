@@ -184,9 +184,9 @@ func RegisterFinish(c *gin.Context) {
 
 	// If login was successful, handle next steps
 	if _, err := _webAuthnCredentialUsecase.CreateCredential(int64(user.ID), credential); err != nil {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"msg":      "Save WebAuthnCredential Failed",
-			"verified": false,
+			"verified": true,
 		})
 		return
 	}
