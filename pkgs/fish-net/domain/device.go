@@ -10,21 +10,6 @@ type Device struct {
 	Type    uint8  // 设备类型
 }
 
-type Sensor struct {
-	gorm.Model
-	// 设备 id
-	// 传感器与设备是一一对应的吗？
-	DeviceId uint32 `gorm:"index"`
-	Type     uint8
-}
-
-// int
-// []int
-// [][]int
-// stream
-type SensorData struct {
-	gorm.Model
-	SensorId uint32 `gorm:"index"`
-	Value    float64
-	Extra    string
+func (Device) TableName() string {
+	return "device"
 }

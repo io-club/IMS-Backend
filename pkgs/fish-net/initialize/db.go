@@ -17,7 +17,7 @@ func initDB() {
 
 	// 迁移 schema
 	db.AutoMigrate(&domain.User{})
-	db.AutoMigrate(&domain.Credential{})
+	db.AutoMigrate(&domain.WebAuthnCredential{})
 	db.AutoMigrate(&domain.Device{})
 	db.AutoMigrate(&domain.Sensor{})
 	db.AutoMigrate(&domain.SensorData{})

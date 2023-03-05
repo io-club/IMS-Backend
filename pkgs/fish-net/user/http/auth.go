@@ -5,6 +5,7 @@ import (
 	"fishnet/domain"
 	"fishnet/glb"
 	"fishnet/user/usecase"
+	"fishnet/util"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -18,9 +19,12 @@ import (
 )
 
 var _userUsecase domain.UserUsecase
+var _webAuthnCredentialUsecase domain.WebAuthnCredentialUsecase
 
 func init() {
 	_userUsecase = usecase.NewUserUsecase()
+	_webAuthnCredentialUsecase = usecase.NewWebAuthnCredentialUsecase()
+
 }
 
 const SESSION_DATA_KEY = "registeration"
@@ -78,7 +82,8 @@ func RegisterBegin(c *gin.Context) {
 
 	users, count, err = _userUsecase.QueryUser(&userName, 1, 0)
 	user := users[0]
-
+	user.Credentials = _webAuthnCredentialUsecase.QueryCredential(int64(user.ID))
+	util.PrettyLog("user.CredentialExcludeList(): ", user.CredentialExcludeList())
 	// 检查用户已经注册的设备，不允许重复注册
 	registerOptions := func(credCreationOpts *protocol.PublicKeyCredentialCreationOptions) {
 		credCreationOpts.CredentialExcludeList = user.CredentialExcludeList()
@@ -177,14 +182,16 @@ func RegisterFinish(c *gin.Context) {
 
 	glb.LOG.Info("FinishRegistration success!!!")
 
-	fmt.Printf("FinishRegistration credential: %+v", credential)
-
 	// If login was successful, handle next steps
-	// user.AddWebAuthnCredential(*credential)
-	// glb.DB.Save(&user)
+	if _, err := _webAuthnCredentialUsecase.CreateCredential(int64(user.ID), credential); err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"msg":      "Save WebAuthnCredential Failed",
+			"verified": false,
+		})
+		return
+	}
 
 	glb.LOG.Info("RegisterBegin sessionData.UserID: " + string(user.WebAuthnID()))
-
 	c.JSON(http.StatusOK, gin.H{
 		"msg":      "Register Success",
 		"verified": true,
