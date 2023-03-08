@@ -17,11 +17,6 @@ func InitAll() {
 	// db
 	initDB()
 
-	// server
-	initServer()
-	// router
-	initRouter()
-
 	// passkey webauthn
 	initAuth()
 

@@ -1,10 +1,8 @@
 package http
 
 import (
-	"encoding/binary"
 	"fishnet/domain"
 	"fishnet/glb"
-	"fishnet/user/usecase"
 	"fishnet/util"
 	"net/http"
 	"strconv"
@@ -16,22 +14,6 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 	"go.uber.org/zap"
 )
-
-var _userUsecase domain.UserUsecase
-var _webAuthnCredentialUsecase domain.WebAuthnCredentialUsecase
-
-func init() {
-	_userUsecase = usecase.NewUserUsecase()
-	_webAuthnCredentialUsecase = usecase.NewWebAuthnCredentialUsecase()
-
-}
-
-const REGISTER_SESSION_DATA_KEY = "register_session_data"
-const LOGIN_SESSION_DATA_KEY = "login_session_data"
-
-func ByteToInt64(b []byte) int64 {
-	return int64(binary.LittleEndian.Uint64(b))
-}
 
 func Play(c *gin.Context) {
 	session := sessions.Default(c)
@@ -59,9 +41,15 @@ func RegisterBegin(c *gin.Context) {
 	glb.LOG.Info("RegisterBegin username: " + userName)
 
 	// 没有用户就新建
-	users, count, err := _userUsecase.QueryUser(&userName, 1, 0)
-	if err != nil || count == 0 {
-		glb.LOG.Info("Creating user: " + userName)
+	users, err := _userUsecase.QueryUser(nil, &userName, nil, 1, 0)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"failed": true,
+			"msg":    "server is broken",
+		})
+		return
+	}
+	if len(users) == 0 {
 		user := &domain.User{
 			Username: userName,
 			Nickname: userName,
@@ -76,11 +64,8 @@ func RegisterBegin(c *gin.Context) {
 			})
 			return
 		}
-	} else {
-		glb.LOG.Info("user exists")
 	}
-
-	users, count, err = _userUsecase.QueryUser(&userName, 1, 0)
+	users, err = _userUsecase.QueryUser(nil, &userName, nil, 1, 0)
 	user := users[0]
 	user.Credentials = _webAuthnCredentialUsecase.QueryCredential(int64(user.ID))
 	util.PrettyLog("user.CredentialExcludeList(): ", user.CredentialExcludeList())
@@ -90,7 +75,6 @@ func RegisterBegin(c *gin.Context) {
 	}
 	options, sessionData, err := glb.Auth.BeginRegistration(user, registerOptions)
 	if err != nil {
-		glb.LOG.Warn("SESSION ERROR: " + err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"failed": true,
 			"msg":    "server is broken",
@@ -101,7 +85,6 @@ func RegisterBegin(c *gin.Context) {
 	// store the sessionData values
 	session := sessions.Default(c)
 	session.Set(REGISTER_SESSION_DATA_KEY, *sessionData)
-	session.Set("a", 1)
 	err = session.Save()
 	if err != nil {
 		msg := "can not save session"
@@ -211,8 +194,15 @@ func LoginBegin(c *gin.Context) {
 	}
 	glb.LOG.Info("LoginBegin username: " + userName)
 
-	users, count, err := _userUsecase.QueryUser(&userName, 1, 0)
-	if err != nil || count == 0 {
+	users, err := _userUsecase.QueryUser(nil, &userName, nil, 1, 0)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"failed": true,
+			"msg":    "user not exists",
+		})
+		return
+	}
+	if len(users) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"failed": true,
 			"msg":    "user not exists",

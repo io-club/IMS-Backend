@@ -8,7 +8,7 @@ import "gorm.io/gorm"
 // stream
 type SensorData struct {
 	gorm.Model
-	SensorId uint32 `gorm:"index"`
+	SensorID uint32 `gorm:"index"`
 	Value    float64
 	Extra    string
 }

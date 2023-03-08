@@ -3,8 +3,6 @@ package repo
 import (
 	"fishnet/domain"
 	"fishnet/glb"
-
-	"go.uber.org/zap"
 )
 
 type userRepo struct {
@@ -42,43 +40,37 @@ func (u *userRepo) UpdateUser(userID int64, nickName *string, icon *string) erro
 }
 
 // QueryNote query list of note info
-func (u *userRepo) QueryUser(userName *string, limit, offset int) ([]*domain.User, int64, error) {
+func (u *userRepo) QueryUser(userID *int64, userName *string, nickName *string, limit, offset int) ([]*domain.User, error) {
 	var total int64
 	var res []*domain.User
 	conn := glb.DB.Model(&domain.User{})
-
-	if userName != nil {
-		conn = conn.Where("username like ?", "%"+*userName+"%")
+	if userID != nil {
+		conn = conn.Where("id = ?", *userID)
+	} else {
+		if userName != nil {
+			conn = conn.Where("username like ?", "%"+*userName+"%")
+		}
+		if nickName != nil {
+			conn = conn.Where("nickname like ?", "%"+*nickName+"%")
+		}
+		if err := conn.Count(&total).Error; err != nil {
+			return res, err
+		}
+	}
+	if err := conn.Limit(limit).Offset(offset).Find(&res).Order("id desc").Error; err != nil {
+		return res, err
 	}
 
-	if err := conn.Count(&total).Error; err != nil {
-		return res, total, err
-	}
-
-	if err := conn.Limit(limit).Offset(offset).Find(&res).Error; err != nil {
-		return res, total, err
-	}
-
-	return res, total, nil
+	return res, nil
 }
 
 func (u *userRepo) MGetUsers(userIDs []int64) ([]*domain.User, error) {
-	glb.LOG.Info("field to query", zap.Int64s("userIDs", userIDs))
-
 	var res []*domain.User
 	if len(userIDs) == 0 {
 		return res, nil
 	}
-
-	if err := glb.DB.Where("id in ?", userIDs).Find(&res).Error; err != nil {
-		return nil, err
+	if err := glb.DB.Where("id in (?)", userIDs).Find(&res).Error; err != nil {
+		return res, err
 	}
-	userNames := (func(users []*domain.User) (ret []string) {
-		for _, user := range users {
-			ret = append(ret, user.Username)
-		}
-		return
-	})(res)
-	glb.LOG.Info("query result", zap.Strings("userNames", userNames))
 	return res, nil
 }

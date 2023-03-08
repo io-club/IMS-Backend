@@ -22,7 +22,7 @@ type UserRepo interface {
 	CreateUser(users []*User) error
 	DeleteUser(userID int64) error
 	UpdateUser(userID int64, nickName *string, icon *string) error
-	QueryUser(userName *string, limit, offset int) ([]*User, int64, error)
+	QueryUser(userID *int64, userName *string, nickName *string, limit, offset int) ([]*User, error)
 	MGetUsers(userIDs []int64) ([]*User, error)
 }
 
@@ -31,6 +31,8 @@ type UserUsecase interface {
 	CreateUser(users []*User) error
 	DeleteUser(userID int64) error
 	UpdateUser(userID int64, nickName *string, icon *string) error
-	QueryUser(userName *string, limit, offset int) ([]*User, int64, error)
+	QueryUser(userID *int64, userName *string, nickName *string, limit, offset int) ([]*User, error)
 	MGetUsers(userIDs []int64) ([]*User, error)
+	CheckUserExist(userID *int64, userName *string) (bool, error)
+	FindByID(userID *int64) (*User, error)
 }
