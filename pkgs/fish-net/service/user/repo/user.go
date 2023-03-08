@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"fishnet/common/consts"
 	"fishnet/domain"
 	"fishnet/glb"
 )
@@ -25,15 +26,15 @@ func (u *userRepo) CreateUser(users []*domain.User) error {
 }
 
 func (u *userRepo) DeleteUser(userId int64) error {
-	return glb.DB.Where("id = ?", userId).Delete(domain.User{}).Error
+	return glb.DB.Where("id = ?", userId).Delete(&domain.User{}).Error
 }
 
 func (u *userRepo) UpdateUser(userID int64, nickName *string, icon *string) error {
 	params := map[string]interface{}{}
-	if nickName != nil {
+	if nickName != nil || *nickName != "" {
 		params["nickname"] = *nickName
 	}
-	if icon != nil {
+	if icon != nil || *icon != "" {
 		params["icon"] = *icon
 	}
 	return glb.DB.Model(&domain.User{}).Where("id = ?", userID).Updates(params).Error
@@ -44,20 +45,24 @@ func (u *userRepo) QueryUser(userID *int64, userName *string, nickName *string, 
 	var total int64
 	var res []*domain.User
 	conn := glb.DB.Model(&domain.User{})
-	if userID != nil {
+	if userID != nil && *userID > 0 {
 		conn = conn.Where("id = ?", *userID)
 	} else {
-		if userName != nil {
+		if userName != nil || *userName == "" {
 			conn = conn.Where("username like ?", "%"+*userName+"%")
 		}
-		if nickName != nil {
+		if nickName != nil || *nickName == "" {
 			conn = conn.Where("nickname like ?", "%"+*nickName+"%")
 		}
+		if limit == 0 {
+			limit = consts.DefaultLimit
+		}
+		conn = conn.Limit(limit)
 		if err := conn.Count(&total).Error; err != nil {
 			return res, err
 		}
 	}
-	if err := conn.Limit(limit).Offset(offset).Find(&res).Order("id desc").Error; err != nil {
+	if err := conn.Offset(offset).Find(&res).Order("id desc").Error; err != nil {
 		return res, err
 	}
 

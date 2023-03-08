@@ -31,16 +31,16 @@ func (u *wordcaseRepo) DeleteWordcase(wordcaseId int64) error {
 // UpdateWordcase implements domain.WordcaseRepo
 func (*wordcaseRepo) UpdateWordcase(wordcaseID int64, value *string, order *int, disable *bool, remark *string) error {
 	params := map[string]interface{}{}
-	if value != nil {
+	if value != nil || *value != "" {
 		params["value"] = *value
 	}
-	if order != nil {
+	if order != nil || *order != 0 {
 		params["order"] = *order
 	}
 	if disable != nil {
 		params["disable"] = *disable
 	}
-	if remark != nil {
+	if remark != nil || *remark != "" {
 		params["remark"] = *remark
 	}
 	return glb.DB.Model(&domain.Wordcase{}).Where("id = ?", wordcaseID).Updates(params).Error
@@ -72,6 +72,7 @@ func (u *wordcaseRepo) QueryWordcase(wordcaseID *int64, groupName *string, key *
 		return nil, err
 	}
 	conn = conn.Offset(offset)
+
 	if err := conn.Find(&res).Error; err != nil {
 		return res, err
 	}

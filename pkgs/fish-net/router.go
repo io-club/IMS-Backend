@@ -15,29 +15,42 @@ func register(g *gin.Engine) {
 		})
 	})
 
+	type User struct {
+		Name  string `json:"name"`
+		Age   int    `json:"age"`
+		Email string `json:"email"`
+	}
+
 	v1 := g.Group("/v1")
 	{
 		// auth
 		auth := v1.Group("/auth")
-		auth.GET("/play", userApi.Play)
-		auth.GET("/register/begin/:username", userApi.RegisterBegin)
-		auth.POST("/register/finish/:id", userApi.RegisterFinish)
-		auth.GET("/login/begin/:username", userApi.LoginBegin)
-		auth.POST("/login/finish/:id", userApi.LoginFinish)
+		{
+			auth.GET("/play", userApi.Play)
+			auth.GET("/register/begin/:username", userApi.RegisterBegin)
+			auth.POST("/register/finish/:id", userApi.RegisterFinish)
+			auth.GET("/login/begin/:username", userApi.LoginBegin)
+			auth.POST("/login/finish/:id", userApi.LoginFinish)
+		}
+
 		// user
 		user := v1.Group("/user")
-		user.POST("", userApi.CreateUser)
-		user.DELETE("/:userId", userApi.DeleteUser)
-		user.PUT("/:userId", userApi.UpdateUser)
-		user.GET("", userApi.QueryUser)
-		user.GET("/:userId", userApi.QueryUser)
+		{
+			user.POST("", userApi.CreateUser)
+			user.DELETE("/:userId", userApi.DeleteUser)
+			user.PUT("/:userId", userApi.UpdateUser)
+			user.GET("", userApi.QueryUser)
+			user.GET("/:userId", userApi.QueryUser)
+		}
 
 		// wordcase
 		wordcase := v1.Group("/wordcase")
-		wordcase.POST("", confApi.CreateWordcase)
-		wordcase.DELETE("/:wordcaseId", confApi.DeleteWordcase)
-		wordcase.PUT("/:wordcaseId", confApi.UpdateWordcase)
-		wordcase.GET("", confApi.QueryWordcase)
-		wordcase.GET("/:wordcaseId", confApi.QueryWordcase)
+		{
+			wordcase.POST("", confApi.CreateWordcase)
+			wordcase.DELETE("/:wordcaseId", confApi.DeleteWordcase)
+			wordcase.PUT("/:wordcaseId", confApi.UpdateWordcase)
+			wordcase.GET("", confApi.QueryWordcase)
+			wordcase.GET("/:wordcaseId", confApi.QueryWordcase)
+		}
 	}
 }

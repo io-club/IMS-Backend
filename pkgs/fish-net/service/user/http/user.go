@@ -10,21 +10,20 @@ import (
 
 func CreateUser(c *gin.Context) {
 	var req pack.CreateUserRequest
-	print(1)
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.BindJSON(&req); err != nil {
 		c.JSON(400, gin.H{
 			"msg": "bad request",
 		})
 		return
 	}
-	print(2)
+
 	if len(req.Username) < 3 {
 		c.JSON(400, gin.H{
 			"msg": "bad request",
 		})
 		return
 	}
-	print(3)
+
 	users, err := _userUsecase.QueryUser(nil, &req.Username, nil, 1, 0)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -142,15 +141,12 @@ func QueryUser(c *gin.Context) {
 			return
 		}
 		c.JSON(200, gin.H{
-			"msg": "ok",
-			"data": gin.H{
-				"list":  pack.Users(users),
-				"total": len(users),
-			},
+			"msg":  "ok",
+			"data": pack.User(users[0]),
 		})
 		return
 	}
-	if err := c.ShouldBindQuery(&req); err != nil {
+	if err := c.BindQuery(&req); err != nil {
 		c.JSON(400, gin.H{
 			"msg": "bad request",
 		})
