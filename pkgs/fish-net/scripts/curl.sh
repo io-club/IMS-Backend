@@ -64,8 +64,7 @@ case $1 in
 # Device
 4001) # createDevice
   curl -fsSL "${baseUrl}"/v1/device -X POST -d '{
-    "name": "test1",
-    "type": "test_key2",
+    "name": "device1",
     "remark": "Some Info"
   }' | jq
   ;;
@@ -74,7 +73,8 @@ case $1 in
   ;;
 4003) # updateDevice
   curl -fsSL "${baseUrl}"/v1/device/"$2" -X PUT -d '{
-    "name":"test"
+    "name":"device1-1",
+    "remark":"some-info-2"
   }' | jq
   ;;
 4004) # queryDevice

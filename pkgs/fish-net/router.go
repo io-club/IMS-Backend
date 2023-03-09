@@ -2,6 +2,7 @@ package main
 
 import (
 	confApi "fishnet/service/conf/http"
+	deviceApi "fishnet/service/device/http"
 	userApi "fishnet/service/user/http"
 	"net/http"
 
@@ -51,6 +52,16 @@ func register(g *gin.Engine) {
 			wordcase.PUT("/:wordcaseId", confApi.UpdateWordcase)
 			wordcase.GET("", confApi.QueryWordcase)
 			wordcase.GET("/:wordcaseId", confApi.QueryWordcase)
+		}
+
+		// device
+		device := v1.Group("/device")
+		{
+			device.POST("", deviceApi.CreateDevice)
+			device.DELETE("/:deviceId", deviceApi.DeleteDevice)
+			device.PUT("/:deviceId", deviceApi.UpdateDevice)
+			device.GET("", deviceApi.QueryDevice)
+			device.GET("/:deviceId", deviceApi.QueryDevice)
 		}
 	}
 }

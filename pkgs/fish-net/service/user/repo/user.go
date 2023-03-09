@@ -46,7 +46,6 @@ func (u *userRepo) QueryUser(userID *int64, userName *string, nickName *string, 
 	var res []*domain.User
 	conn := glb.DB.Model(&domain.User{})
 	if userID != nil && *userID > 0 {
-		glb.LOG.Info("aaa")
 		conn = conn.Where("id = ?", *userID)
 	} else {
 		if userName != nil && *userName != "" {
