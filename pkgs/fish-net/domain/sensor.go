@@ -9,3 +9,7 @@ type Sensor struct {
 	Disabled     bool
 	Remark       string
 }
+
+func (Sensor) TableName() string {
+	return "sensor"
+}

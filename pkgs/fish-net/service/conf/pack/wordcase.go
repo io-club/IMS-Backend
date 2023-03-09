@@ -34,6 +34,7 @@ type QueryWordcaseResponseEntry map[string]QueryWordcaseResponseValue
 type QueryWordcaseResponseGroup map[string]QueryWordcaseResponseEntry
 
 type QueryWordcaseResponseValue struct {
+	ID      int64  `json:"id"`
 	Value   string `json:"value"`
 	Order   int    `json:"order"`
 	Disable bool   `json:"disable"`
@@ -50,6 +51,7 @@ func Keys(wordcases []*domain.Wordcase) []string {
 
 func Value(wordcase *domain.Wordcase) QueryWordcaseResponseValue {
 	return QueryWordcaseResponseValue{
+		ID:      int64(wordcase.ID),
 		Value:   wordcase.Value,
 		Order:   wordcase.Order,
 		Disable: wordcase.Disable,

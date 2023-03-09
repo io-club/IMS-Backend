@@ -1,8 +1,10 @@
 package repo
 
 import (
+	"fishnet/common/consts"
 	"fishnet/domain"
 	"fishnet/glb"
+	"fishnet/util"
 )
 
 var _wordcaseRepo domain.WordcaseRepo
@@ -25,22 +27,22 @@ func (u *wordcaseRepo) CreateWordcase(wordcases []*domain.Wordcase) error {
 }
 
 func (u *wordcaseRepo) DeleteWordcase(wordcaseId int64) error {
-	return glb.DB.Where("id = ?", wordcaseId).Delete(domain.Wordcase{}).Error
+	return glb.DB.Where("id = ?", wordcaseId).Delete(&domain.Wordcase{}).Error
 }
 
 // UpdateWordcase implements domain.WordcaseRepo
 func (*wordcaseRepo) UpdateWordcase(wordcaseID int64, value *string, order *int, disable *bool, remark *string) error {
 	params := map[string]interface{}{}
-	if value != nil || *value != "" {
+	if value != nil && *value != "" {
 		params["value"] = *value
 	}
-	if order != nil || *order != 0 {
+	if order != nil && *order != 0 {
 		params["order"] = *order
 	}
 	if disable != nil {
 		params["disable"] = *disable
 	}
-	if remark != nil || *remark != "" {
+	if remark != nil && *remark != "" {
 		params["remark"] = *remark
 	}
 	return glb.DB.Model(&domain.Wordcase{}).Where("id = ?", wordcaseID).Updates(params).Error
@@ -48,32 +50,33 @@ func (*wordcaseRepo) UpdateWordcase(wordcaseID int64, value *string, order *int,
 
 // QueryWordcase implements domain.QueryWordcase
 func (u *wordcaseRepo) QueryWordcase(wordcaseID *int64, groupName *string, key *string, limit int, offset int) ([]*domain.Wordcase, error) {
-	if wordcaseID != nil {
+	if wordcaseID != nil && *wordcaseID > 0 {
+		glb.LOG.Info(util.SPrettyLog("QueryWordcase", "wordcaseID", wordcaseID))
 		var res []*domain.Wordcase
 		if err := glb.DB.Where("id = ?", wordcaseID).Find(&res).Error; err != nil {
 			return nil, err
 		}
 		return res, nil
 	}
+	glb.LOG.Info(util.SPrettyLog("QueryWordcase", "groupName", groupName, "key", key, "limit", limit, "offset", offset))
 	var total int64
 	var res []*domain.Wordcase
 	conn := glb.DB.Model(&domain.Wordcase{})
 
-	if groupName != nil {
+	if groupName != nil && *groupName != "" {
 		conn = conn.Where("group_name = ?", groupName)
 	}
-	if key != nil {
+	if key != nil && *key != "" {
 		conn = conn.Where("key = ?", key)
 	}
-	if limit != 0 {
-		conn.Limit(limit)
+	if limit == 0 {
+		limit = consts.DefaultLimit
 	}
+	conn = conn.Limit(limit).Offset(offset)
 	if err := conn.Count(&total).Error; err != nil {
 		return nil, err
 	}
-	conn = conn.Offset(offset)
-
-	if err := conn.Find(&res).Error; err != nil {
+	if err := conn.Find(&res).Order("id desc").Error; err != nil {
 		return res, err
 	}
 	return res, nil

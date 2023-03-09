@@ -31,10 +31,10 @@ func (u *userRepo) DeleteUser(userId int64) error {
 
 func (u *userRepo) UpdateUser(userID int64, nickName *string, icon *string) error {
 	params := map[string]interface{}{}
-	if nickName != nil || *nickName != "" {
+	if nickName != nil && *nickName != "" {
 		params["nickname"] = *nickName
 	}
-	if icon != nil || *icon != "" {
+	if icon != nil && *icon != "" {
 		params["icon"] = *icon
 	}
 	return glb.DB.Model(&domain.User{}).Where("id = ?", userID).Updates(params).Error
@@ -46,23 +46,24 @@ func (u *userRepo) QueryUser(userID *int64, userName *string, nickName *string, 
 	var res []*domain.User
 	conn := glb.DB.Model(&domain.User{})
 	if userID != nil && *userID > 0 {
+		glb.LOG.Info("aaa")
 		conn = conn.Where("id = ?", *userID)
 	} else {
-		if userName != nil || *userName == "" {
-			conn = conn.Where("username like ?", "%"+*userName+"%")
+		if userName != nil && *userName != "" {
+			conn = conn.Where("username = ?", *userName)
 		}
-		if nickName != nil || *nickName == "" {
-			conn = conn.Where("nickname like ?", "%"+*nickName+"%")
+		if nickName != nil && *nickName != "" {
+			conn = conn.Where("nickname = ?", *nickName)
 		}
 		if limit == 0 {
 			limit = consts.DefaultLimit
 		}
-		conn = conn.Limit(limit)
+		conn = conn.Limit(limit).Offset(offset)
 		if err := conn.Count(&total).Error; err != nil {
 			return res, err
 		}
 	}
-	if err := conn.Offset(offset).Find(&res).Order("id desc").Error; err != nil {
+	if err := conn.Find(&res).Order("id desc").Error; err != nil {
 		return res, err
 	}
 

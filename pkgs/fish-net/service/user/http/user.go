@@ -2,7 +2,9 @@ package http
 
 import (
 	"fishnet/domain"
+	"fishnet/glb"
 	"fishnet/service/user/pack"
+	"fishnet/util"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +27,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	users, err := _userUsecase.QueryUser(nil, &req.Username, nil, 1, 0)
+	glb.LOG.Info(util.SPrettyLog(users))
 	if err != nil {
 		c.JSON(400, gin.H{
 			"msg": "bad request",
@@ -78,15 +81,22 @@ func DeleteUser(c *gin.Context) {
 }
 
 func UpdateUser(c *gin.Context) {
-	userId, err := strconv.ParseInt(c.Param("userId"), 10, 64)
+	userIDStr := c.Param("userId")
+	if userIDStr == "" {
+		c.JSON(400, gin.H{
+			"msg": "bad request",
+		})
+		return
+	}
+	userId, err := strconv.ParseInt(userIDStr, 10, 64)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"msg": "bad request",
 		})
 		return
 	}
-	var req *pack.UpdateUserRequest
-	if err := c.ShouldBindJSON(req); err != nil {
+	var req pack.UpdateUserRequest
+	if err := c.BindJSON(&req); err != nil {
 		c.JSON(400, gin.H{
 			"msg": "bad request",
 		})
@@ -118,7 +128,6 @@ func UpdateUser(c *gin.Context) {
 }
 
 func QueryUser(c *gin.Context) {
-	var req pack.QueryUserRequest
 	if userIDStr := c.Param("userId"); userIDStr != "" {
 		userId, err := strconv.ParseInt(userIDStr, 10, 64)
 		if err != nil {
@@ -146,13 +155,14 @@ func QueryUser(c *gin.Context) {
 		})
 		return
 	}
+	var req pack.QueryUserRequest
 	if err := c.BindQuery(&req); err != nil {
 		c.JSON(400, gin.H{
 			"msg": "bad request",
 		})
 		return
 	}
-	users, err := _userUsecase.QueryUser(&req.UserID, &req.Username, &req.Nickname, req.Limit, req.Offset)
+	users, err := _userUsecase.QueryUser(nil, &req.Username, &req.Nickname, req.Limit, req.Offset)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"msg": "internal server error",

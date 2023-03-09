@@ -38,7 +38,7 @@ func (u *wordcaseUsecase) MGetWordcases(wordcaseIDs []int64) ([]*domain.Wordcase
 
 // QueryWordcase implements domain.WordcaseUsecase
 func (u *wordcaseUsecase) QueryWordcase(wordcaseID *int64, groupName, key *string, limit, offset int) ([]*domain.Wordcase, error) {
-	return u.r.QueryWordcase(wordcaseID, groupName, nil, limit, offset)
+	return u.r.QueryWordcase(wordcaseID, groupName, key, limit, offset)
 }
 
 // UpdateWordcase implements domain.WordcaseUsecase
