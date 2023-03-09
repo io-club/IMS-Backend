@@ -1,9 +1,9 @@
 package main
 
 import (
-	confApi "fishnet/service/conf/http"
-	deviceApi "fishnet/service/device/http"
-	userApi "fishnet/service/user/http"
+	confAPI "fishnet/service/conf/http"
+	deviceAPI "fishnet/service/device/http"
+	userAPI "fishnet/service/user/http"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -27,41 +27,59 @@ func register(g *gin.Engine) {
 		// auth
 		auth := v1.Group("/auth")
 		{
-			auth.GET("/play", userApi.Play)
-			auth.GET("/register/begin/:username", userApi.RegisterBegin)
-			auth.POST("/register/finish/:id", userApi.RegisterFinish)
-			auth.GET("/login/begin/:username", userApi.LoginBegin)
-			auth.POST("/login/finish/:id", userApi.LoginFinish)
+			auth.GET("/play", userAPI.Play)
+			auth.GET("/register/begin/:username", userAPI.RegisterBegin)
+			auth.POST("/register/finish/:id", userAPI.RegisterFinish)
+			auth.GET("/login/begin/:username", userAPI.LoginBegin)
+			auth.POST("/login/finish/:id", userAPI.LoginFinish)
 		}
 
 		// user
 		user := v1.Group("/user")
 		{
-			user.POST("", userApi.CreateUser)
-			user.DELETE("/:userId", userApi.DeleteUser)
-			user.PUT("/:userId", userApi.UpdateUser)
-			user.GET("", userApi.QueryUser)
-			user.GET("/:userId", userApi.QueryUser)
+			user.POST("", userAPI.CreateUser)
+			user.DELETE("/:userId", userAPI.DeleteUser)
+			user.PUT("/:userId", userAPI.UpdateUser)
+			user.GET("", userAPI.QueryUser)
+			user.GET("/:userId", userAPI.QueryUser)
 		}
 
 		// wordcase
 		wordcase := v1.Group("/wordcase")
 		{
-			wordcase.POST("", confApi.CreateWordcase)
-			wordcase.DELETE("/:wordcaseId", confApi.DeleteWordcase)
-			wordcase.PUT("/:wordcaseId", confApi.UpdateWordcase)
-			wordcase.GET("", confApi.QueryWordcase)
-			wordcase.GET("/:wordcaseId", confApi.QueryWordcase)
+			wordcase.POST("", confAPI.CreateWordcase)
+			wordcase.DELETE("/:wordcaseId", confAPI.DeleteWordcase)
+			wordcase.PUT("/:wordcaseId", confAPI.UpdateWordcase)
+			wordcase.GET("", confAPI.QueryWordcase)
+			wordcase.GET("/:wordcaseId", confAPI.QueryWordcase)
 		}
 
 		// device
 		device := v1.Group("/device")
 		{
-			device.POST("", deviceApi.CreateDevice)
-			device.DELETE("/:deviceId", deviceApi.DeleteDevice)
-			device.PUT("/:deviceId", deviceApi.UpdateDevice)
-			device.GET("", deviceApi.QueryDevice)
-			device.GET("/:deviceId", deviceApi.QueryDevice)
+			// device
+			device.POST("", deviceAPI.CreateDevice)
+			device.DELETE("/:deviceId", deviceAPI.DeleteDevice)
+			device.PUT("/:deviceId", deviceAPI.UpdateDevice)
+			device.GET("", deviceAPI.QueryDevice)
+			device.GET("/:deviceId", deviceAPI.QueryDevice)
+
+			deviceSensor := device.Group("/:deviceId/sensor")
+			{
+				deviceSensor.POST("", deviceAPI.CreateSensor)
+				deviceSensor.GET("", deviceAPI.QuerySensor)
+				deviceSensor.GET("/:sensorId", deviceAPI.QuerySensor)
+			}
 		}
+
+		// sensor
+		sensor := v1.Group("/sensor")
+		{
+			sensor.DELETE("/:sensorId", deviceAPI.DeleteSensor)
+			sensor.PUT("/:sensorId", deviceAPI.UpdateSensor)
+			sensor.GET("", deviceAPI.QuerySensor)
+			sensor.GET("/:sensorId", deviceAPI.QuerySensor)
+		}
+
 	}
 }

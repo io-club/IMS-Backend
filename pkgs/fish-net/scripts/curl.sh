@@ -84,48 +84,52 @@ case $1 in
   curl -fsSL "${baseUrl}"/v1/device/"$2" -X GET | jq
   ;;
 # Sensor
-5001) # createSensor
-  curl -fsSL "${baseUrl}"/v1/sensor -X POST -d '{
-    "name": "test1",
-    "type": "test_key2",
-    "remark": "Some Info"
+5001) # createDeviceSensor
+  curl -fsSL "${baseUrl}"/v1/device/"$2"/sensor -X POST -d '{
+    "sensorTypeId": 2,
+    "remark": "Some Info 2"
   }' | jq
   ;;
-5002) # deleteSensor
+5002) # getDeviceSensors
+  curl -fsSL "${baseUrl}"/v1/device/"$2"/sensor -X GET | jq
+  ;;
+5003) # getDeviceSensor
+  curl -fsSL "${baseUrl}"/v1/device/"$2"/sensor/"$3" -X GET | jq
+  ;;
+5004) # deleteSensor
   curl -fsSL "${baseUrl}"/v1/sensor/"$2" -X DELETE | jq
   ;;
-5003) # updateSensor
+5005) # updateSensor
   curl -fsSL "${baseUrl}"/v1/sensor/"$2" -X PUT -d '{
-    "name":"test"
+    "remark":"some-info-2"
   }' | jq
   ;;
-5004) # querySensor
+5006) # querySensor
   curl -fsSL "${baseUrl}"/v1/sensor -X GET | jq
   ;;
-5005) # getSensor
+5007) # getSensor
   curl -fsSL "${baseUrl}"/v1/sensor/"$2" -X GET | jq
   ;;
-# Data
-6001) # createData
-  curl -fsSL "${baseUrl}"/v1/data -X POST -d '{
-    "device_id": 1,
-    "sensor_id": 1,
-    "value": 1,
+# SensorType
+6001) # createSensorType
+  curl -fsSL "${baseUrl}"/v1/sensorType -X POST -d '{
+    "name": "sensorType1",
     "remark": "Some Info"
   }' | jq
   ;;
-6002) # deleteData
-  curl -fsSL "${baseUrl}"/v1/data/"$2" -X DELETE | jq
+6002) # deleteSensorType
+  curl -fsSL "${baseUrl}"/v1/sensorType/"$2" -X DELETE | jq
   ;;
-6003) # updateData
-  curl -fsSL "${baseUrl}"/v1/data/"$2" -X PUT -d '{
-    "value": 2
+6003) # updateSensorType
+  curl -fsSL "${baseUrl}"/v1/sensorType/"$2" -X PUT -d '{
+    "name":"sensorType1-1",
+    "remark":"some-info-2"
   }' | jq
   ;;
-6004) # queryData
-  curl -fsSL "${baseUrl}"/v1/data -X GET | jq
+6004) # querySensorType
+  curl -fsSL "${baseUrl}"/v1/sensorType -X GET | jq
   ;;
-6005) # getData
-  curl -fsSL "${baseUrl}"/v1/data/"$2" -X GET | jq
+6005) # getSensorType
+  curl -fsSL "${baseUrl}"/v1/sensorType/"$2" -X GET | jq
   ;;
 esac
