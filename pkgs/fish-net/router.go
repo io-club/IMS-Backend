@@ -81,5 +81,24 @@ func register(g *gin.Engine) {
 			sensor.GET("/:sensorId", deviceAPI.QuerySensor)
 		}
 
+		// sensorType
+		sensorType := v1.Group("/sensorType")
+		{
+			sensorType.POST("", deviceAPI.CreateSensorType)
+			sensorType.DELETE("/:sensorTypeId", deviceAPI.DeleteSensorType)
+			sensorType.PUT("/:sensorTypeId", deviceAPI.UpdateSensorType)
+			sensorType.GET("", deviceAPI.QuerySensorType)
+			sensorType.GET("/:sensorTypeId", deviceAPI.QuerySensorType)
+		}
+
+		// sensorData
+		sensorData := v1.Group("/sensorData")
+		{
+			sensorData.POST("", deviceAPI.CreateSensorData)
+			sensorData.DELETE("/:sensorDataId", deviceAPI.DeleteSensorData)
+			sensorData.PUT("/:sensorDataId", deviceAPI.UpdateSensorData)
+			sensorData.GET("", deviceAPI.QuerySensorData)
+			sensorData.GET("/:sensorDataId", deviceAPI.QuerySensorData)
+		}
 	}
 }

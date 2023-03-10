@@ -31,6 +31,14 @@ func CreateWordcase(c *gin.Context) {
 		})
 		return
 	}
+
+	if len(req.Group) == 0 || len(req.Key) == 0 {
+		c.JSON(400, gin.H{
+			"msg": "group and key can not be empty",
+		})
+		return
+	}
+
 	wordcase := &domain.Wordcase{
 		GroupName: req.Group,
 		Key:       req.Key,
@@ -146,8 +154,6 @@ func QueryWordcase(c *gin.Context) {
 		})
 		return
 	}
-
-	glb.LOG.Info("aaa multi")
 	var req pack.QueryWordcaseRequest
 	if err := c.BindQuery(&req); err != nil {
 		c.JSON(400, gin.H{

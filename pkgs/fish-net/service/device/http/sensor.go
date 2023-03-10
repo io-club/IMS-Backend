@@ -52,10 +52,10 @@ func CreateSensor(c *gin.Context) {
 	// TODO check sensor type
 
 	sensor := &domain.Sensor{
-		DeviceID:     deviceID,
-		SensorTypeID: req.SensorTypeID,
-		Remark:       req.Remark,
-		Stat:         0,
+		DeviceID:   deviceID,
+		WordcaseID: req.WordcaseID,
+		Remark:     req.Remark,
+		Stat:       0,
 	}
 	if err := _sensorUsecase.CreateSensor(sensor); err != nil {
 		c.JSON(500, gin.H{
@@ -179,7 +179,7 @@ func QuerySensor(c *gin.Context) {
 		}
 		c.JSON(200, gin.H{
 			"msg":  "ok",
-			"data": pack.Value(sensors[0]),
+			"data": pack.Sensor(sensors[0]),
 		})
 		return
 	}
@@ -188,7 +188,7 @@ func QuerySensor(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"msg": "ok",
 			"data": gin.H{
-				"list":  pack.Values(sensors),
+				"list":  pack.Sensors(sensors),
 				"total": len(sensors),
 			},
 		})
@@ -198,7 +198,7 @@ func QuerySensor(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"msg": "ok",
 		"data": gin.H{
-			"list":  pack.Values(sensors),
+			"list":  pack.Sensors(sensors),
 			"total": len(sensors),
 		},
 	})

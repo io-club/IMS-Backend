@@ -39,9 +39,9 @@ case $1 in
 # Wordcase
 3001) # createWordcase
   curl -fsSL "${baseUrl}"/v1/wordcase -X POST -d '{
-    "group": "test1",
-    "key": "test_key2",
-    "value": "test_value2",
+    "group": "device",
+    "key": "sensorType",
+    "value": "温度传感器",
     "order": 1,
     "disable": false,
     "remark": "Some Info"
@@ -113,8 +113,9 @@ case $1 in
 # SensorType
 6001) # createSensorType
   curl -fsSL "${baseUrl}"/v1/sensorType -X POST -d '{
-    "name": "sensorType1",
-    "remark": "Some Info"
+    "wordcaseId": 3,
+    "fieldType": "int",
+    "fieldName": "value"
   }' | jq
   ;;
 6002) # deleteSensorType
@@ -122,8 +123,7 @@ case $1 in
   ;;
 6003) # updateSensorType
   curl -fsSL "${baseUrl}"/v1/sensorType/"$2" -X PUT -d '{
-    "name":"sensorType1-1",
-    "remark":"some-info-2"
+    "fieldName": "infoContent"
   }' | jq
   ;;
 6004) # querySensorType
@@ -131,5 +131,27 @@ case $1 in
   ;;
 6005) # getSensorType
   curl -fsSL "${baseUrl}"/v1/sensorType/"$2" -X GET | jq
+  ;;
+# SensorData
+7001) # createSensorData
+  curl -fsSL "${baseUrl}"/v1/sensorData -X POST -d '{
+    "sensorId": 2,
+    "value": "1",
+    "collectTime":"2020-01-01T00:00:01Z"
+  }' | jq
+  ;;
+7002) # deleteSensorData
+  curl -fsSL "${baseUrl}"/v1/sensorData/"$2" -X DELETE | jq
+  ;;
+7003) # updateSensorData
+  curl -fsSL "${baseUrl}"/v1/sensorData/"$2" -X PUT -d '{
+    "value": 2
+  }' | jq
+  ;;
+7004) # querySensorData
+  curl -fsSL "${baseUrl}"/v1/sensorData -X GET | jq
+  ;;
+7005) # getSensorData
+  curl -fsSL "${baseUrl}"/v1/sensorData/"$2" -X GET | jq
   ;;
 esac

@@ -4,9 +4,9 @@ import "gorm.io/gorm"
 
 type Wordcase struct {
 	gorm.Model
-	GroupName string // 分组名称
-	Key       string // 键
-	Value     string // 值
+	GroupName string // 分组名称 例如：device, express
+	Key       string // 键 例如：sensor, expressNo
+	Value     string // 值 例如：temperature, {name: "JD", code: "JD"}
 	Order     int    // 顺序
 	Disable   bool   // 是否禁用
 	Remark    string // 备注

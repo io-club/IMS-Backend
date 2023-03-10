@@ -34,7 +34,7 @@ func (*sensorRepo) MGetSensors(sensorIDs []int64) ([]*domain.Sensor, error) {
 }
 
 // QuerySensor implements domain.SensorRepo
-func (*sensorRepo) QuerySensor(sensorID *int64, deviceID *int64, sensorTypeID *int, stat *int, limit int, offset int) ([]*domain.Sensor, error) {
+func (*sensorRepo) QuerySensor(sensorID *int64, deviceID *int64, wordcaseID *int, stat *int, limit int, offset int) ([]*domain.Sensor, error) {
 	var total int64
 	var res []*domain.Sensor
 	conn := glb.DB.Model(&domain.Sensor{})
@@ -44,8 +44,8 @@ func (*sensorRepo) QuerySensor(sensorID *int64, deviceID *int64, sensorTypeID *i
 		if deviceID != nil && *deviceID > 0 {
 			conn = conn.Where("device_id = ?", *deviceID)
 		}
-		if sensorTypeID != nil && *sensorTypeID > 0 {
-			conn = conn.Where("sensor_type_id = ?", *sensorTypeID)
+		if wordcaseID != nil && *wordcaseID > 0 {
+			conn = conn.Where("wordcase_id = ?", *wordcaseID)
 		}
 		if stat != nil && *stat != 0 {
 			conn = conn.Where("stat = ?", *stat)

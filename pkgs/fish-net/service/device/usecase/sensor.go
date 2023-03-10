@@ -30,8 +30,8 @@ func (u *sensorUsecase) MGetSensors(sensorIDs []int64) ([]*domain.Sensor, error)
 }
 
 // QuerySensor implements domain.SensorUsecase
-func (u *sensorUsecase) QuerySensor(sensorID *int64, deviceID *int64, sensorTypeID *int, stat *int, limit int, offset int) ([]*domain.Sensor, error) {
-	return u.r.QuerySensor(sensorID, deviceID, sensorTypeID, stat, limit, offset)
+func (u *sensorUsecase) QuerySensor(sensorID *int64, deviceID *int64, wordcaseID *int, stat *int, limit int, offset int) ([]*domain.Sensor, error) {
+	return u.r.QuerySensor(sensorID, deviceID, wordcaseID, stat, limit, offset)
 }
 
 // UpdateSensor implements domain.SensorUsecase
