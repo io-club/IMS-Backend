@@ -30,8 +30,8 @@ func register(g *gin.Engine) {
 			auth.GET("/play", userAPI.Play)
 			auth.GET("/register/begin/:username", userAPI.RegisterBegin)
 			auth.POST("/register/finish/:id", userAPI.RegisterFinish)
-			auth.GET("/login/begin/:username", userAPI.LoginBegin)
-			auth.POST("/login/finish/:id", userAPI.LoginFinish)
+			auth.GET("/login/begin", userAPI.LoginBegin)
+			auth.POST("/login/finish", userAPI.LoginFinish)
 		}
 
 		// user

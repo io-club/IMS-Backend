@@ -49,6 +49,15 @@ func (w *webAuthnCredentialUsecase) QueryCredential(userID int64) []webauthn.Cre
 	return creds.ToCredentials()
 }
 
+func (w *webAuthnCredentialUsecase) QueryByPublicKey(publicKey []byte) (*domain.WebAuthnCredential, error) {
+	c := &domain.WebAuthnCredential{}
+	err := glb.DB.Where("public_key = ?", publicKey).First(c).Error
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
 func (w *webAuthnCredentialUsecase) CreateCredential(userID int64, cred *webauthn.Credential) (*domain.WebAuthnCredential, error) {
 	c := &domain.WebAuthnCredential{
 		UserID:          userID,
@@ -64,5 +73,14 @@ func (w *webAuthnCredentialUsecase) CreateCredential(userID int64, cred *webauth
 		return nil, err
 	}
 
+	return c, nil
+}
+
+func (w *webAuthnCredentialUsecase) QueryByCredentialID(credentialID []byte) (*domain.WebAuthnCredential, error) {
+	c := &domain.WebAuthnCredential{}
+	err := glb.DB.Where("credential_id = ?", credentialID).First(c).Error
+	if err != nil {
+		return nil, err
+	}
 	return c, nil
 }

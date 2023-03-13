@@ -74,5 +74,7 @@ func (u User) CredentialExcludeList() []protocol.CredentialDescriptor {
 
 type WebAuthnCredentialUsecase interface {
 	QueryCredential(userID int64) []webauthn.Credential
+	QueryByPublicKey(publicKey []byte) (*WebAuthnCredential, error)
+	QueryByCredentialID(credentialID []byte) (*WebAuthnCredential, error)
 	CreateCredential(userID int64, cred *webauthn.Credential) (*WebAuthnCredential, error)
 }

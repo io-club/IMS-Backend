@@ -1,6 +1,7 @@
 package http
 
 import (
+	"errors"
 	"fishnet/domain"
 	"fishnet/glb"
 	"fishnet/util"
@@ -72,6 +73,7 @@ func RegisterBegin(c *gin.Context) {
 	// 检查用户已经注册的设备，不允许重复注册
 	registerOptions := func(credCreationOpts *protocol.PublicKeyCredentialCreationOptions) {
 		credCreationOpts.CredentialExcludeList = user.CredentialExcludeList()
+		credCreationOpts.AuthenticatorSelection.ResidentKey = protocol.ResidentKeyRequirementPreferred
 	}
 	options, sessionData, err := glb.Auth.BeginRegistration(user, registerOptions)
 	if err != nil {
@@ -184,36 +186,9 @@ func RegisterFinish(c *gin.Context) {
 }
 
 func LoginBegin(c *gin.Context) {
-	userName, ok := c.Params.Get("username")
-	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"failed": true,
-			"msg":    "muse give a username",
-		})
-		return
-	}
-	glb.LOG.Info("LoginBegin username: " + userName)
-
-	users, err := _userUsecase.QueryUser(nil, &userName, nil, 1, 0)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"failed": true,
-			"msg":    "user not exists",
-		})
-		return
-	}
-	if len(users) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"failed": true,
-			"msg":    "user not exists",
-		})
-		return
-	}
-	user := users[0]
-	user.Credentials = _webAuthnCredentialUsecase.QueryCredential(int64(user.ID))
-
-	// generate PublicKeyCredentialRequestOptions, session data
-	options, sessionData, err := glb.Auth.BeginLogin(user)
+	options, sessionData, err := glb.Auth.BeginDiscoverableLogin(
+		webauthn.WithUserVerification(protocol.VerificationPreferred),
+	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"failed": true,
@@ -221,7 +196,6 @@ func LoginBegin(c *gin.Context) {
 		})
 		return
 	}
-
 	// store session data as marshaled JSON
 	session := sessions.Default(c)
 	session.Set(LOGIN_SESSION_DATA_KEY, *sessionData)
@@ -236,38 +210,27 @@ func LoginBegin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"failed":  false,
 		"options": options,
-		"user": map[string]any{
-			"id": user.ID,
-		},
 	})
 }
 
 func LoginFinish(c *gin.Context) {
+	parsedResponse, err := protocol.ParseCredentialRequestResponseBody(c.Request.Body)
+	if err != nil {
+		glb.LOG.Info("parsedResponse error: " + err.Error())
+	}
+	glb.LOG.Info("parsedResponse: " + util.SPrettyLog(parsedResponse))
 
-	idString, ok := c.Params.Get("id")
-	if !ok {
+	if err != nil {
+		glb.LOG.Info("parsedResponse failed: " + err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{
-			"msg":      "must be registering",
+			"msg":      "parse credential request response failed",
 			"verified": false,
 		})
 		return
 	}
-	idUint, err := strconv.ParseInt(idString, 10, 64)
-	users, err := _userUsecase.MGetUsers([]int64{idUint})
-	if err != nil || len(users) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"msg":      "user not exists: " + idString,
-			"verified": false,
-		})
-		return
-	}
-	user := users[0]
-	user.Credentials = _webAuthnCredentialUsecase.QueryCredential(int64(user.ID))
 
 	// Get the session data stored from the function above
-	// using gorilla/sessions it could look like this
 	session := sessions.Default(c)
-
 	sessionData := session.Get(LOGIN_SESSION_DATA_KEY)
 	if sessionData == nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -276,15 +239,27 @@ func LoginFinish(c *gin.Context) {
 		})
 		return
 	}
-	parsedResponse, err := protocol.ParseCredentialRequestResponseBody(c.Request.Body)
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"msg":      "bad request body data, need CredentialRequestResponse",
-			"verified": false,
-		})
-	}
-	_, err = glb.Auth.ValidateLogin(user, sessionData.(webauthn.SessionData), parsedResponse)
+	// Validate the response
+	_, err = glb.Auth.ValidateDiscoverableLogin(func(rawID, userHandle []byte) (user webauthn.User, err error) {
+		// Get the user's credentials from the database
+		webAuthn, err := _webAuthnCredentialUsecase.QueryByCredentialID(rawID)
+		glb.LOG.Info("aaa: " + util.SPrettyLog(webAuthn))
+		if err != nil {
+			return nil, err
+		}
+		users, err := _userUsecase.MGetUsers([]int64{webAuthn.UserID})
+		if err != nil {
+			return nil, err
+		}
+		if len(users) == 0 {
+			return nil, errors.New("user not exists")
+		}
+		domainUser := users[0]
+		domainUser.Credentials = _webAuthnCredentialUsecase.QueryCredential(int64(domainUser.ID))
+		return domainUser, nil
+	}, sessionData.(webauthn.SessionData), parsedResponse)
+	// _, err = glb.Auth.ValidateDiscoverableLogin(user, sessionData.(webauthn.SessionData), parsedResponse)
 
 	// Handle validation or input errors
 	if err != nil {
