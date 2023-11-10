@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"fishnet/glb"
+	"IMS-Backend/pkgs/fish-net/glb"
 	"fmt"
 	"time"
 

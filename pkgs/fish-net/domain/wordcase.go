@@ -4,12 +4,12 @@ import "gorm.io/gorm"
 
 type Wordcase struct {
 	gorm.Model
-	GroupName string // 分组名称 例如：device, express
-	Key       string // 键 例如：sensor, expressNo
-	Value     string // 值 例如：temperature, {name: "JD", code: "JD"}
-	Order     int    // 顺序
-	Disable   bool   // 是否禁用
-	Remark    string // 备注
+	Key     string // 分组名称 例如：device, express
+	Value1  string // 键 例如：sensor, expressNo
+	Value2  string // 值 例如：temperature, {name: "JD", code: "JD"}
+	Order   int    // 顺序
+	Disable bool   // 是否禁用
+	Remark  string // 备注
 }
 
 func (Wordcase) TableName() string {

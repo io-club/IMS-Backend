@@ -1,8 +1,8 @@
 package http
 
 import (
-	"fishnet/domain"
-	"fishnet/service/user/usecase"
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/service/user/usecase"
 )
 
 const REGISTER_SESSION_DATA_KEY = "register_session_data"

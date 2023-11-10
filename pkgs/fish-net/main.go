@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fishnet/initialize"
-	"fishnet/middleware"
+	"IMS-Backend/pkgs/fish-net/initialize"
+	"IMS-Backend/pkgs/fish-net/middleware"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"

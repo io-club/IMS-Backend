@@ -1,10 +1,10 @@
 package repo
 
 import (
-	"fishnet/common/consts"
-	"fishnet/domain"
-	"fishnet/glb"
-	"fishnet/util"
+	"IMS-Backend/pkgs/fish-net/common/consts"
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/glb"
+	"IMS-Backend/pkgs/fish-net/util"
 )
 
 var _wordcaseRepo domain.WordcaseRepo

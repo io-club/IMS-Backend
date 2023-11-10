@@ -1,12 +1,12 @@
 package initialize
 
 import (
-	"fishnet/glb"
+	"IMS-Backend/pkgs/fish-net/glb"
 	"flag"
 	"fmt"
 	"os"
 
-	"fishnet/initialize/internal"
+	"IMS-Backend/pkgs/fish-net/initialize/internal"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gin-gonic/gin"

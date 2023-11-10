@@ -1,9 +1,9 @@
 package usecase
 
 import (
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/service/conf/repo"
 	"errors"
-	"fishnet/domain"
-	"fishnet/service/conf/repo"
 )
 
 var _wordcaseUsecase domain.WordcaseUsecase

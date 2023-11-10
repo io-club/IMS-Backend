@@ -1,8 +1,8 @@
 package repo
 
 import (
-	"fishnet/domain"
-	"fishnet/glb"
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/glb"
 )
 
 var _sensorTypeRepo domain.SensorTypeRepo

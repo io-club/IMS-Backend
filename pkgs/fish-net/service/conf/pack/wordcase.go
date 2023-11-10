@@ -1,14 +1,14 @@
 package pack
 
 import (
-	"fishnet/domain"
-	"fishnet/service/common"
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/service/common"
 )
 
 type CreateWordcaseRequest struct {
-	Group   string `json:"group"`
-	Key     string `json:"key"`
-	Value   string `json:"value"`
+	Key     string `json:"group"`
+	Value1  string `json:"key"`
+	Value2  string `json:"value"`
 	Order   int    `json:"order"`
 	Disable bool   `json:"disable"`
 	Remark  string `json:"remark"`
@@ -35,7 +35,7 @@ type QueryWordcaseResponseGroup map[string]QueryWordcaseResponseEntry
 
 type QueryWordcaseResponseValue struct {
 	ID      int64  `json:"id"`
-	Value   string `json:"value"`
+	Value1  string `json:"value1"`
 	Order   int    `json:"order"`
 	Disable bool   `json:"disable"`
 	Remark  string `json:"remark"`
@@ -52,7 +52,7 @@ func Keys(wordcases []*domain.Wordcase) []string {
 func Value(wordcase *domain.Wordcase) QueryWordcaseResponseValue {
 	return QueryWordcaseResponseValue{
 		ID:      int64(wordcase.ID),
-		Value:   wordcase.Value,
+		Value1:  wordcase.Value1,
 		Order:   wordcase.Order,
 		Disable: wordcase.Disable,
 		Remark:  wordcase.Remark,
@@ -78,7 +78,7 @@ func Entries(wordcases []*domain.Wordcase) map[string]QueryWordcaseResponseValue
 func Groups(wordcases []*domain.Wordcase) QueryWordcaseResponseGroup {
 	res := make(QueryWordcaseResponseGroup)
 	for _, wordcase := range wordcases {
-		res[wordcase.GroupName] = Entries(wordcases)
+		res[wordcase.Key] = Entries(wordcases)
 	}
 	return res
 }

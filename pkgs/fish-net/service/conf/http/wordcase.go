@@ -1,10 +1,10 @@
 package http
 
 import (
-	"fishnet/domain"
-	"fishnet/glb"
-	"fishnet/service/conf/pack"
-	"fishnet/util"
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/glb"
+	"IMS-Backend/pkgs/fish-net/service/conf/pack"
+	"IMS-Backend/pkgs/fish-net/util"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +18,7 @@ func CreateWordcase(c *gin.Context) {
 		})
 		return
 	}
-	wordcases, err := _wordcaseUsecase.QueryWordcase(nil, &req.Group, &req.Key, 1, 0)
+	wordcases, err := _wordcaseUsecase.QueryWordcase(nil, &req.Key, &req.Value1, 1, 0)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"msg": "internal server error",
@@ -32,7 +32,7 @@ func CreateWordcase(c *gin.Context) {
 		return
 	}
 
-	if len(req.Group) == 0 || len(req.Key) == 0 {
+	if len(req.Key) == 0 || len(req.Value1) == 0 {
 		c.JSON(400, gin.H{
 			"msg": "group and key can not be empty",
 		})
@@ -40,12 +40,12 @@ func CreateWordcase(c *gin.Context) {
 	}
 
 	wordcase := &domain.Wordcase{
-		GroupName: req.Group,
-		Key:       req.Key,
-		Value:     req.Value,
-		Order:     req.Order,
-		Disable:   req.Disable,
-		Remark:    req.Remark,
+		Key:     req.Key,
+		Value1:  req.Value1,
+		Value2:  req.Value2,
+		Order:   req.Order,
+		Disable: req.Disable,
+		Remark:  req.Remark,
 	}
 	if err := _wordcaseUsecase.CreateWordcase([]*domain.Wordcase{wordcase}); err != nil {
 		c.JSON(500, gin.H{
