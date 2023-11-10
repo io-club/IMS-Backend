@@ -1,9 +1,9 @@
 package http
 
 import (
-	"fishnet/domain"
-	confUsecase "fishnet/service/conf/usecase"
-	usecase "fishnet/service/device/usecase"
+	"IMS-Backend/pkgs/fish-net/domain"
+	confUsecase "IMS-Backend/pkgs/fish-net/service/conf/usecase"
+	usecase "IMS-Backend/pkgs/fish-net/service/device/usecase"
 )
 
 var _deviceUsecase domain.DeviceUsecase

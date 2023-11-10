@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"fishnet/glb"
+	"IMS-Backend/pkgs/fish-net/glb"
 
 	"os"
 

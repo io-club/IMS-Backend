@@ -1,10 +1,10 @@
 package usecase
 
 import (
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/glb"
+	"IMS-Backend/pkgs/fish-net/service/user/repo"
 	"errors"
-	"fishnet/domain"
-	"fishnet/glb"
-	"fishnet/service/user/repo"
 
 	"go.uber.org/zap"
 )

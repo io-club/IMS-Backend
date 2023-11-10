@@ -1,9 +1,9 @@
 package http
 
 import (
-	"fishnet/domain"
-	"fishnet/glb"
-	"fishnet/service/device/pack"
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/glb"
+	"IMS-Backend/pkgs/fish-net/service/device/pack"
 	"strconv"
 
 	"github.com/gin-gonic/gin"

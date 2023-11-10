@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"fishnet/domain"
-	"fishnet/service/device/repo"
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/service/device/repo"
 )
 
 var _sensorUsecase domain.SensorUsecase

@@ -1,9 +1,9 @@
 package main
 
 import (
-	confAPI "fishnet/service/conf/http"
-	deviceAPI "fishnet/service/device/http"
-	userAPI "fishnet/service/user/http"
+	confAPI "IMS-Backend/pkgs/fish-net/service/conf/http"
+	deviceAPI "IMS-Backend/pkgs/fish-net/service/device/http"
+	userAPI "IMS-Backend/pkgs/fish-net/service/user/http"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

@@ -1,6 +1,6 @@
 package pack
 
-import "fishnet/domain"
+import "IMS-Backend/pkgs/fish-net/domain"
 
 type CreateSensorTypeRequest struct {
 	WordcaseID int64  `json:"wordcaseId"` // 词表 id

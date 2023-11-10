@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"fishnet/domain"
-	"fishnet/glb"
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/glb"
 
 	"github.com/go-webauthn/webauthn/webauthn"
 )

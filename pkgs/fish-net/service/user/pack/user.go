@@ -1,8 +1,8 @@
 package pack
 
 import (
-	"fishnet/domain"
-	"fishnet/service/common"
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/service/common"
 )
 
 type CreateUserRequest struct {

@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"fishnet/glb"
+	"IMS-Backend/pkgs/fish-net/glb"
 	"net/http"
 
-	"fishnet/config"
+	"IMS-Backend/pkgs/fish-net/config"
 
 	"github.com/gin-gonic/gin"
 )

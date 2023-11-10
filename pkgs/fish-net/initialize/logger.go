@@ -1,10 +1,10 @@
 package initialize
 
 import (
+	"IMS-Backend/pkgs/fish-net/glb"
+	"IMS-Backend/pkgs/fish-net/initialize/internal"
+	"IMS-Backend/pkgs/fish-net/util"
 	"bytes"
-	"fishnet/glb"
-	"fishnet/initialize/internal"
-	"fishnet/util"
 	"encoding/json"
 	"fmt"
 	"io"

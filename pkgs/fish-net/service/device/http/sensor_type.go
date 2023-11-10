@@ -1,8 +1,8 @@
 package http
 
 import (
-	"fishnet/domain"
-	"fishnet/service/device/pack"
+	"IMS-Backend/pkgs/fish-net/domain"
+	"IMS-Backend/pkgs/fish-net/service/device/pack"
 	"net/http"
 	"strconv"
 
