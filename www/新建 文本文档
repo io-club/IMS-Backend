@@ -2,3 +2,34 @@ curl http://192.168.0.201:5200/wssb
 curl -X POST http://192.168.0.201:5200/wssb
 curl -XPUT http://192.168.0.201:5200/wssb
 curl -XDELETE http://192.168.0.201:5200/wssb
+
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+
+	r := gin.Default()
+
+	r.GET("/wssb", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "wssb",
+		})
+	})
+
+	r.POST("/wssb", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "Yes"})
+	})
+
+	r.PUT("/wssb", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "NO"})
+	})
+
+	r.DELETE("/wssb", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "wssb"})
+	})
+
+	r.Run(":5200") // 监听并在 0.0.0.0:8080 上启动服务
+}
