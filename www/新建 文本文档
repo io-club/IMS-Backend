@@ -1,0 +1,4 @@
+curl http://192.168.0.201:5200/wssb
+curl -X POST http://192.168.0.201:5200/wssb
+curl -XPUT http://192.168.0.201:5200/wssb
+curl -XDELETE http://192.168.0.201:5200/wssb
