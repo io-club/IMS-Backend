@@ -1,0 +1,14 @@
+1.>curl -X GET -H "Content-Type:applicatin/json" http://localhost:8080/xxx/123
+{"Id":"123","User":"xxx"}
+
+2.>curl -X POST http://localhost:8080/loginJson -H "content-type: application/json" -d "{\"user\": \"xxx\",\"id\": \"132\",\"password\": \"123\" }"
+{"Status":"you are logged in","id":"132","password":"123","user":"xxx"}
+
+3.>curl -X POST http://localhost:8080/LoginForm -H "content-type: application/json" -d "{\"user\": \"xxx\",\"id\": \"132\",\"password\": \"123\" }"
+{"Status":"you are logged in","id":"132","password":"123","user":"xxx"}
+
+4.>curl -X PUT http://localhost:8080/user -H "content-type: application/json"
+{"id":"","user":"Tom"}
+
+5.>curl -X DELETE http://localhost:8080/user/123 -H "content-type: application/json"
+{"id":"123"}
