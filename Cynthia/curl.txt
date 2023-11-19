@@ -1,4 +1,0 @@
-curl -X GET http://127.0.0.1:8080/get/cyn
-curl -X POST -d '{"name":"cyn","age":18,"password":"2484846"}' http://127.0.0.1:8080/post
-curl -X DELETE http://127.0.0.1:8080/delete
-curl -X PUT http://127.0.0.1:8080/update

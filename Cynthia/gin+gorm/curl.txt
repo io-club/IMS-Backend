@@ -1,0 +1,5 @@
+curl -X GET http://127.0.0.1:8080/get?page=2&limit=3
+curl -X GET http://127.0.0.1:8080/get/2
+curl -X POST -d '{"name":"cyn","age":18,"password":"2484846"}' http://127.0.0.1:8080/post
+curl -X DELETE http://127.0.0.1:8080/delete/2
+curl -X PUT -d "username"="jin" -d "password"="12306" http://127.0.0.1:8080/update
