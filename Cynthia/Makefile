@@ -8,4 +8,4 @@ server:
 	go run ./grpc/server/server.go
 
 gin:
-	go run ./gin+gorm/main.go
+	go run ./gin+gorm/main.go                            
