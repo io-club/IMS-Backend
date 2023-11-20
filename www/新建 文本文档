@@ -1,35 +1,79 @@
-curl http://192.168.0.201:5200/wssb
-curl -X POST http://192.168.0.201:5200/wssb
-curl -XPUT http://192.168.0.201:5200/wssb
-curl -XDELETE http://192.168.0.201:5200/wssb
 
 package main
 
 import (
+	"fmt"
+	"github.com/bytedance/sonic"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-func main() {
+type Login struct {
+	User     string `json:"user" binfing:"required"`
+	Password string `json:"password" binding:"required"`
+}
 
+func main() {
+	json1 := Login{User: "a", Password: "123"}
+	json := Login{User: "b", Password: "456"}
+	library := []Login{}
+	library = append(library, json)
+	library = append(library, json1)
 	r := gin.Default()
 
-	r.GET("/wssb", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "wssb",
-		})
-	})
+	r.GET("/GetUser", func(c *gin.Context) { GetUser(library, c) })
 
-	r.POST("/wssb", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "Yes"})
-	})
+	r.POST("/LoginUser", func(c *gin.Context) {LoginPost(c)})
 
-	r.PUT("/wssb", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "NO"})
-	})
+	r.PUT("/ChangeUser0", func(c *gin.Context) { ChangeUser0(library, c) })
 
-	r.DELETE("/wssb", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "wssb"})
-	})
+	r.DELETE("/DeleteUser0", func(c *gin.Context) { DeleteUser0(library, c) })
 
-	r.Run(":5200") // 监听并在 0.0.0.0:8080 上启动服务
+	r.Run(":8080") // 监听并在 0.0.0.0:8080 上启动服务
+
 }
+
+
+func mmd(library []Login,c *gin.Context)(b []Login){
+	a, err := sonic.Marshal(&library)
+	if err != nil {
+		fmt.Print("22")
+	}
+
+	err = sonic.Unmarshal(a, &b)
+	if err != nil {
+		fmt.Print("22")
+	}
+
+	fmt.Println(b)
+	return b
+}
+
+func ChangeUser0(library []Login, c *gin.Context) {
+	library[0].Password = "456"
+	library[0].User = "q"
+
+	c.JSON(200, gin.H{"message": mmd(library,c),})
+}
+
+func DeleteUser0(library []Login, c *gin.Context) {
+	library1 := library[1:]
+
+	c.JSON(200, gin.H{"message": mmd(library1,c),})
+}
+
+func GetUser(library []Login, c *gin.Context) {
+	c.JSON(200, gin.H{"message": mmd(library,c)})
+}
+
+func LoginPost(c *gin.Context){
+	var json3 Login
+		if c.ShouldBind(&json3) == nil {
+			if json3.User == "ylx" && json3.Password == "123" {
+				c.JSON(http.StatusOK, gin.H{"status": "LOGIN"})
+			} else {
+				c.JSON(401, gin.H{"status": "UNLOGIN"})
+			}
+		}
+}
+
