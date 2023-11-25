@@ -24,11 +24,11 @@ func newErrCode(code int, en, zh string) ErrCode {
 	}
 }
 
-// 错误码格式：000 000，前三位表示模块，后三位表示错误码
-// 通用错误码的模块编号为 0
-// 例如：|      0|，表示通用模块的第一个错误码，OK
-// 例如：|  1 001|，表示用户模块的第一个错误码
-// 例如：|111 001|，表示第 111 个模块的第一个错误码
+// The format of the error code is 000 000. The first three digits represent the module, and the last three digits represent the error code.
+// The module number for general error codes is 0.
+// For example: |      0|, represents the first error code of the general module, OK.
+// For example: |  1 001|, represents the first error code of the user module.
+// For example: |111 001|, represents the first error code of the 111th module.
 
 // ---------------------------- 通用错误码 ----------------------------
 var (

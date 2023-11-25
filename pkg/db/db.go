@@ -39,9 +39,9 @@ func NewMySQLProxy() *gorm.DB {
 	proxy, err := gorm.Open(
 		mysql.New(mysql.Config{
 			DSN:                       dsn,
-			DefaultStringSize:         256,   // string 类型字段的默认长度
-			DontSupportRenameIndex:    true,  // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
-			SkipInitializeWithVersion: false, // 根据当前 MySQL 版本自动配置
+			DefaultStringSize:         256,   // Default length of string type fields
+			DontSupportRenameIndex:    true,  // Use the method of deleting and recreating when renaming the index, the database before MySQL 5.7 and MariaDB does not support renaming indexes
+			SkipInitializeWithVersion: false, // Automatically configure according to the current MySQL version
 		}),
 		&gorm.Config{
 			PrepareStmt: true,
