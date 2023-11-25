@@ -1,11 +1,11 @@
 mode: release
 
 logger:
-    level : "debug" # 最低日志级别
-    path : "log/" # 日志文件存放地址（前接项目根目录）
-    file_name : "ims.log" # 日志文件名
-    heartbeat : 60 # 日志心跳间隔（以分钟为单位）
-    max_age : 168 # 日志保留时间（以小时为单位）
+  level : "debug" # Minimum log level
+  path : "log/" # Log file storage location (preceded by the project root directory)
+  file_name : "ims.log" # Log file name
+  heartbeat : 60 # Log heartbeat interval (in minutes)
+  max_age : 168 # Log retention time (in hours)
 
 database:
   db : "mysql"
@@ -25,7 +25,7 @@ database:
 
 etcd:
   endpoints : ["127.0.0.1:2379"]
-  timeout: 3  # 以秒为单位
+  timeout: 3  # In seconds
 
 services:
   nms:

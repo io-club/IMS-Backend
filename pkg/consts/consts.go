@@ -3,11 +3,11 @@ package ioconst
 type Mode string
 
 const (
-	// ModeRelease 发布
+	// ModeRelease for production
 	ModeRelease Mode = "release"
-	// ModeTest 单元测试
+	// ModeTest for unit testing
 	ModeTest Mode = "test"
-	// ModeDebug 开发与联调测试
+	// ModeDebug for development and joint debugging tests
 	ModeDebug Mode = "debug"
 )
 

@@ -97,10 +97,10 @@ func (s *IOServer) ServiceRegister() {
 
 	// Check for duplicate routes
 	if err := CheckRoutes(routes); err != nil {
-		iologger.Fatalf("route 校验失败: %s", err)
+		iologger.Fatalf("route verification failed: %s", err)
 	}
 
-	// 放入默认的 route
+	// Add default route
 	routes = append(routes, DefaultRoute...)
 	// Register routes (ignore case)
 	for _, route := range routes {
@@ -119,7 +119,7 @@ func (s *IOServer) ServiceRegister() {
 				}
 
 				// TODO: Permission check
-				//if ioconfig.GetAuthConfig().CheckAccountType {
+				// if ioconfig.GetAuthConfig().CheckAccountType {
 				// if route.Permission != nil && !route.Permission.IsEmpty() {
 				//    if _, ok := route.Permission[cliams.UserType]; !ok {
 				//       iolog.Info().Any("Permission", route.Permission).Any("cliams", cliams).Msg("Permission check failed")
