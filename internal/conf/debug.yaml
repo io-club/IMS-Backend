@@ -1,0 +1,39 @@
+mode: release
+
+logger:
+    level : "debug" # 最低日志级别
+    path : "log/" # 日志文件存放地址（前接项目根目录）
+    file_name : "ims.log" # 日志文件名
+    heartbeat : 60 # 日志心跳间隔（以分钟为单位）
+    max_age : 168 # 日志保留时间（以小时为单位）
+
+database:
+  db : "mysql"
+
+  mysql:
+    get_slave_strategy : "random"
+    master : "master"
+    slaves : ["slave1", "slave2", "slave3"]
+    username : "programmer"
+    password : "programmer"
+    host : "127.0.0.1"
+    port : 3306
+    dbname : "ims"
+
+  sqlite:
+    master : "ims.db"
+
+etcd:
+  endpoints : ["127.0.0.1:2379"]
+  timeout: 3  # 以秒为单位
+
+services:
+  nms:
+    name : "nms"
+    host : "127.0.0.1"
+    port : 10000
+
+  user:
+    name : "user"
+    host : "127.0.0.1"
+    port : 10005
