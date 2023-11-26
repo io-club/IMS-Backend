@@ -2,9 +2,9 @@ package ioginx
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"ims-server/internal/user/job"
 	ioconfig "ims-server/pkg/config"
 	ioconst "ims-server/pkg/consts"
 	"ims-server/pkg/db"
@@ -22,7 +22,7 @@ var DefaultRoute = []Route{
 		Func: func(c *gin.Context) {
 			c.String(http.StatusOK, "pong")
 		},
-		private:    false,
+		Private:    false,
 		Methods:    []string{http.MethodGet},
 		Permission: nil,
 		FuncName:   "ping",
@@ -104,7 +104,6 @@ func (s *IOServer) ServiceRegister() {
 	for _, route := range routes {
 		route := route
 		url := "/" + strings.ToLower(route.FuncName)
-		fmt.Printf("Register route: %s\n", url)
 		fn := route.Func
 
 		for _, method := range route.Methods {
@@ -120,7 +119,7 @@ func (s *IOServer) ServiceRegister() {
 	}
 }
 
-func (s *IOServer) Run(addr string, serviceName string) {
+func (s *IOServer) Run(addr string, serviceName string, serviceHub *job.ServiceHub, endpoint string) {
 	s.ServiceRegister()
 
 	server := &http.Server{
@@ -144,6 +143,12 @@ func (s *IOServer) Run(addr string, serviceName string) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
+	if serviceName != "nms" {
+		err := serviceHub.UnRegisterService(serviceName, endpoint)
+		if err != nil {
+			iologger.Warn("Failed to unregister service: %s,err: %v", addr, err)
+		}
+	}
 	iologger.Info("Shutdown Server ...")
 	// After receiving the interrupt signal, set a 5-second timeout to handle remaining requests
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

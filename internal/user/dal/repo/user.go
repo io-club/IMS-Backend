@@ -1,4 +1,4 @@
-package userrepo
+package repo
 
 import (
 	"context"
@@ -9,15 +9,15 @@ import (
 )
 
 type userRepo struct {
-	ioginx.IRepo[usermodel.User]
+	ioginx.IRepo[model.User]
 }
 
 func NewUserRepo() *userRepo {
 	return &userRepo{}
 }
 
-func (r *userRepo) CreateEmptyAccount(ctx context.Context, password string, accountType ioconst.UserType) (*usermodel.User, error) {
-	user := usermodel.User{
+func (r *userRepo) CreateEmptyAccount(ctx context.Context, password string, accountType ioconst.UserType) (*model.User, error) {
+	user := model.User{
 		Password: password,
 		Type:     accountType,
 	}
@@ -28,12 +28,12 @@ func (r *userRepo) CreateEmptyAccount(ctx context.Context, password string, acco
 	return &user, nil
 }
 
-func (r *userRepo) CreateUserAccount(ctx context.Context, name, password string, accountType ioconst.UserType) (*usermodel.User, error) {
+func (r *userRepo) CreateUserAccount(ctx context.Context, name, password string, accountType ioconst.UserType) (*model.User, error) {
 	_, err := r.GetByUsername(ctx, name)
 	if err == nil {
 		return nil, egoerror.ErrRepeatedEntry
 	}
-	user := usermodel.User{
+	user := model.User{
 		Type:     accountType,
 		Name:     name,
 		Password: password,
@@ -46,11 +46,11 @@ func (r *userRepo) CreateUserAccount(ctx context.Context, name, password string,
 	return &user, nil
 }
 
-func (r *userRepo) GetByUsername(ctx context.Context, username string) (*usermodel.User, error) {
+func (r *userRepo) GetByUsername(ctx context.Context, username string) (*model.User, error) {
 	if username == "" {
 		return nil, egoerror.ErrNotFound
 	}
-	var user usermodel.User
+	var user model.User
 	err := r.DB().WithContext(ctx).Where("username = ?", username).First(&user).Error
 	if err != nil {
 		return nil, egoerror.ErrNotFound

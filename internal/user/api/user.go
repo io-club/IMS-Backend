@@ -8,21 +8,21 @@ import (
 
 // TODO: 删除私有创建示例
 func CreateUser() func(ctx *gin.Context) {
-	return ioginx.ToHandle(userservice.NewUserService().CreateUser)
+	return ioginx.ToHandle(service.NewUserService().CreateUser)
 }
 
 func GetUserByID() func(ctx *gin.Context) {
-	return ioginx.ToHandle(userservice.NewUserService().GetUserByID)
+	return ioginx.ToHandle(service.NewUserService().GetUserByID)
 }
 
 func MGetUserByID() func(ctx *gin.Context) {
-	return ioginx.ToHandle(userservice.NewUserService().MGetUserByID)
+	return ioginx.ToHandle(service.NewUserService().MGetUserByID)
 }
 
 func UpdateUserByID() func(ctx *gin.Context) {
-	return ioginx.ToHandle(userservice.NewUserService().UpdateUserByID)
+	return ioginx.ToHandle(service.NewUserService().UpdateUserByID)
 }
 
 func DeleteUserByID() func(ctx *gin.Context) {
-	return ioginx.ToHandle(userservice.NewUserService().DeleteUserByID)
+	return ioginx.ToHandle(service.NewUserService().DeleteUserByID)
 }

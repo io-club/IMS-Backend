@@ -14,7 +14,7 @@ type Route struct {
 
 	FuncName string
 
-	private bool // Whether it is an internal public function
+	Private bool // Whether it is an internal public function
 
 	Permission util.Set[string]
 	Methods    []string // Method types,such as: get, post...

@@ -1,4 +1,4 @@
-package etcd
+package ioetcd
 
 import (
 	clientv3 "go.etcd.io/etcd/client/v3"
@@ -7,6 +7,7 @@ import (
 )
 
 func NewClient() (*clientv3.Client, error) {
+	// TODO：设置超时时间
 	config := ioconfig.GetEtcdConf()
 	client, err := clientv3.New(
 		clientv3.Config{
