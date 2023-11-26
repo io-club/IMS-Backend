@@ -1,7 +1,7 @@
 package ioconfig
 
 import (
-	iologger "ims-server/pkg/logger"
+	"log"
 	"sync"
 	"time"
 )
@@ -20,7 +20,7 @@ func GetEtcdConf() *EtcdConf {
 	etcdOnce.Do(func() {
 		if etcdConf == nil {
 			if err := V.UnmarshalKey("etcd", &etcdConf); etcdConf == nil || err != nil {
-				iologger.Panicf("unmarshal conf failed, err: %s \n", err)
+				log.Panicf("unmarshal conf failed, err: %s \n", err)
 			}
 			etcdConf.DialTimeout = etcdConf.DialTimeout * time.Second
 		}

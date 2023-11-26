@@ -25,9 +25,7 @@ var DefaultRoute = []Route{
 		private:    false,
 		Methods:    []string{http.MethodGet},
 		Permission: nil,
-		funcName:   "ping",
-		reqName:    "",
-		respName:   "",
+		FuncName:   "ping",
 	},
 }
 
@@ -69,8 +67,8 @@ func NewIOServer(router *gin.Engine) *IOServer {
 	}
 }
 
-func (s *IOServer) GetRouter(f func(*gorm.DB) error) *IOServer {
-	err := f(db.NewDB())
+func (s *IOServer) InitDB(f func(*gorm.DB) error) *IOServer {
+	err := f(iodb.NewDB())
 	if err != nil {
 		iologger.Panicf("db connect fail,err:%v", err)
 	}
@@ -105,50 +103,9 @@ func (s *IOServer) ServiceRegister() {
 	// Register routes (ignore case)
 	for _, route := range routes {
 		route := route
-		url := "/" + strings.ToLower(route.funcName)
+		url := "/" + strings.ToLower(route.FuncName)
 		fmt.Printf("Register route: %s\n", url)
-		fn := func(c *gin.Context) {}
-		if route.funcName != "ping" {
-			fn = func(c *gin.Context) {
-				ctx := context.Background()
-				// Parse request parameters
-				req, err := BindRequest(c, route)
-				if err != nil {
-					c.JSON(200, NewErr(c, err))
-					return
-				}
-
-				// TODO: Permission check
-				// if ioconfig.GetAuthConfig().CheckAccountType {
-				// if route.Permission != nil && !route.Permission.IsEmpty() {
-				//    if _, ok := route.Permission[cliams.UserType]; !ok {
-				//       iolog.Info().Any("Permission", route.Permission).Any("cliams", cliams).Msg("Permission check failed")
-				//       c.JSON(200, NewErr(c, ioerror.ErrNotPermitted))
-				//       return
-				//    }
-				// }
-				//}
-
-				// Call the handler function
-				rets, err := ToHandle(&ctx, req, route.Func)
-				if err != nil {
-					iologger.Warn("ToHandle Failed")
-					c.JSON(200, NewErr(c, err))
-					return
-				}
-
-				// Process the response
-				res, err := BindResponse(rets)
-				iologger.Info("response: %+v", res)
-				if err != nil {
-					c.JSON(200, NewErr(c, err))
-					return
-				}
-				c.JSON(http.StatusOK, NewOk(c, res))
-			}
-		} else {
-			fn = (route.Func).(func(c *gin.Context))
-		}
+		fn := route.Func
 
 		for _, method := range route.Methods {
 			switch method {

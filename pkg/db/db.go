@@ -1,4 +1,4 @@
-package db
+package iodb
 
 import (
 	"fmt"
@@ -55,7 +55,7 @@ func NewMySQLProxy() *gorm.DB {
 
 func NewSQLiteProxy() *gorm.DB {
 	conf := ioconfig.GetDBConf().SQLite
-	proxy, err := gorm.Open(sqlite.Open(conf.Master), &gorm.Config{PrepareStmt: true})
+	proxy, err := gorm.Open(sqlite.Open(conf.Master), &gorm.Config{})
 	if err != nil {
 		log.Panicf("db connect fail,err:%v", err)
 	}

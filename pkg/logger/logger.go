@@ -38,7 +38,7 @@ func init() {
 	var ok bool
 	var err error
 
-	logLevel, ok = ioconst.LoggerLevel_value[ioconfig.GetLoggerConf().Level]
+	logLevel, ok = ioconst.LoggerLevelValue[ioconfig.GetLoggerConf().Level]
 	if !ok {
 		panic("Error occurred when getting the \"log level\" configuration")
 	}
@@ -136,28 +136,28 @@ func addPrefix() string {
 }
 
 func Debug(format string, v ...any) {
-	if logLevel <= ioconst.LoggerLevel_value["debug"] {
+	if logLevel <= ioconst.LoggerLevelValue["debug"] {
 		checkLogRotation()
 		debugLogger.Printf(addPrefix()+" "+format, v...) // If there's no newline character at the end of the format, it will be automatically added
 	}
 }
 
 func Info(format string, v ...any) {
-	if logLevel <= ioconst.LoggerLevel_value["info"] {
+	if logLevel <= ioconst.LoggerLevelValue["info"] {
 		checkLogRotation()
 		infoLogger.Printf(addPrefix()+" "+format, v...)
 	}
 }
 
 func Warn(format string, v ...any) {
-	if logLevel <= ioconst.LoggerLevel_value["warn"] {
+	if logLevel <= ioconst.LoggerLevelValue["warn"] {
 		checkLogRotation()
 		warnLogger.Printf(addPrefix()+" "+format, v...)
 	}
 }
 
 func Error(format string, v ...any) {
-	if logLevel <= ioconst.LoggerLevel_value["error"] {
+	if logLevel <= ioconst.LoggerLevelValue["error"] {
 		checkLogRotation()
 		errorLogger.Printf(addPrefix()+" "+format, v...)
 	}

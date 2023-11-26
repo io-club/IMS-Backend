@@ -1,7 +1,7 @@
 package ioconfig
 
 import (
-	iologger "ims-server/pkg/logger"
+	"log"
 	"strings"
 	"sync"
 	"time"
@@ -24,7 +24,7 @@ func GetLoggerConf() *LoggerConf {
 	loggerOnce.Do(func() {
 		if loggerConf == nil {
 			if err := V.UnmarshalKey("logger", &loggerConf); loggerConf == nil || err != nil {
-				iologger.Panicf("unmarshal conf failed, err: %s\n", err)
+				log.Panicf("unmarshal conf failed, err: %s\n", err)
 			}
 			loggerConf.Level = strings.ToLower(loggerConf.Level)
 			loggerConf.Path = RootPath + loggerConf.Path
