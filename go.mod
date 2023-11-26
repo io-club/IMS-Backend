@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.1
+	github.com/iancoleman/strcase v0.3.0
 	github.com/spf13/viper v1.17.0
 	go.etcd.io/etcd/client/v3 v3.5.9
 	gorm.io/driver/mysql v1.5.2

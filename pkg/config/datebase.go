@@ -1,7 +1,7 @@
 package ioconfig
 
 import (
-	iologger "ims-server/pkg/logger"
+	"log"
 	"sync"
 )
 
@@ -35,7 +35,7 @@ func GetDBConf() *DBConf {
 	dbOnce.Do(func() {
 		if dbConf == nil {
 			if err := V.UnmarshalKey("database", &dbConf); dbConf == nil || err != nil {
-				iologger.Panicf("unmarshal conf failed, err: %s\n", err)
+				log.Panicf("unmarshal conf failed, err: %s\n", err)
 			}
 		}
 	})

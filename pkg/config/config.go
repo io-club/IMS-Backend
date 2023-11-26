@@ -2,8 +2,8 @@ package ioconfig
 
 import (
 	"github.com/spf13/viper"
-	iologger "ims-server/pkg/logger"
 	"ims-server/pkg/util"
+	"log"
 	"strings"
 )
 
@@ -23,7 +23,7 @@ func NewConfigReader(fileName string) *viper.Viper {
 
 	arr := strings.Split(fileName, ".")
 	if len(arr) != 2 {
-		iologger.Panicf("fileName must have two parts which splited by dot")
+		log.Panicf("fileName must have two parts which splited by dot")
 	}
 	configFile, configType := arr[0], arr[1]
 	config.SetConfigName(configFile)                 // Set the config file name
@@ -33,9 +33,9 @@ func NewConfigReader(fileName string) *viper.Viper {
 	// Try to find the config file
 	if err := config.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			iologger.Panicf("could not found config file %s\n", fileName)
+			log.Panicf("could not found config file %s\n", fileName)
 		} else {
-			iologger.Panicf("parse config file failed: %s\n", err.Error())
+			log.Panicf("parse config file failed: %s\n", err.Error())
 		}
 	}
 	return config

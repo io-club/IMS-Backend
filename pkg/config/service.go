@@ -1,7 +1,7 @@
 package ioconfig
 
 import (
-	iologger "ims-server/pkg/logger"
+	"log"
 	"sync"
 )
 
@@ -26,7 +26,7 @@ func GetServiceConf() *ServiceConf {
 	serviceOnce.Do(func() {
 		if serviceConf == nil {
 			if err := V.UnmarshalKey("services", &serviceConf); serviceConf == nil || err != nil {
-				iologger.Panicf("unmarshal conf failed, err: %s\n", err)
+				log.Panicf("unmarshal conf failed, err: %s\n", err)
 			}
 		}
 	})

@@ -1,4 +1,4 @@
-mode: release
+mode: debug
 
 logger:
   level : "debug" # Minimum log level
@@ -8,7 +8,7 @@ logger:
   max_age : 168 # Log retention time (in hours)
 
 database:
-  db : "mysql"
+  db : "sqlite"
 
   mysql:
     get_slave_strategy : "random"
