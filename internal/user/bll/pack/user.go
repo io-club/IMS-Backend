@@ -1,11 +1,11 @@
-package userpack
+package pack
 
 import (
 	"ims-server/internal/user/dal/model"
 	"ims-server/internal/user/param"
 )
 
-func ToUserResponse(u *usermodel.User) param.UserResponse {
+func ToUserResponse(u *model.User) param.UserResponse {
 	res := param.UserResponse{
 		ID:          u.ID,
 		Type:        u.Type,

@@ -1,4 +1,4 @@
-package usermodel
+package model
 
 var Models = []interface{}{
 	&User{},
