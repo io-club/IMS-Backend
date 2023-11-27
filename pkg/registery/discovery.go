@@ -1,32 +1,33 @@
-package ioetcd
+package registery
 
 import (
 	"context"
 	etcd "go.etcd.io/etcd/client/v3"
+	"ims-server/pkg/etcd"
 	"log"
 	"strings"
 	"sync"
 )
 
-type ServiceHub struct {
+type ServiceClient struct {
 	client        *etcd.Client
 	endpointCache sync.Map // 维护每一个 service 下的所有 servers
 	watched       sync.Map
 }
 
 var (
-	serviceHub *ServiceHub
-	hubOnce    sync.Once
+	serviceClient *ServiceClient
+	clientOnce    sync.Once
 )
 
-// ServiceHub 的构造函数，单例模式
-func GetServiceHub() *ServiceHub {
-	hubOnce.Do(func() {
-		if serviceHub == nil {
-			if client, err := NewClient(); err != nil {
+// ServiceClient 的构造函数，单例模式
+func GetServiceClient() *ServiceClient {
+	clientOnce.Do(func() {
+		if serviceClient == nil {
+			if client, err := ioetcd.NewClient(); err != nil {
 				log.Fatalf("连接不上etcd服务器: %v", err) //发生 log.Fatal 时 go 进程会直接退出
 			} else {
-				serviceHub = &ServiceHub{
+				serviceClient = &ServiceClient{
 					client:        client,
 					endpointCache: sync.Map{},
 					watched:       sync.Map{},
@@ -34,11 +35,11 @@ func GetServiceHub() *ServiceHub {
 			}
 		}
 	})
-	return serviceHub
+	return serviceClient
 }
 
 // 从 etcd 里获取服务对应的节点（endpoint）
-func (hub *ServiceHub) getServiceEndpoints(service string) []string {
+func (hub *ServiceClient) getServiceEndpoints(service string) []string {
 	ctx := context.Background()
 	prefix := strings.TrimRight(ServiceRootPath, "/") + "/" + service + "/"
 	if resp, err := hub.client.Get(ctx, prefix, etcd.WithPrefix()); err != nil { //按前缀获取 key-value
@@ -56,7 +57,7 @@ func (hub *ServiceHub) getServiceEndpoints(service string) []string {
 }
 
 // 把第一次查询 etcd 的结果缓存起来，然后安装一个 Watcher，仅 etcd 数据变化时更新本地缓存，这样可以降低 etcd 的访问压力
-func (hub *ServiceHub) watchEndpointsOfService(service string) {
+func (hub *ServiceClient) watchEndpointsOfService(service string) {
 	if _, ok := hub.watched.LoadOrStore(service, true); ok {
 		return // 已经被监听过了
 	}
@@ -83,7 +84,7 @@ func (hub *ServiceHub) watchEndpointsOfService(service string) {
 }
 
 // 服务发现：client 每次进行 RPC 调用之前都查询 etcd，获取 server 集合，然后采用负载均衡算法选择一台 server
-func (hub *ServiceHub) GetServiceEndpointsWithCache(service string) []string {
+func (hub *ServiceClient) GetServiceEndpointsWithCache(service string) []string {
 	hub.watchEndpointsOfService(service)
 	if endpoints, ok := hub.endpointCache.Load(service); ok {
 		return endpoints.([]string)

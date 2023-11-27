@@ -51,7 +51,7 @@ func SetLogger(serviceName string) {
 	logFile = config.FileName
 	postFix := "_" + time.Now().Format("2006-01-02 15-04-05")
 	file := filepath.Join(config.Path, logFile+postFix)
-	logOut, err = os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0666)
+	logOut, err = os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		panic(err)
 	}
@@ -94,7 +94,7 @@ func checkLogRotation() {
 	// Switch log files
 	postFix := "_" + now.Add(time.Hour*24).Format("2006-01-02 15-04-05")
 	logPath := filepath.Join(config.Path, logFile+postFix)
-	logOut, err = os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0664)
+	logOut, err = os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
 	if err != nil {
 		os.Stderr.WriteString(fmt.Sprintf("Failed to create new log file %s, error information: %v\n", logFile, err))
 		panic(err)

@@ -1,4 +1,4 @@
-package job
+package registery
 
 import (
 	"context"
@@ -9,6 +9,11 @@ import (
 	"log"
 	"strings"
 	"sync"
+)
+
+const (
+	ServiceRootPath = "/ims/http" //etcd key 的前缀
+	UserService     = "user"
 )
 
 // 以下全局变量包外不可见，包外想使用时通过 GetServiceHub() 获得
@@ -50,7 +55,7 @@ func (hub *ServiceHub) RegisterService(service string, endpoint string, leaseID 
 		if lease, err := hub.client.Grant(ctx, hub.heartbeatFrequency); err != nil {
 			return 0, err
 		} else {
-			key := strings.TrimRight(ioetcd.ServiceRootPath, "/") + "/" + service + "/" + endpoint // TrimRight 用于删除/，以确保后面的添加不会重复
+			key := strings.TrimRight(ServiceRootPath, "/") + "/" + service + "/" + endpoint // TrimRight 用于删除/，以确保后面的添加不会重复
 			if _, err := hub.client.Put(ctx, key, endpoint, etcd.WithLease(lease.ID)); err != nil {
 				if err == rpctypes.ErrLeaseNotFound {
 					return hub.RegisterService(service, endpoint, 0) // 虚假租约，走注册流程 (把 leaseID 置为 0)
@@ -71,7 +76,7 @@ func (hub *ServiceHub) RegisterService(service string, endpoint string, leaseID 
 // 注销服务
 func (hub *ServiceHub) UnRegisterService(service string, endpoint string) error {
 	ctx := context.Background()
-	key := strings.TrimRight(ioetcd.ServiceRootPath, "/") + "/" + service + "/" + endpoint
+	key := strings.TrimRight(ServiceRootPath, "/") + "/" + service + "/" + endpoint
 
 	if _, err := hub.client.Delete(ctx, key); err != nil {
 		log.Printf("注销服务 %s 对应的节点 %s 失败: %v", service, endpoint, err)

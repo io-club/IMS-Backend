@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	ioconfig "ims-server/pkg/config"
-	ioetcd "ims-server/pkg/etcd"
 	ioginx "ims-server/pkg/ginx"
 	iologger "ims-server/pkg/logger"
+	"ims-server/pkg/registery"
 	"math/rand"
 	"net/http"
 	"net/http/httputil"
@@ -38,8 +38,8 @@ func main() {
 		c.Request.Header.Set("spanID", fmt.Sprintf("%d", rand.Int63()))
 
 		// 服务发现
-		hub := ioetcd.GetServiceHub()
-		servers := hub.GetServiceEndpointsWithCache(ioetcd.UserService)
+		hub := registery.GetServiceClient()
+		servers := hub.GetServiceEndpointsWithCache(registery.UserService)
 		// TODO：实现更高效的负载均衡算法
 		// 负载均衡（随机法）
 		idx := rand.Intn(len(servers))
@@ -73,5 +73,5 @@ func main() {
 		proxy.ServeHTTP(c.Writer, c.Request)
 	})
 
-	ioginx.NewIOServer(svc).Run(addr, config.Name, nil, "")
+	ioginx.NewIOServer(svc).Run(addr, config.Name)
 }

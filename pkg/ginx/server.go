@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"ims-server/internal/user/job"
 	ioconfig "ims-server/pkg/config"
 	ioconst "ims-server/pkg/consts"
 	"ims-server/pkg/db"
@@ -119,7 +118,7 @@ func (s *IOServer) ServiceRegister() {
 	}
 }
 
-func (s *IOServer) Run(addr string, serviceName string, serviceHub *job.ServiceHub, endpoint string) {
+func (s *IOServer) Run(addr string, serviceName string) {
 	s.ServiceRegister()
 
 	server := &http.Server{
@@ -129,13 +128,12 @@ func (s *IOServer) Run(addr string, serviceName string, serviceHub *job.ServiceH
 		WriteTimeout:   10 * time.Second, // Timeout for writing the response body
 		MaxHeaderBytes: 1 << 20,          // Max size of received request headers
 	}
-	// TODO: Add service registration
 
 	// Start a goroutine to listen and wait for an interrupt signal to gracefully shut down the server
 	go func() {
 		iologger.Debug("Listening and serving HTTP on %s, service name: %s", addr, serviceName)
 		err := server.ListenAndServe()
-		if err != nil {
+		if err != nil && err != http.ErrServerClosed {
 			iologger.Panicf("Failed to start server: %s", err)
 		}
 	}()
@@ -143,17 +141,12 @@ func (s *IOServer) Run(addr string, serviceName string, serviceHub *job.ServiceH
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
-	if serviceName != "nms" {
-		err := serviceHub.UnRegisterService(serviceName, endpoint)
-		if err != nil {
-			iologger.Warn("Failed to unregister service: %s,err: %v", addr, err)
-		}
-	}
-	iologger.Info("Shutdown Server ...")
-	// After receiving the interrupt signal, set a 5-second timeout to handle remaining requests
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	iologger.Info("Shutdown Server %s ...", serviceName)
+	// Try to gracefully shut down the server within 3 seconds
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
 		iologger.Fatalf("Failed to shutdown server: %v", err)
 	}
+	iologger.Info("%s Server exiting", serviceName)
 }
