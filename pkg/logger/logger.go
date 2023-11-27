@@ -25,6 +25,8 @@ var (
 )
 
 var (
+	config ioconfig.LoggerConf
+
 	logOut    *os.File      // Log output file
 	heartbeat time.Duration // Log heartbeat interval
 	maxAge    time.Duration // Log retention time
@@ -34,18 +36,21 @@ var (
 	dayChangeLock sync.RWMutex // Lock when switching log files
 )
 
-func init() {
+func SetLogger(serviceName string) {
 	var ok bool
 	var err error
-
-	logLevel, ok = ioconst.LoggerLevelValue[ioconfig.GetLoggerConf().Level]
+	value, ok := ioconfig.ServiceConfMap[serviceName]
+	if !ok {
+		panic("Error occurred when getting the \"service name\" configuration")
+	}
+	config = value.(ioconfig.Service).LoggerConf
+	logLevel, ok = ioconst.LoggerLevelValue[config.Level]
 	if !ok {
 		panic("Error occurred when getting the \"log level\" configuration")
 	}
-
-	logFile = ioconfig.GetLoggerConf().FileName
+	logFile = config.FileName
 	postFix := "_" + time.Now().Format("2006-01-02 15-04-05")
-	file := filepath.Join(ioconfig.GetLoggerConf().Path, logFile+postFix)
+	file := filepath.Join(config.Path, logFile+postFix)
 	logOut, err = os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0666)
 	if err != nil {
 		panic(err)
@@ -63,8 +68,8 @@ func init() {
 	errorLogger = log.New(logOut, "[ERROR] ", log.LstdFlags)
 	errorLogger.SetOutput(io.MultiWriter(errorLogger.Writer(), os.Stdout))
 
-	heartbeat = ioconfig.GetLoggerConf().HeartBeat
-	maxAge = ioconfig.GetLoggerConf().MaxAge
+	heartbeat = config.HeartBeat
+	maxAge = config.MaxAge
 
 	timeFlag = time.Now()
 	dayChangeLock = sync.RWMutex{}
@@ -88,7 +93,7 @@ func checkLogRotation() {
 
 	// Switch log files
 	postFix := "_" + now.Add(time.Hour*24).Format("2006-01-02 15-04-05")
-	logPath := filepath.Join(ioconfig.GetLoggerConf().Path, logFile+postFix)
+	logPath := filepath.Join(config.Path, logFile+postFix)
 	logOut, err = os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0664)
 	if err != nil {
 		os.Stderr.WriteString(fmt.Sprintf("Failed to create new log file %s, error information: %v\n", logFile, err))
@@ -101,14 +106,14 @@ func checkLogRotation() {
 	timeFlag = time.Now()
 
 	// Judge whether the creation time exceeds the maximum allowable time difference and delete expired files
-	files, err := os.ReadDir(ioconfig.GetLoggerConf().Path)
+	files, err := os.ReadDir(config.Path)
 	if err != nil {
 		os.Stderr.WriteString(fmt.Sprintf("Unable to open folder, error information: %v\n", err))
 		return
 	}
 	for _, file := range files {
 		// Get file information
-		filePath := filepath.Join(ioconfig.GetLoggerConf().Path, file.Name())
+		filePath := filepath.Join(config.Path, file.Name())
 		fileInfo, err := os.Stat(filePath)
 		if err != nil {
 			os.Stderr.WriteString(fmt.Sprintf("Failed to get information for file %s, error information: %v\n", file.Name(), err))

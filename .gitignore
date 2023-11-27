@@ -74,8 +74,8 @@ cover/
 *.pot
 
 # Django stuff:
-*.log*.
-*.db
+.*log.*
+.*db
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -128,7 +128,7 @@ ipython_config.py
 #   https://pdm.fming.dev/#use-with-ide
 .pdm.toml
 
-*.yaml
+.*yaml
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/

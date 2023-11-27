@@ -1,12 +1,5 @@
 mode: debug
 
-logger:
-  level : "debug" # Minimum log level
-  path : "log/" # Log file storage location (preceded by the project root directory)
-  file_name : "ims.log" # Log file name
-  heartbeat : 60 # Log heartbeat interval (in minutes)
-  max_age : 168 # Log retention time (in hours)
-
 database:
   db : "sqlite"
 
@@ -32,8 +25,20 @@ services:
     name : "nms"
     host : "0.0.0.0"
     port : 10000
+    logger:
+      level: "debug" # Minimum log level
+      path: "log/nms/" # Log file storage location (preceded by the project root directory)
+      file_name: "nms.log" # Log file name
+      heartbeat: 60 # Log heartbeat interval (in minutes)
+      max_age: 168 # Log retention time (in hours)
 
   user:
     name : "user"
     host : "0.0.0.0"
     port : 10005
+    logger:
+      level: "debug" # Minimum log level
+      path: "log/user/" # Log file storage location (preceded by the project root directory)
+      file_name: "user.log" # Log file name
+      heartbeat: 60 # Log heartbeat interval (in minutes)
+      max_age: 168 # Log retention time (in hours)
