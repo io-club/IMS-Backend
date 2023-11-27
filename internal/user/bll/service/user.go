@@ -56,7 +56,7 @@ func (s *userService) GetUserByID(ctx context.Context, req *param.GetUserByIDReq
 }
 
 // MGetUserByID  根据用户 ID 列表获取多个用户信息
-func (s *userService) MGetUserByID(ctx context.Context, req *param.MGetUserByIDRequest) (*param.MGetUserByIDResponse, error) {
+func (s *userService) MGetUserByIDs(ctx context.Context, req *param.MGetUserByIDsRequest) (*param.MGetUserByIDsResponse, error) {
 	res, err := repo.NewUserRepo().MGet(ctx, req.IDs)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
@@ -70,7 +70,7 @@ func (s *userService) MGetUserByID(ctx context.Context, req *param.MGetUserByIDR
 		})
 	}
 
-	return &param.MGetUserByIDResponse{
+	return &param.MGetUserByIDsResponse{
 		List: resp,
 	}, nil
 }
