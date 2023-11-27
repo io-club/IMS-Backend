@@ -41,6 +41,13 @@ func GetServiceConf() *ServiceConf {
 			if err := V.UnmarshalKey("services", &serviceConf); serviceConf == nil || err != nil {
 				log.Panicf("unmarshal conf failed, err: %s\n", err)
 			}
+			// Convert time units
+			serviceConf.Nms.LoggerConf.HeartBeat = serviceConf.Nms.LoggerConf.HeartBeat * time.Minute
+			serviceConf.Nms.LoggerConf.MaxAge = serviceConf.Nms.LoggerConf.MaxAge * time.Hour
+			serviceConf.User.LoggerConf.HeartBeat = serviceConf.User.LoggerConf.HeartBeat * time.Minute
+			serviceConf.User.LoggerConf.MaxAge = serviceConf.User.LoggerConf.MaxAge * time.Hour
+
+			// Convert the struct to a map
 			ServiceConfMap = util.StructToMap(serviceConf)
 		}
 	})

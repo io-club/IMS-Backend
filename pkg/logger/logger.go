@@ -21,7 +21,7 @@ var (
 	warnLogger  *log.Logger
 	errorLogger *log.Logger
 
-	logLevel = 0 // 默认的 LogLevel 为 0，即所有级别的日志都打印
+	logLevel = 0 //The default LogLevel is 0, that is, all levels of logs are printed
 )
 
 var (
@@ -48,13 +48,44 @@ func SetLogger(serviceName string) {
 	if !ok {
 		panic("Error occurred when getting the \"log level\" configuration")
 	}
+
+	// Lock when opening the file to avoid contention
+	dayChangeLock.Lock()
+	var filePath string
+	// Assign the file from the configuration by default
 	logFile = config.FileName
 	postFix := "_" + time.Now().Format("2006-01-02 15-04-05")
-	file := filepath.Join(config.Path, logFile+postFix)
-	logOut, err = os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0666)
+	filePath = filepath.Join(config.Path, logFile+postFix)
+	// Try to find a file that has not exceeded the maximum age for writing
+	files, err := os.ReadDir(config.Path)
+	if err != nil {
+		os.Stderr.WriteString(fmt.Sprintf("Unable to open folder, error: %v\n", err))
+		return
+	}
+	for _, file := range files {
+		path := filepath.Join(config.Path, file.Name())
+		fmt.Printf("path: %s\n", path)
+		time.Sleep(30 * time.Second)
+		fileInfo, err := os.Stat(path) // If the file is already in use, an error indicating that the file is in use will be returned
+		if err != nil {
+			os.Stderr.WriteString(fmt.Sprintf("Failed to get information for file %s, error: %v\n", file.Name(), err))
+			continue
+		}
+		// Get the file creation time
+		creationTime := fileInfo.ModTime()
+		if time.Now().Sub(creationTime) <= maxAge {
+			// If there is a file that has not exceeded the maximum age, override the default values
+			logFile = fileInfo.Name()
+			filePath = path
+			break
+		}
+	}
+	logOut, err = os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		panic(err)
 	}
+	// Successfully opened the file, release the lock
+	dayChangeLock.Unlock()
 
 	debugLogger = log.New(logOut, "[DEBUG] ", log.LstdFlags)
 	debugLogger.SetOutput(io.MultiWriter(debugLogger.Writer(), os.Stdout)) // Synchronize output to terminal
@@ -87,16 +118,16 @@ func checkLogRotation() {
 
 	err := logOut.Close()
 	if err != nil {
-		os.Stderr.WriteString(fmt.Sprintf("Failed to close log file %s, error information: %v\n", logFile, err))
+		os.Stderr.WriteString(fmt.Sprintf("Failed to close log file %s, error: %v\n", logFile, err))
 		return
 	}
 
 	// Switch log files
-	postFix := "_" + now.Add(time.Hour*24).Format("2006-01-02 15-04-05")
+	postFix := "_" + now.Format("2006-01-02 15-04-05")
 	logPath := filepath.Join(config.Path, logFile+postFix)
-	logOut, err = os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0664)
+	logOut, err = os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
 	if err != nil {
-		os.Stderr.WriteString(fmt.Sprintf("Failed to create new log file %s, error information: %v\n", logFile, err))
+		os.Stderr.WriteString(fmt.Sprintf("Failed to create new log file %s, error: %v\n", logFile, err))
 		panic(err)
 	}
 	debugLogger = log.New(logOut, "[DEBUG] ", log.LstdFlags)

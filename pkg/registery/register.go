@@ -1,4 +1,4 @@
-package job
+package registery
 
 import (
 	"context"
@@ -6,9 +6,13 @@ import (
 	etcd "go.etcd.io/etcd/client/v3"
 	ioetcd "ims-server/pkg/etcd"
 	iologger "ims-server/pkg/logger"
-	"log"
 	"strings"
 	"sync"
+)
+
+const (
+	ServiceRootPath = "/ims/http" //etcd key 的前缀
+	UserService     = "user"
 )
 
 // 以下全局变量包外不可见，包外想使用时通过 GetServiceHub() 获得
@@ -40,9 +44,6 @@ func GetServiceHub(heartbeatFrequency int64) *ServiceHub {
 }
 
 // 服务注册：第一次注册向 etcd 写一个 key，后续注册仅仅是在续约
-// 参数：
-// - service: 服务名称
-// - endpoint: 服务地址
 func (hub *ServiceHub) RegisterService(service string, endpoint string, leaseID etcd.LeaseID) (etcd.LeaseID, error) {
 	ctx := context.Background()
 	// 租约 ID 小于 0，服务未注册，自动创建一个租约
@@ -50,7 +51,7 @@ func (hub *ServiceHub) RegisterService(service string, endpoint string, leaseID 
 		if lease, err := hub.client.Grant(ctx, hub.heartbeatFrequency); err != nil {
 			return 0, err
 		} else {
-			key := strings.TrimRight(ioetcd.ServiceRootPath, "/") + "/" + service + "/" + endpoint // TrimRight 用于删除/，以确保后面的添加不会重复
+			key := strings.TrimRight(ServiceRootPath, "/") + "/" + service + "/" + endpoint // TrimRight 用于删除/，以确保后面的添加不会重复
 			if _, err := hub.client.Put(ctx, key, endpoint, etcd.WithLease(lease.ID)); err != nil {
 				if err == rpctypes.ErrLeaseNotFound {
 					return hub.RegisterService(service, endpoint, 0) // 虚假租约，走注册流程 (把 leaseID 置为 0)
@@ -62,7 +63,7 @@ func (hub *ServiceHub) RegisterService(service string, endpoint string, leaseID 
 	}
 	// 已经存在租约，直接续租
 	if _, err := hub.client.KeepAliveOnce(ctx, leaseID); err != nil {
-		log.Printf("续约失败:%v", err)
+		iologger.Warn("续约失败:%v", err)
 		return 0, err
 	}
 	return leaseID, nil
@@ -71,12 +72,12 @@ func (hub *ServiceHub) RegisterService(service string, endpoint string, leaseID 
 // 注销服务
 func (hub *ServiceHub) UnRegisterService(service string, endpoint string) error {
 	ctx := context.Background()
-	key := strings.TrimRight(ioetcd.ServiceRootPath, "/") + "/" + service + "/" + endpoint
+	key := strings.TrimRight(ServiceRootPath, "/") + "/" + service + "/" + endpoint
 
 	if _, err := hub.client.Delete(ctx, key); err != nil {
-		log.Printf("注销服务 %s 对应的节点 %s 失败: %v", service, endpoint, err)
+		iologger.Warn("注销服务 %s 对应的节点 %s 失败: %v", service, endpoint, err)
 		return err
 	}
-	log.Printf("注销服务 %s 对应的节点 %s", service, endpoint)
+	iologger.Info("注销服务 %s 对应的节点 %s", service, endpoint)
 	return nil
 }
