@@ -64,8 +64,6 @@ func SetLogger(serviceName string) {
 	}
 	for _, file := range files {
 		path := filepath.Join(config.Path, file.Name())
-		fmt.Printf("path: %s\n", path)
-		time.Sleep(30 * time.Second)
 		fileInfo, err := os.Stat(path) // If the file is already in use, an error indicating that the file is in use will be returned
 		if err != nil {
 			os.Stderr.WriteString(fmt.Sprintf("Failed to get information for file %s, error: %v\n", file.Name(), err))
