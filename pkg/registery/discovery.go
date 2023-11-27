@@ -11,7 +11,7 @@ import (
 
 type ServiceClient struct {
 	client        *etcd.Client
-	endpointCache sync.Map // 维护每一个 service 下的所有 servers
+	endpointCache sync.Map // maintains all servers under each service
 	watched       sync.Map
 }
 
@@ -20,12 +20,12 @@ var (
 	clientOnce    sync.Once
 )
 
-// ServiceClient 的构造函数，单例模式
+// GetServiceClient is the constructor for ServiceClient using singleton pattern
 func GetServiceClient() *ServiceClient {
 	clientOnce.Do(func() {
 		if serviceClient == nil {
 			if client, err := ioetcd.NewClient(); err != nil {
-				iologger.Fatalf("连接不上etcd服务器: %v", err) //发生 log.Fatal 时 go 进程会直接退出
+				iologger.Fatalf("Failed to connect to etcd server: %v", err) // When log.Fatal is called, the Go process exits directly
 			} else {
 				serviceClient = &ServiceClient{
 					client:        client,
@@ -38,44 +38,44 @@ func GetServiceClient() *ServiceClient {
 	return serviceClient
 }
 
-// 从 etcd 里获取服务对应的节点（endpoint）
+// Get service endpoints from etcd
 func (hub *ServiceClient) getServiceEndpoints(service string) []string {
 	ctx := context.Background()
 	prefix := strings.TrimRight(ServiceRootPath, "/") + "/" + service + "/"
-	if resp, err := hub.client.Get(ctx, prefix, etcd.WithPrefix()); err != nil { //按前缀获取 key-value
-		iologger.Warn("获取服务 %s 的节点失败: %v", service, err)
+	if resp, err := hub.client.Get(ctx, prefix, etcd.WithPrefix()); err != nil {
+		iologger.Warn("Failed to get endpoints for service %s: %v", service, err)
 		return nil
 	} else {
 		endpoints := make([]string, 0, len(resp.Kvs))
 		for _, kv := range resp.Kvs {
-			path := strings.Split(string(kv.Key), "/") // 只需要 key（服务地址）
+			path := strings.Split(string(kv.Key), "/") // Only need the key (service address)
 			endpoints = append(endpoints, path[len(path)-1])
 		}
-		iologger.Info("刷新 %s 服务对应的server %v\n", service, endpoints)
+		iologger.Info("Refreshed servers for service %s: %v\n", service, endpoints)
 		return endpoints
 	}
 }
 
-// 把第一次查询 etcd 的结果缓存起来，然后安装一个 Watcher，仅 etcd 数据变化时更新本地缓存，这样可以降低 etcd 的访问压力
+// Cache the initial query result from etcd and then install a watcher to update the local cache only when etcd data changes, reducing the pressure on etcd access
 func (hub *ServiceClient) watchEndpointsOfService(service string) {
 	if _, ok := hub.watched.LoadOrStore(service, true); ok {
-		return // 已经被监听过了
+		return // Already being watched
 	}
 	ctx := context.Background()
 	prefix := strings.TrimRight(ServiceRootPath, "/") + "/" + service + "/"
-	ch := hub.client.Watch(ctx, prefix, etcd.WithPrefix()) //根据前缀监听，每一个修改都会放入管道 ch
-	iologger.Info("监听服务%s的节点变化", service)
+	ch := hub.client.Watch(ctx, prefix, etcd.WithPrefix()) // Watch based on prefix, each modification will be put into the channel ch
+	iologger.Info("Watching for endpoint changes of service %s", service)
 	go func() {
-		for resp := range ch { // 与 _,response:=range ch 不同，这是一种特殊的 range 循环语法，会一直迭代管道直到关闭
-			for _, event := range resp.Events { // 每次从 ch 里取出来的是事件的集合
-				path := strings.Split(string(event.Kv.Key), "/") // 按 / 分割
+		for resp := range ch {
+			for _, event := range resp.Events {
+				path := strings.Split(string(event.Kv.Key), "/") // Split by /
 				if len(path) > 2 {
 					service := path[len(path)-2]
 					endpoints := hub.getServiceEndpoints(service)
 					if len(endpoints) > 0 {
-						hub.endpointCache.Store(service, endpoints) // 将 service 对应的 endpoints 存入 map 作为缓存
+						hub.endpointCache.Store(service, endpoints) // Store the endpoints for the service in the map as cache
 					} else {
-						hub.endpointCache.Delete(service) // 该服务已没有可用的节点，删除键值对（缓存）
+						hub.endpointCache.Delete(service) // No available endpoints for the service, delete the key-value pair (cache)
 					}
 				}
 			}
@@ -83,7 +83,7 @@ func (hub *ServiceClient) watchEndpointsOfService(service string) {
 	}()
 }
 
-// 服务发现：client 每次进行 RPC 调用之前都查询 etcd，获取 server 集合，然后采用负载均衡算法选择一台 server
+// GetServiceEndpointsWithCache queries etcd for the server collection before each RPC call, and then selects a server using a load balancing algorithm
 func (hub *ServiceClient) GetServiceEndpointsWithCache(service string) []string {
 	hub.watchEndpointsOfService(service)
 	if endpoints, ok := hub.endpointCache.Load(service); ok {
@@ -91,7 +91,7 @@ func (hub *ServiceClient) GetServiceEndpointsWithCache(service string) []string 
 	}
 	endpoints := hub.getServiceEndpoints(service)
 	if len(endpoints) > 0 {
-		hub.endpointCache.Store(service, endpoints) // 将 service 对应的 endpoints 存入 map 作为缓存
+		hub.endpointCache.Store(service, endpoints) // Cache endpoints
 	}
 	return endpoints
 }
