@@ -31,9 +31,7 @@ func GetLocalIPWithHardware() (ipv4 string, err error) {
 			}
 		}
 	}
-
-	err = errors.New("ERR_NO_LOCAL_IP_FOUND")
-	return "", err
+	return "", errors.New("ERR_NO_LOCAL_IP_FOUND")
 }
 
 func GetLocalIPWithNet() (string, error) {
@@ -41,6 +39,5 @@ func GetLocalIPWithNet() (string, error) {
 	defer conn.Close()
 	localAddr := conn.LocalAddr().String()
 	idx := strings.LastIndex(localAddr, ":")
-	log.Printf("ip: %s", localAddr[0:idx])
 	return localAddr[0:idx], nil
 }

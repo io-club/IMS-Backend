@@ -22,3 +22,24 @@ func GetFunctionName(f interface{}) string {
 
 	return funcLastName
 }
+
+func StructToMap(obj interface{}) map[string]interface{} {
+	values := reflect.ValueOf(obj)
+
+	if values.Kind() == reflect.Ptr {
+		values = values.Elem()
+	}
+	if values.Kind() != reflect.Struct {
+		return nil
+	}
+
+	m := make(map[string]interface{})
+	typ := values.Type()
+	for i := 0; i < values.NumField(); i++ {
+		field := values.Field(i)
+		name := strings.ToLower(typ.Field(i).Name)
+		m[name] = field.Interface()
+	}
+
+	return m
+}

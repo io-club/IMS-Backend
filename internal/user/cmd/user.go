@@ -8,6 +8,7 @@ import (
 	ioconfig "ims-server/pkg/config"
 	ioetcd "ims-server/pkg/etcd"
 	ioginx "ims-server/pkg/ginx"
+	iologger "ims-server/pkg/logger"
 	"ims-server/pkg/util"
 	"time"
 )
@@ -16,6 +17,8 @@ func main() {
 	config := ioconfig.GetServiceConf().User
 	addr := config.Host + ":" + config.Port
 	serviceName := config.Name
+
+	iologger.SetLogger(serviceName)
 
 	// 获取本机 IP
 	selfIP, err := util.GetLocalIPWithNet()
