@@ -4,7 +4,7 @@ import (
 	"context"
 	etcd "go.etcd.io/etcd/client/v3"
 	"ims-server/pkg/etcd"
-	"log"
+	iologger "ims-server/pkg/logger"
 	"strings"
 	"sync"
 )
@@ -25,7 +25,7 @@ func GetServiceClient() *ServiceClient {
 	clientOnce.Do(func() {
 		if serviceClient == nil {
 			if client, err := ioetcd.NewClient(); err != nil {
-				log.Fatalf("连接不上etcd服务器: %v", err) //发生 log.Fatal 时 go 进程会直接退出
+				iologger.Fatalf("连接不上etcd服务器: %v", err) //发生 log.Fatal 时 go 进程会直接退出
 			} else {
 				serviceClient = &ServiceClient{
 					client:        client,
@@ -43,7 +43,7 @@ func (hub *ServiceClient) getServiceEndpoints(service string) []string {
 	ctx := context.Background()
 	prefix := strings.TrimRight(ServiceRootPath, "/") + "/" + service + "/"
 	if resp, err := hub.client.Get(ctx, prefix, etcd.WithPrefix()); err != nil { //按前缀获取 key-value
-		log.Printf("获取服务%s的节点失败: %v", service, err)
+		iologger.Warn("获取服务 %s 的节点失败: %v", service, err)
 		return nil
 	} else {
 		endpoints := make([]string, 0, len(resp.Kvs))
@@ -51,7 +51,7 @@ func (hub *ServiceClient) getServiceEndpoints(service string) []string {
 			path := strings.Split(string(kv.Key), "/") // 只需要 key（服务地址）
 			endpoints = append(endpoints, path[len(path)-1])
 		}
-		log.Printf("刷新%s服务对应的server %v\n", service, endpoints)
+		iologger.Info("刷新 %s 服务对应的server %v\n", service, endpoints)
 		return endpoints
 	}
 }
@@ -64,7 +64,7 @@ func (hub *ServiceClient) watchEndpointsOfService(service string) {
 	ctx := context.Background()
 	prefix := strings.TrimRight(ServiceRootPath, "/") + "/" + service + "/"
 	ch := hub.client.Watch(ctx, prefix, etcd.WithPrefix()) //根据前缀监听，每一个修改都会放入管道 ch
-	log.Printf("监听服务%s的节点变化", service)
+	iologger.Info("监听服务%s的节点变化", service)
 	go func() {
 		for resp := range ch { // 与 _,response:=range ch 不同，这是一种特殊的 range 循环语法，会一直迭代管道直到关闭
 			for _, event := range resp.Events { // 每次从 ch 里取出来的是事件的集合
