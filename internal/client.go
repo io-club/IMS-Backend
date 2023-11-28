@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	ioconfig "ims-server/pkg/config"
 	ioginx "ims-server/pkg/ginx"
@@ -21,6 +22,20 @@ func main() {
 	iologger.SetLogger(config.Name)
 
 	svc := gin.Default()
+	// 启用代理服务
+	svc.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		// AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"*"},
+		AllowHeaders:     []string{"*"},
+		ExposeHeaders:    []string{"*"},
+		AllowCredentials: true,
+		// AllowOriginFunc: func(origin string) bool {
+		// 	return origin == "https://github.com"
+		// },
+		// MaxAge: 12 * time.Hour,
+	}))
+
 	svc.Any("/:service/:func", func(c *gin.Context) {
 		service := c.Param("service")
 		fn := c.Param("func")

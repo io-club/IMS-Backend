@@ -19,23 +19,6 @@ type UserResponse struct {
 	Status ioconsts.AccountStatus `json:"status" form:"status"`
 }
 
-type CreateUserRequest struct {
-	Type ioconsts.UserType `json:"type" form:"type" binding:"required"`
-
-	Account  string `json:"account" form:"account" binding:"required"`
-	Password string `json:"password" form:"password" binding:"required"`
-	Name     string `json:"name" form:"name" binding:"required"`
-
-	Nickname    string `json:"nickname" form:"nickname"`
-	PhoneNumber string `json:"phoneNumber" form:"phoneNumber"`
-	Email       string `json:"email" form:"email"`
-	Avatar      string `json:"avatar" form:"avatar"`
-}
-
-type CreateUserResponse struct {
-	UserResponse
-}
-
 type GetUserByIDRequest struct {
 	ID uint `json:"id" form:"id" binding:"required"`
 }
@@ -88,4 +71,9 @@ type IUserService interface {
 	UpdateUserByID(ctx context.Context, req *UpdateUserByIDRequest) (*UpdateUserByIDResponse, error)
 	// 根据主键 ID 删除用户
 	DeleteUserByID(ctx context.Context, req *DeleteUserByIDRequest) (*DeleteUserByIDResponse, error)
+
+	// 注册
+	Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error)
+	// 发送验证码
+	SendVerification(ctx context.Context, req *SendVerification) (*SendVerificationResponse, error)
 }

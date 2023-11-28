@@ -16,7 +16,7 @@ func TimeMW() gin.HandlerFunc {
 		ctx.Next()
 		timeCost := time.Since(now)
 		// TODO: 信息收集
-		msg := fmt.Sprintf("request %s use %d ms\n", ctx.Request.URL.Path, timeCost.Milliseconds())
+		msg := fmt.Sprintf("request %s cost time %d ms\n", ctx.Request.URL.Path, timeCost.Milliseconds())
 		iologger.Info(msg)
 	}
 }
