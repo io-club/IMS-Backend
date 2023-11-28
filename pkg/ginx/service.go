@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	ioerror "ims-server/pkg/error"
 	iologger "ims-server/pkg/logger"
 	"net/http"
@@ -23,13 +24,12 @@ func BindRequest(c *gin.Context, svc interface{}) (interface{}, ioerror.ErrCode)
 	// If it is a `GET` request, only use the `Form` binding engine (`query`).
 	// If it is a `POST` request, first check if `content-type` is `JSON` or `XML`, and then use `Form` (`form-data`).
 	reqType := svcType.In(1).Elem()
-	fmt.Printf("reqType: %v\n", reqType)
 	req := reflect.New(reqType)
-	fmt.Printf("req: %#v\n", req)
 	if err := c.ShouldBind(req.Interface()); err != nil {
 		iologger.Info("bind Params failed,err: %v", err)
 		return nil, ioerror.ErrInvalidParam
 	}
+	fmt.Printf("req: %#v\n", req)
 	return req.Interface(), nil
 }
 
@@ -74,19 +74,29 @@ func BindResponse(rets []reflect.Value) (interface{}, ioerror.ErrCode) {
 
 func ToHandle(fn interface{}) func(c *gin.Context) {
 	handler := func(c *gin.Context) {
+		validate := validator.New()
+		error := validate.RegisterValidation("password", customPassword)
+
 		ctx := context.Background()
 		// Parse request parameters
 		req, err := BindRequest(c, fn)
 		if err != nil {
-			c.JSON(200, NewErr(c, err))
+			c.JSON(http.StatusBadRequest, NewErr(c, err))
 			return
 		}
+		iologger.Info("request: %#v", req)
+		error = validate.Struct(req)
+		if error != nil {
+			c.JSON(http.StatusBadRequest, NewErr(c, ioerror.ErrRegisterWrong))
+			return
+		}
+		iologger.Info("request: %#v", req)
 
 		// Call the handler function
 		rets, err := CallaService(ctx, req, fn)
 		if err != nil {
 			iologger.Warn("CallaService Failed")
-			c.JSON(200, NewErr(c, err))
+			c.JSON(http.StatusBadRequest, NewErr(c, err))
 			return
 		}
 
@@ -94,7 +104,7 @@ func ToHandle(fn interface{}) func(c *gin.Context) {
 		res, err := BindResponse(rets)
 		iologger.Info("response: %#v", res)
 		if err != nil {
-			c.JSON(200, NewErr(c, err))
+			c.JSON(http.StatusBadRequest, NewErr(c, err))
 			return
 		}
 		c.JSON(http.StatusOK, NewOk(c, res))

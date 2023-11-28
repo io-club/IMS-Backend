@@ -6,17 +6,12 @@ import (
 	ioginx "ims-server/pkg/ginx"
 )
 
-// TODO: 删除私有创建示例
-func CreateUser() func(ctx *gin.Context) {
-	return ioginx.ToHandle(service.NewUserService().CreateUser)
-}
-
 func GetUserByID() func(ctx *gin.Context) {
 	return ioginx.ToHandle(service.NewUserService().GetUserByID)
 }
 
-func MGetUserByID() func(ctx *gin.Context) {
-	return ioginx.ToHandle(service.NewUserService().MGetUserByID)
+func MGetUserByIDs() func(ctx *gin.Context) {
+	return ioginx.ToHandle(service.NewUserService().MGetUserByIDs)
 }
 
 func UpdateUserByID() func(ctx *gin.Context) {

@@ -13,7 +13,7 @@ var (
 
 type EtcdConf struct {
 	Endpoints   []string      `mapstructure:"endpoints"`
-	DialTimeout time.Duration `mapstructure:"timeout"` // 连接重试间隔
+	DialTimeout time.Duration `mapstructure:"timeout"`
 }
 
 func GetEtcdConf() *EtcdConf {

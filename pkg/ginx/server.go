@@ -2,12 +2,14 @@ package ioginx
 
 import (
 	"context"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	ioconfig "ims-server/pkg/config"
 	ioconst "ims-server/pkg/consts"
 	"ims-server/pkg/db"
 	iologger "ims-server/pkg/logger"
+	"ims-server/pkg/middleware"
 	"net/http"
 	"os"
 	"os/signal"
@@ -57,7 +59,9 @@ func NewIOServer(router *gin.Engine) *IOServer {
 	case ioconst.ModeTest.String():
 		gin.SetMode(gin.TestMode)
 	}
-	// TODO: Configure middleware
+
+	// Configure middleware
+	router.Use(middleware.LimitMW(), middleware.TimeMW()) // The farther forward, the deeper the layers
 
 	return &IOServer{
 		router: router,
@@ -133,7 +137,7 @@ func (s *IOServer) Run(addr string, serviceName string) {
 	go func() {
 		iologger.Debug("Listening and serving HTTP on %s, service name: %s", addr, serviceName)
 		err := server.ListenAndServe()
-		if err != nil && err != http.ErrServerClosed {
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			iologger.Panicf("Failed to start server: %s", err)
 		}
 	}()

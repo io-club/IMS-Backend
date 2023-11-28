@@ -22,7 +22,6 @@ func GetPublicRouteMap(fullServiceFuncList map[string][]ioginx.Route) map[string
 			if err := ioginx.ParseRoute(&route); err != nil {
 				panic(err)
 			}
-
 		}
 
 		indexMap := map[string]struct{}{}

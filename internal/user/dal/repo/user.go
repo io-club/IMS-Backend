@@ -29,7 +29,7 @@ func (r *userRepo) CreateEmptyAccount(ctx context.Context, password string, acco
 }
 
 func (r *userRepo) CreateUserAccount(ctx context.Context, name, password string, accountType ioconst.UserType) (*model.User, error) {
-	_, err := r.GetByUsername(ctx, name)
+	_, err := r.GetByName(ctx, name)
 	if err == nil {
 		return nil, egoerror.ErrRepeatedEntry
 	}
@@ -46,12 +46,21 @@ func (r *userRepo) CreateUserAccount(ctx context.Context, name, password string,
 	return &user, nil
 }
 
-func (r *userRepo) GetByUsername(ctx context.Context, username string) (*model.User, error) {
-	if username == "" {
+func (r *userRepo) GetByName(ctx context.Context, name string) (*model.User, error) {
+	if name == "" {
 		return nil, egoerror.ErrNotFound
 	}
 	var user model.User
-	err := r.DB().WithContext(ctx).Where("username = ?", username).First(&user).Error
+	err := r.DB().WithContext(ctx).Where("name = ?", name).First(&user).Error
+	if err != nil {
+		return nil, egoerror.ErrNotFound
+	}
+	return &user, nil
+}
+
+func (u *userRepo) GetByEmail(ctx context.Context, email string) (*model.User, error) {
+	var user model.User
+	err := u.DB().WithContext(ctx).Where("email = ?", email).First(&user).Error
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}

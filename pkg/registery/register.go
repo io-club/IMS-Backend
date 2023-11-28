@@ -31,7 +31,7 @@ func GetServiceHub(heartbeatFrequency int64) *ServiceHub {
 	hubOnce.Do(func() {
 		if serviceHub == nil {
 			client, err := ioetcd.NewClient()
-			if err != nil {
+			if client == nil || err != nil {
 				iologger.Fatalf("Failed to connect to etcd: %v", err)
 			}
 			serviceHub = &ServiceHub{
