@@ -72,8 +72,14 @@ type IUserService interface {
 	// 根据主键 ID 删除用户
 	DeleteUserByID(ctx context.Context, req *DeleteUserByIDRequest) (*DeleteUserByIDResponse, error)
 
-	// 注册
-	Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error)
 	// 发送验证码
 	SendVerification(ctx context.Context, req *SendVerification) (*SendVerificationResponse, error)
+	// 注册
+	Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error)
+	// 用户名登录
+	NameLogin(ctx context.Context, req *NameLoginRequest) (*NameLoginResponse, error)
+	// 邮箱登录
+	EmailLogin(ctx context.Context, req *EmailLoginRequest) (*EmailLoginResponse, error)
+	// 找回密码
+	RetrievePassword(ctx context.Context, req *RetrievePasswordRequest) (*RetrievePasswordResponse, error)
 }

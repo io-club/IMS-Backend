@@ -8,6 +8,16 @@ import (
 	ioginx "ims-server/pkg/ginx"
 )
 
+var userSelect = []string{
+	"id",
+	"type",
+	"name",
+	"email",
+	"phone_number",
+	"avatar",
+	"status",
+}
+
 type userRepo struct {
 	ioginx.IRepo[model.User]
 }
@@ -51,7 +61,7 @@ func (r *userRepo) GetByName(ctx context.Context, name string) (*model.User, err
 		return nil, egoerror.ErrNotFound
 	}
 	var user model.User
-	err := r.DB().WithContext(ctx).Where("name = ?", name).First(&user).Error
+	err := r.DB().WithContext(ctx).Select(append(userSelect, "password")).Where("name = ?", name).First(&user).Error
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -60,7 +70,7 @@ func (r *userRepo) GetByName(ctx context.Context, name string) (*model.User, err
 
 func (u *userRepo) GetByEmail(ctx context.Context, email string) (*model.User, error) {
 	var user model.User
-	err := u.DB().WithContext(ctx).Where("email = ?", email).First(&user).Error
+	err := u.DB().WithContext(ctx).Select(append(userSelect, "password")).Where("email = ?", email).First(&user).Error
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
