@@ -13,6 +13,6 @@ func GetRandCode() (string, error) {
 		return "", err
 	}
 	// 生成个 6 位数字
-	randomCode := fmt.Sprintf("%06d", int(randomBytes[0])<<8|int(randomBytes[1])<<16|int(randomBytes[2]))
+	randomCode := fmt.Sprintf("%06d", int(randomBytes[0])<<6|int(randomBytes[1])<<5|int(randomBytes[2]<<3))
 	return randomCode, nil
 }
