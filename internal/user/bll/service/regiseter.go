@@ -43,7 +43,6 @@ func (u *userService) Register(ctx context.Context, req *param.RegisterRequest) 
 	if err == nil {
 		return nil, egoerror.ErrEmailExist
 	}
-	// TODO：去除测试逻辑
 	// 检查验证码是否正确
 	code, err := ioredis.NewClient().Get(ctx, req.Email).Result()
 	if err != nil {
@@ -52,7 +51,11 @@ func (u *userService) Register(ctx context.Context, req *param.RegisterRequest) 
 	if req.VerificationCode != code {
 		return nil, egoerror.ErrInvalidVerifyCode
 	}
-	// TODO: 加密密码
+	// 加密密码
+	req.Password, err = repo.NewUserRepo().EncryptedPassword(ctx, req.Password)
+	if err != nil {
+		return nil, egoerror.ErrInvalidParam
+	}
 	user := &model.User{
 		Type:        req.Type,
 		Password:    req.Password,
@@ -79,9 +82,14 @@ func (u *userService) NameLogin(ctx context.Context, req *param.NameLoginRequest
 		return nil, egoerror.ErrNotFound
 	}
 	// 检查密码是否正确
+	user.Password, err = repo.NewUserRepo().DecryptedPassword(ctx, user.Password)
+	if err != nil {
+		return nil, egoerror.ErrInvalidParam
+	}
 	if user.Password != req.Password {
 		return nil, egoerror.ErrPasswordError
 	}
+
 	resp := pack.ToUserResponse(user)
 	return &param.NameLoginResponse{
 		UserResponse: resp,
@@ -121,6 +129,11 @@ func (u *userService) RetrievePassword(ctx context.Context, req *param.RetrieveP
 	}
 	if req.VerificationCode != code {
 		return nil, egoerror.ErrInvalidVerifyCode
+	}
+	// 加密密码
+	req.Password, err = repo.NewUserRepo().EncryptedPassword(ctx, req.Password)
+	if err != nil {
+		return nil, egoerror.ErrInvalidParam
 	}
 
 	m := map[string]interface{}{

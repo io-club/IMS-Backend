@@ -23,6 +23,7 @@ func (u *userService) GetUserByID(ctx context.Context, req *param.GetUserByIDReq
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
+
 	resp := pack.ToUserResponse(user)
 	return &param.GetUserByIDResponse{
 		UserResponse: resp,

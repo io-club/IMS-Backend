@@ -40,6 +40,7 @@ func NameLogin() func(ctx *gin.Context) {
 		resp, err := service.NewUserService().NameLogin(c, &req)
 		if err != nil {
 			iologger.Debug("bind Params failed,err: %v", err)
+			// TODO：错误类型的检验好像存在一定问题
 			var ioErr ioerror.ErrCode
 			ok := errors.As(err, &ioErr)
 			if ok {

@@ -60,7 +60,6 @@ func SetLogger(serviceName string) {
 	logFile = config.FileName
 	postFix := "_" + time.Now().Format("2006-01-02 15-04-05")
 	filePath = filepath.Join(config.Path, logFile+postFix)
-	// TODO：修复搜索原有日志文件
 	// Try to find a file that has not exceeded the maximum age for writing
 	files, err := os.ReadDir(config.Path)
 	if err != nil {

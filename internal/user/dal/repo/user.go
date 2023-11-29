@@ -3,9 +3,12 @@ package repo
 import (
 	"context"
 	"ims-server/internal/user/dal/model"
+	ioconfig "ims-server/pkg/config"
 	ioconst "ims-server/pkg/consts"
+	"ims-server/pkg/encryption"
 	egoerror "ims-server/pkg/error"
 	ioginx "ims-server/pkg/ginx"
+	"log"
 )
 
 var userSelect = []string{
@@ -24,6 +27,24 @@ type userRepo struct {
 
 func NewUserRepo() *userRepo {
 	return &userRepo{}
+}
+
+func (r *userRepo) EncryptedPassword(ctx context.Context, password string) (string, error) {
+	encrypt, err := encryption.Encrypt([]byte(password), encryption.AES, ioconfig.GetEncryptionConf().AesKey)
+	if err != nil {
+		log.Printf("encrypt failed, err: %v", err)
+		return "", err
+	}
+	return string(encrypt), nil
+}
+
+func (r *userRepo) DecryptedPassword(ctx context.Context, password string) (string, error) {
+	decrypt, err := encryption.Decrypt([]byte(password), encryption.AES, ioconfig.GetEncryptionConf().AesKey)
+	if err != nil {
+		log.Printf("encrypt failed, err: %v", err)
+		return "", err
+	}
+	return string(decrypt), nil
 }
 
 func (r *userRepo) CreateEmptyAccount(ctx context.Context, password string, accountType ioconst.UserType) (*model.User, error) {

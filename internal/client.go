@@ -69,6 +69,8 @@ func main() {
 			panic(err)
 		}
 
+		// todo:2023/11/29 21:21:31 http: proxy error: EOF
+		// todo:[GIN] 2023/11/29 - 21:21:31 | 502 |   15.9804887s |   192.168.0.127 | POST     "/user/SendVerification"
 		proxy := httputil.NewSingleHostReverseProxy(remote)
 		// Define the director func
 		// This is a good place to log, for example
