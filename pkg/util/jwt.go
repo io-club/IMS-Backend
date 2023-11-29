@@ -63,7 +63,7 @@ func VerifyJwt(token string) (*JwtHeader, *JwtPayload, error) {
 	h := hmac.New(sha256.New, []byte(JwtSecret))
 	h.Write([]byte(part[0] + "." + part[1]))
 	signature := base64.RawURLEncoding.EncodeToString(h.Sum(nil))
-	if signature != part[3] {
+	if signature != part[2] {
 		return nil, nil, errors.New("token 验证失败")
 	}
 	// 尝试解析 header

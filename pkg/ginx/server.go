@@ -9,7 +9,6 @@ import (
 	ioconst "ims-server/pkg/consts"
 	"ims-server/pkg/db"
 	iologger "ims-server/pkg/logger"
-	"ims-server/pkg/middleware"
 	"net/http"
 	"os"
 	"os/signal"
@@ -61,7 +60,7 @@ func NewIOServer(router *gin.Engine) *IOServer {
 	}
 
 	// Configure middleware
-	router.Use(middleware.LimitMW(), middleware.TimeMW()) // The farther forward, the deeper the layers
+	router.Use(LimitMW(), TimeMW(), JwtAuthMW()) // The farther forward, the deeper the layers
 
 	return &IOServer{
 		router: router,

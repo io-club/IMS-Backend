@@ -3,6 +3,7 @@ package ioginx
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	ioconsts "ims-server/pkg/consts"
 	"ims-server/pkg/util"
 	"net/http"
 	"reflect"
@@ -16,7 +17,7 @@ type Route struct {
 
 	Private bool // Whether it is an internal public function
 
-	Permission util.Set[string]
+	Permission util.Set[ioconsts.UserType]
 	Methods    []string // Method types,such as: get, post...
 }
 
