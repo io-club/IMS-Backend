@@ -48,6 +48,12 @@ func (u *userService) Register(ctx context.Context, req *param.RegisterRequest) 
 	if err != nil {
 		return nil, egoerror.ErrInvalidVerifyCode
 	}
+	// 消费验证码
+	err = ioredis.NewClient().Del(ctx, req.Email).Err()
+	if err != nil {
+		return nil, egoerror.ErrInvalidVerifyCode
+	}
+
 	if req.VerificationCode != code {
 		return nil, egoerror.ErrInvalidVerifyCode
 	}
@@ -107,6 +113,12 @@ func (u *userService) EmailLogin(ctx context.Context, req *param.EmailLoginReque
 	if err != nil {
 		return nil, egoerror.ErrInvalidVerifyCode
 	}
+	// 消费验证码
+	err = ioredis.NewClient().Del(ctx, req.Email).Err()
+	if err != nil {
+		return nil, egoerror.ErrInvalidVerifyCode
+	}
+
 	if req.VerificationCode != code {
 		return nil, egoerror.ErrInvalidVerifyCode
 	}
