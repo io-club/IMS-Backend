@@ -5,6 +5,8 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	ioconfig "ims-server/pkg/config"
+	ioconsts "ims-server/pkg/consts"
+	egoerror "ims-server/pkg/error"
 	ioginx "ims-server/pkg/ginx"
 	iologger "ims-server/pkg/logger"
 	"ims-server/pkg/registery"
@@ -36,18 +38,36 @@ func main() {
 		// MaxAge: 12 * time.Hour,
 	}))
 
+	// TODO:试试能不能变成统一添加中间件
+	// 为了实现简单权限检查，得先运行中间件
+	svc.Use(ioginx.LimitMW(), ioginx.TimeMW(), ioginx.JwtAuthMW())
+
 	svc.Any("/:service/:func", func(c *gin.Context) {
 		service := c.Param("service")
 		fn := c.Param("func")
 
 		publicMap := GetPublicRouteMap(NmsRoutesMap)
 		// 禁止访问私有服务
-		if _, ok := publicMap[service][strings.ToLower(fn)]; !ok {
+		route, ok := publicMap[service][strings.ToLower(fn)]
+		if !ok {
 			iologger.Warn("用户异常访问内部服务, service: %s, fn: %s", service, fn)
 			c.String(http.StatusMethodNotAllowed, "")
 			return
 		}
-
+		// 检查权限
+		if route.Permission != nil && !route.Permission.IsEmpty() {
+			utype, ok := c.Get("utype")
+			if !ok {
+				c.JSON(http.StatusUnauthorized, ioginx.NewErr(c, egoerror.ErrUnauthorized))
+				return
+			}
+			userType := ioconsts.UserType(utype.(string))
+			if _, ok := route.Permission[userType]; !ok {
+				iologger.Debug("用户权限不足, service: %s, fn: %s", service, fn)
+				c.JSON(http.StatusUnauthorized, ioginx.NewErr(c, egoerror.ErrNotPermitted))
+				return
+			}
+		}
 		// 生成 trace 信息
 		c.Request.Header.Set("traceID", fmt.Sprintf("%d", rand.Int63()))
 		c.Request.Header.Set("spanID", fmt.Sprintf("%d", rand.Int63()))

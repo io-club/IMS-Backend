@@ -26,7 +26,12 @@ func SendVerification() func(ctx *gin.Context) {
 func NameLogin() func(ctx *gin.Context) {
 	handler := func(c *gin.Context) {
 		if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-			v.RegisterValidation("password", ioginx.CheckPassword)
+			err := v.RegisterValidation("password", ioginx.CheckPassword)
+			if err != nil {
+				iologger.Debug("validator register failed,err: %v", err)
+				c.JSON(http.StatusBadRequest, ioginx.NewErr(c, ioerror.ErrInvalidParam))
+				return
+			}
 		}
 		// 绑定参数
 		var req param.NameLoginRequest
@@ -46,7 +51,7 @@ func NameLogin() func(ctx *gin.Context) {
 			if ok {
 				ioErr = ioerror.ErrSystemError
 			}
-			c.JSON(http.StatusForbidden, ioErr)
+			c.JSON(http.StatusBadRequest, ioErr)
 			return
 		}
 		// 生成 refresh token
@@ -91,7 +96,7 @@ func EmailLogin() func(ctx *gin.Context) {
 			if ok {
 				ioErr = ioerror.ErrSystemError
 			}
-			c.JSON(http.StatusForbidden, ioErr)
+			c.JSON(http.StatusBadRequest, ioErr)
 			return
 		}
 		// 生成 refresh token

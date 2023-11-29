@@ -74,7 +74,11 @@ func CheckResponse(rets []reflect.Value) (interface{}, ioerror.ErrCode) {
 func ToHandle(fn interface{}) func(c *gin.Context) {
 	handler := func(c *gin.Context) {
 		if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-			v.RegisterValidation("password", CheckPassword)
+			err := v.RegisterValidation("password", CheckPassword)
+			if err != nil {
+				iologger.Debug("validator register failed,err: %v", err)
+				return
+			}
 		}
 
 		ctx := context.Background()
@@ -90,7 +94,7 @@ func ToHandle(fn interface{}) func(c *gin.Context) {
 		rets, err := CallaService(ctx, req, fn)
 		if err != nil {
 			iologger.Debug("CallaService Failed")
-			c.JSON(http.StatusForbidden, NewErr(c, err))
+			c.JSON(http.StatusBadRequest, NewErr(c, err))
 			return
 		}
 

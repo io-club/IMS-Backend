@@ -2,14 +2,20 @@ package route
 
 import (
 	"ims-server/internal/user/api"
+	ioconsts "ims-server/pkg/consts"
 	ioginx "ims-server/pkg/ginx"
+	"ims-server/pkg/util"
 	"net/http"
 )
 
 var Routes = []ioginx.Route{
 	// User
-	{Func: api.GetUserByID(), FuncName: "GetUserByID", Methods: []string{http.MethodGet, http.MethodPost}, Permission: nil},
-	{Func: api.MGetUserByIDs(), FuncName: "MGetUserByIDs", Methods: []string{http.MethodGet, http.MethodPost}, Permission: nil},
+	{Func: api.GetUserByID(), FuncName: "GetUserByID", Methods: []string{http.MethodGet, http.MethodPost},
+		Permission: util.NewSet(ioconsts.UserTypeAdmin, ioconsts.UserTypeInsider, ioconsts.UserTypeOutsiders),
+	},
+	{Func: api.MGetUserByIDs(), FuncName: "MGetUserByIDs", Methods: []string{http.MethodGet, http.MethodPost},
+		Permission: util.NewSet(ioconsts.UserTypeAdmin, ioconsts.UserTypeInsider, ioconsts.UserTypeOutsiders),
+	},
 	{Func: api.UpdateUserByID(), FuncName: "UpdateUserByID", Methods: []string{http.MethodPost}, Permission: nil},
 	{Func: api.DeleteUserByID(), FuncName: "DeleteUserByID", Methods: []string{http.MethodPost}, Permission: nil},
 

@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-func GetPublicRouteMap(fullServiceFuncList map[string][]ioginx.Route) map[string]map[string]struct{} {
-	publicRouteMap := map[string]map[string]struct{}{}
+func GetPublicRouteMap(fullServiceFuncList map[string][]ioginx.Route) map[string]map[string]ioginx.Route {
+	publicRouteMap := map[string]map[string]ioginx.Route{}
 	for service, routes := range fullServiceFuncList {
 		publicRoutes := []ioginx.Route{}
 		for _, route := range routes {
@@ -24,9 +24,9 @@ func GetPublicRouteMap(fullServiceFuncList map[string][]ioginx.Route) map[string
 			}
 		}
 
-		indexMap := map[string]struct{}{}
+		indexMap := map[string]ioginx.Route{}
 		for _, route := range publicRoutes {
-			indexMap[strings.ToLower(route.FuncName)] = struct{}{}
+			indexMap[strings.ToLower(route.FuncName)] = route
 		}
 		publicRouteMap[service] = indexMap
 	}
