@@ -40,11 +40,9 @@ type UpdateUserByIDRequest struct {
 	ID   uint              `json:"id" form:"id" binding:"required"`
 	Type ioconsts.UserType `json:"type" form:"type"`
 
-	Name     string `json:"name" form:"name"`
-	Nickname string `json:"nickname" form:"nickname"`
+	Name string `json:"name" form:"name,lt=10"`
 
 	PhoneNumber string `json:"phoneNumber" form:"phoneNumber"`
-	Email       string `json:"email" form:"email"`
 
 	Status ioconsts.AccountStatus `json:"accountStatus" form:"accountStatus"`
 }
@@ -72,8 +70,14 @@ type IUserService interface {
 	// 根据主键 ID 删除用户
 	DeleteUserByID(ctx context.Context, req *DeleteUserByIDRequest) (*DeleteUserByIDResponse, error)
 
-	// 注册
-	Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error)
 	// 发送验证码
 	SendVerification(ctx context.Context, req *SendVerification) (*SendVerificationResponse, error)
+	// 注册
+	Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error)
+	// 用户名登录
+	NameLogin(ctx context.Context, req *NameLoginRequest) (*NameLoginResponse, error)
+	// 邮箱登录
+	EmailLogin(ctx context.Context, req *EmailLoginRequest) (*EmailLoginResponse, error)
+	// 找回密码
+	RetrievePassword(ctx context.Context, req *RetrievePasswordRequest) (*RetrievePasswordResponse, error)
 }

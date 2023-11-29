@@ -1,4 +1,4 @@
-package iologger
+package iolog
 
 import (
 	"fmt"
@@ -43,11 +43,15 @@ func SetLogger(serviceName string) {
 	if !ok {
 		panic("Error occurred when getting the \"service name\" configuration")
 	}
+
 	config = value.(ioconfig.Service).LoggerConf
+	// 初始化 level,heartbeat,maxAge
 	logLevel, ok = ioconst.LoggerLevelValue[config.Level]
 	if !ok {
 		panic("Error occurred when getting the \"log level\" configuration")
 	}
+	heartbeat = config.HeartBeat
+	maxAge = config.MaxAge
 
 	// Lock when opening the file to avoid contention
 	dayChangeLock.Lock()
@@ -96,9 +100,6 @@ func SetLogger(serviceName string) {
 
 	errorLogger = log.New(logOut, "[ERROR] ", log.LstdFlags)
 	errorLogger.SetOutput(io.MultiWriter(errorLogger.Writer(), os.Stdout))
-
-	heartbeat = config.HeartBeat
-	maxAge = config.MaxAge
 
 	timeFlag = time.Now()
 	dayChangeLock = sync.RWMutex{}

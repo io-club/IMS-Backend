@@ -16,4 +16,7 @@ var Routes = []ioginx.Route{
 	// Register
 	{Func: api.Register(), FuncName: "Register", Methods: []string{http.MethodPost}, Permission: nil},
 	{Func: api.SendVerification(), FuncName: "SendVerification", Methods: []string{http.MethodPost}, Permission: nil},
+	{Func: api.NameLogin(), FuncName: "NameLogin", Methods: []string{http.MethodPost}, Permission: nil},
+	{Func: api.EmailLogin(), FuncName: "EmailLogin", Methods: []string{http.MethodPost}, Permission: nil},
+	{Func: api.RetrievePassword(), FuncName: "RetrievePassword", Methods: []string{http.MethodPost}, Permission: nil},
 }

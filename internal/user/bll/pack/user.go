@@ -10,7 +10,6 @@ func ToUserResponse(u *model.User) param.UserResponse {
 		ID:          u.ID,
 		Type:        u.Type,
 		Name:        u.Name,
-		Nickname:    u.Nickname,
 		PhoneNumber: u.PhoneNumber,
 		Email:       u.Email,
 		Avatar:      u.Avatar,

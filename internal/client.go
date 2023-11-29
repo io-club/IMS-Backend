@@ -44,7 +44,7 @@ func main() {
 		// 禁止访问私有服务
 		if _, ok := publicMap[service][strings.ToLower(fn)]; !ok {
 			iologger.Warn("用户异常访问内部服务, service: %s, fn: %s", service, fn)
-			c.String(http.StatusForbidden, "")
+			c.String(http.StatusMethodNotAllowed, "")
 			return
 		}
 
@@ -69,6 +69,8 @@ func main() {
 			panic(err)
 		}
 
+		// todo:2023/11/29 21:21:31 http: proxy error: EOF
+		// todo:[GIN] 2023/11/29 - 21:21:31 | 502 |   15.9804887s |   192.168.0.127 | POST     "/user/SendVerification"
 		proxy := httputil.NewSingleHostReverseProxy(remote)
 		// Define the director func
 		// This is a good place to log, for example

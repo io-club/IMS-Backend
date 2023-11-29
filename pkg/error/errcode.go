@@ -52,11 +52,11 @@ var (
 // ---------------------------- 用户模块错误码 ----------------------------
 
 var (
-	ErrUserLoginFailed   = newErrCode(1000+1, "login failed", "登录失败")
-	ErrRegisterWrong     = newErrCode(1000+2, "Register info does not meet specifications", "注册信息不符合规范")
-	ErrInvalidVerifyCode = newErrCode(1000+3, "invalid verify code", "验证码错误")
-	ErrFailedSend        = newErrCode(1000+4, "Failed to send verification code", "验证码发送失败")
-	ErrEmailExist        = newErrCode(1000+5, "Email already exists", "该邮箱已被注册")
+	ErrRegisterWrong     = newErrCode(1000+1, "Register info does not meet specifications", "注册信息不符合规范")
+	ErrInvalidVerifyCode = newErrCode(1000+2, "invalid verify code", "验证码错误")
+	ErrFailedSend        = newErrCode(1000+3, "Failed to send verification code", "验证码发送失败")
+	ErrEmailExist        = newErrCode(1000+4, "Email already exists", "该邮箱已被注册")
+	ErrPasswordError     = newErrCode(1000+5, "Password error", "密码错误")
 )
 
 // ---------------------------- 设备管理模块错误码 ----------------------------
@@ -78,8 +78,6 @@ func NewErrCode(code int) ErrCode {
 	case Ok.Code:
 		return Ok
 	// user
-	case ErrUserLoginFailed.Code:
-		return ErrUserLoginFailed
 	case ErrInvalidVerifyCode.Code:
 		return ErrInvalidVerifyCode
 	default:
