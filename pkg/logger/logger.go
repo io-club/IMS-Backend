@@ -1,4 +1,4 @@
-package iologger
+package iolog
 
 import (
 	"fmt"
@@ -43,11 +43,15 @@ func SetLogger(serviceName string) {
 	if !ok {
 		panic("Error occurred when getting the \"service name\" configuration")
 	}
+
 	config = value.(ioconfig.Service).LoggerConf
+	// 初始化 level,heartbeat,maxAge
 	logLevel, ok = ioconst.LoggerLevelValue[config.Level]
 	if !ok {
 		panic("Error occurred when getting the \"log level\" configuration")
 	}
+	heartbeat = config.HeartBeat
+	maxAge = config.MaxAge
 
 	// Lock when opening the file to avoid contention
 	dayChangeLock.Lock()
@@ -56,6 +60,7 @@ func SetLogger(serviceName string) {
 	logFile = config.FileName
 	postFix := "_" + time.Now().Format("2006-01-02 15-04-05")
 	filePath = filepath.Join(config.Path, logFile+postFix)
+	// TODO：修复搜索原有日志文件
 	// Try to find a file that has not exceeded the maximum age for writing
 	files, err := os.ReadDir(config.Path)
 	if err != nil {
@@ -96,9 +101,6 @@ func SetLogger(serviceName string) {
 
 	errorLogger = log.New(logOut, "[ERROR] ", log.LstdFlags)
 	errorLogger.SetOutput(io.MultiWriter(errorLogger.Writer(), os.Stdout))
-
-	heartbeat = config.HeartBeat
-	maxAge = config.MaxAge
 
 	timeFlag = time.Now()
 	dayChangeLock = sync.RWMutex{}
