@@ -9,6 +9,7 @@ import (
 	"ims-server/internal/user/param"
 	ioconsts "ims-server/pkg/consts"
 	egoerror "ims-server/pkg/error"
+	iologger "ims-server/pkg/logger"
 	ioredis "ims-server/pkg/redis"
 	"ims-server/pkg/util"
 	"time"
@@ -22,7 +23,11 @@ func (u *userService) SendVerification(ctx context.Context, req *param.SendVerif
 	// TODO：一定时间只能发送一份？
 	// 先将验证码存入 redis
 	rdb := ioredis.NewClient()
-	rdb.Set(ctx, req.Email, vcode, 360*time.Second)
+	err = rdb.Set(ctx, req.Email, vcode, 360*time.Second).Err()
+	if err != nil {
+		iologger.Error("redis set failed, err: %v", err)
+		return nil, egoerror.ErrFailedSend
+	}
 	// 发送邮件
 	err = job.SendEmail(req.Email, vcode, req.Url)
 	if err != nil {
@@ -38,6 +43,7 @@ func (u *userService) Register(ctx context.Context, req *param.RegisterRequest) 
 	if err == nil {
 		return nil, egoerror.ErrEmailExist
 	}
+	// TODO：去除测试逻辑
 	// 检查验证码是否正确
 	code, err := ioredis.NewClient().Get(ctx, req.Email).Result()
 	if err != nil {
@@ -77,26 +83,8 @@ func (u *userService) NameLogin(ctx context.Context, req *param.NameLoginRequest
 		return nil, egoerror.ErrPasswordError
 	}
 	resp := pack.ToUserResponse(user)
-
-	payload := util.JwtPayload{
-		Issue:       "ims",
-		Audience:    "ims",
-		Subject:     "refresh-Token",
-		IssueAt:     time.Now().Unix(),
-		Expiration:  time.Now().Add(3 * 24 * time.Hour).Unix(),
-		UserDefined: map[string]any{"uid": user.ID, "uname": user.Name, "utype": user.Type},
-	}
-	refreshToken, err := util.GenJwt(util.DefautHeader, payload)
-	// 生成 access token
-	payload.Subject = "access-Token"
-	payload.Expiration = time.Now().Add(1 * time.Hour).Unix()
-	accessToken, err := util.GenJwt(util.DefautHeader, payload)
 	return &param.NameLoginResponse{
-		LoginResponse: param.LoginResponse{
-			UserResponse: resp,
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-		},
+		UserResponse: resp,
 	}, nil
 }
 
@@ -115,26 +103,8 @@ func (u *userService) EmailLogin(ctx context.Context, req *param.EmailLoginReque
 		return nil, egoerror.ErrInvalidVerifyCode
 	}
 	resp := pack.ToUserResponse(user)
-
-	payload := util.JwtPayload{
-		Issue:       "ims",
-		Audience:    "ims",
-		Subject:     "refresh-Token",
-		IssueAt:     time.Now().Unix(),
-		Expiration:  time.Now().Add(3 * 24 * time.Hour).Unix(),
-		UserDefined: map[string]any{"uid": user.ID, "uname": user.Name, "utype": user.Type},
-	}
-	refreshToken, err := util.GenJwt(util.DefautHeader, payload)
-	// 生成 access token
-	payload.Subject = "access-Token"
-	payload.Expiration = time.Now().Add(1 * time.Hour).Unix()
-	accessToken, err := util.GenJwt(util.DefautHeader, payload)
 	return &param.EmailLoginResponse{
-		LoginResponse: param.LoginResponse{
-			UserResponse: resp,
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-		},
+		UserResponse: resp,
 	}, nil
 }
 

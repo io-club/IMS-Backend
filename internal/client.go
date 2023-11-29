@@ -44,7 +44,7 @@ func main() {
 		// 禁止访问私有服务
 		if _, ok := publicMap[service][strings.ToLower(fn)]; !ok {
 			iologger.Warn("用户异常访问内部服务, service: %s, fn: %s", service, fn)
-			c.String(http.StatusForbidden, "")
+			c.String(http.StatusMethodNotAllowed, "")
 			return
 		}
 

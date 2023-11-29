@@ -2,8 +2,8 @@ package ioginx
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	ioerror "ims-server/pkg/error"
 	iologger "ims-server/pkg/logger"
@@ -29,7 +29,6 @@ func BindRequest(c *gin.Context, svc interface{}) (interface{}, ioerror.ErrCode)
 		iologger.Info("bind Params failed,err: %v", err)
 		return nil, ioerror.ErrInvalidParam
 	}
-	fmt.Printf("req: %#v\n", req)
 	return req.Interface(), nil
 }
 
@@ -47,7 +46,7 @@ func CallaService(ctx context.Context, req interface{}, svc interface{}) ([]refl
 	return rets, nil
 }
 
-func BindResponse(rets []reflect.Value) (interface{}, ioerror.ErrCode) {
+func CheckResponse(rets []reflect.Value) (interface{}, ioerror.ErrCode) {
 	// The service function must return two values
 	if len(rets) != 2 {
 		iologger.Info("service return parameter count is not 2")
@@ -74,8 +73,9 @@ func BindResponse(rets []reflect.Value) (interface{}, ioerror.ErrCode) {
 
 func ToHandle(fn interface{}) func(c *gin.Context) {
 	handler := func(c *gin.Context) {
-		validate := validator.New()
-		error := validate.RegisterValidation("password", customPassword)
+		if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+			v.RegisterValidation("password", CheckPassword)
+		}
 
 		ctx := context.Background()
 		// Parse request parameters
@@ -85,28 +85,22 @@ func ToHandle(fn interface{}) func(c *gin.Context) {
 			return
 		}
 		iologger.Info("request: %#v", req)
-		error = validate.Struct(req)
-		if error != nil {
-			c.JSON(http.StatusBadRequest, NewErr(c, ioerror.ErrRegisterWrong))
-			return
-		}
-		iologger.Info("request: %#v", req)
 
 		// Call the handler function
 		rets, err := CallaService(ctx, req, fn)
 		if err != nil {
-			iologger.Warn("CallaService Failed")
-			c.JSON(http.StatusBadRequest, NewErr(c, err))
+			iologger.Debug("CallaService Failed")
+			c.JSON(http.StatusForbidden, NewErr(c, err))
 			return
 		}
 
 		// Process the response
-		res, err := BindResponse(rets)
-		iologger.Info("response: %#v", res)
+		res, err := CheckResponse(rets)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, NewErr(c, err))
 			return
 		}
+		iologger.Info("response: %#v", res)
 		c.JSON(http.StatusOK, NewOk(c, res))
 	}
 	return handler

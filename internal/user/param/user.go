@@ -40,11 +40,9 @@ type UpdateUserByIDRequest struct {
 	ID   uint              `json:"id" form:"id" binding:"required"`
 	Type ioconsts.UserType `json:"type" form:"type"`
 
-	Name     string `json:"name" form:"name"`
-	Nickname string `json:"nickname" form:"nickname"`
+	Name string `json:"name" form:"name,lt=10"`
 
 	PhoneNumber string `json:"phoneNumber" form:"phoneNumber"`
-	Email       string `json:"email" form:"email"`
 
 	Status ioconsts.AccountStatus `json:"accountStatus" form:"accountStatus"`
 }

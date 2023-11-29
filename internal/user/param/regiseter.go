@@ -36,11 +36,11 @@ type RegisterResponse struct {
 
 type NameLoginRequest struct {
 	Name     string `json:"name" form:"name" binding:"required"`
-	Password string `json:"password" form:"password" binding:"required"`
+	Password string `json:"password" form:"password" binding:"required,password"`
 }
 
 type NameLoginResponse struct {
-	LoginResponse
+	UserResponse
 }
 
 type EmailLoginRequest struct {
@@ -49,7 +49,7 @@ type EmailLoginRequest struct {
 }
 
 type EmailLoginResponse struct {
-	LoginResponse
+	UserResponse
 }
 
 type RetrievePasswordRequest struct {
