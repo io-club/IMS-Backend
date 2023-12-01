@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -73,9 +74,12 @@ func SetLogger(serviceName string) {
 			os.Stderr.WriteString(fmt.Sprintf("Failed to get information for file %s, error: %v\n", file.Name(), err))
 			continue
 		}
-		// Get the file creation time
-		creationTime := fileInfo.ModTime()
-		if time.Now().Sub(creationTime) <= maxAge {
+		// TODO: 注意：获取文件创建时间的方法在不同的操作系统上可能会有所不同，能优化优化吗？
+		// 在 window 操作系统上，使用 fileInfo.Sys().(*syscall.Win32FileAttributeData).CreationTime 来获取
+		// 在 linux 操作系统上，使用 fileInfo.Sys().(*syscall.Stat_t).Ctim.Sec 来获取 (在 windows 环境下，该语句会报错，所以只能手动切换？)
+		creationTime := fileInfo.Sys().(*syscall.Win32FileAttributeData).CreationTime.Nanoseconds() / 1e9
+		creatTime := time.Unix(creationTime, 0)
+		if time.Now().Sub(creatTime) <= maxAge {
 			// If there is a file that has not exceeded the maximum age, override the default values
 			logFile = fileInfo.Name()
 			filePath = path
@@ -150,8 +154,9 @@ func checkLogRotation() {
 			continue
 		}
 		// Get the file creation time
-		creationTime := fileInfo.ModTime()
-		if now.Sub(creationTime) > maxAge {
+		creationTime := fileInfo.Sys().(*syscall.Win32FileAttributeData).CreationTime.Nanoseconds() / 1e9
+		creatTime := time.Unix(creationTime, 0)
+		if now.Sub(creatTime) > maxAge {
 			err := os.Remove(filePath)
 			if err != nil {
 				os.Stderr.WriteString(fmt.Sprintf("Failed to delete file %s, error information: %v\n", file.Name(), err))
