@@ -50,9 +50,13 @@ func (u *userService) MGetUserByIDs(ctx context.Context, req *param.MGetUserByID
 
 func (u *userService) GetUsers(ctx context.Context, req *param.GetUsersRequest) (*param.GetUsersResponse, error) {
 	// 设置允许的过滤字段
-	req.SetFilterFields(util.NewSet("id", "Name", "CreateAt"))
+	pageBuilder := req.Build(util.NewSet("id", "Name", "CreateAt"))
 
-	res, err := repo.NewUserRepo().Pageable(ctx, req.PageRequest)
+	total, err := repo.NewUserRepo().Count(ctx, pageBuilder)
+	if err != nil {
+		return nil, egoerror.ErrDBError
+	}
+	res, err := repo.NewUserRepo().Pageable(ctx, pageBuilder)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -64,7 +68,8 @@ func (u *userService) GetUsers(ctx context.Context, req *param.GetUsersRequest) 
 	}
 
 	return &param.GetUsersResponse{
-		List: resp,
+		Total: total,
+		List:  resp,
 	}, nil
 }
 

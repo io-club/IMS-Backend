@@ -33,7 +33,6 @@ type MGetUserByIDsRequest struct {
 }
 
 type MGetUserByIDsResponse struct {
-	// TODO: 加上 total?
 	List []UserResponse `json:"list"`
 }
 
@@ -42,8 +41,8 @@ type GetUsersRequest struct {
 }
 
 type GetUsersResponse struct {
-	// TODO: 加上 total?
-	List []UserResponse `json:"list"`
+	Total int64          `json:"total"`
+	List  []UserResponse `json:"list"`
 }
 
 type UpdateUserByIDRequest struct {

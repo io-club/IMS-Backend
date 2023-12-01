@@ -73,7 +73,6 @@ func (o Order) Valid() bool {
 type Express struct {
 	expr string
 	vars []interface{}
-	src  util.Stack
 }
 
 type PageRequest struct {
@@ -90,21 +89,11 @@ type PageRequest struct {
 	filterFields util.Set[string]
 }
 
-// SetFilterFields 设置允许的查询字段，默认全不允许
-func (pr *PageRequest) SetFilterFields(allowedFieldsSet util.Set[string]) {
-	for k, _ := range allowedFieldsSet {
-		allowedFieldsSet.Remove(k)
-		allowedFieldsSet.Add(strcase.ToSnake(k))
-	}
-	pr.filterFields = allowedFieldsSet
-}
+func (pr *PageRequest) splicing(o string, expr *Express, src *util.Stack) string {
+	value := src.Pop()
+	key := src.Pop()
 
-func (pr *PageRequest) splicing(o string, expr *Express) string {
 	var resp = ""
-
-	value := expr.src.Pop()
-	key := expr.src.Pop()
-
 	switch o {
 	case OpGt.String(), OpLt.String(), OpEq.String(), OpNotEq.String(), OpGtEq.String(), OpLtEq.String():
 		if _, ok := pr.filterFields[key.(string)]; !ok {
@@ -126,7 +115,7 @@ func (pr *PageRequest) splicing(o string, expr *Express) string {
 			resp = key.(string)
 		}
 	case "NOT":
-		expr.src.Push(key)
+		src.Push(key)
 		if value == nil {
 			break
 		}
@@ -139,10 +128,11 @@ func (pr *PageRequest) splicing(o string, expr *Express) string {
 func (pr *PageRequest) handleFilter() {
 	var (
 		symbol = util.NewStack()
+		src    = util.NewStack()
 	)
 	pr.Filter = strings.TrimSpace(pr.Filter)
 	if pr.Filter != "" {
-		expr := Express{}
+		express := Express{}
 
 		pr.Filter = "( " + pr.Filter + " )"
 		parts := strings.Split(pr.Filter, " ")
@@ -157,20 +147,20 @@ func (pr *PageRequest) handleFilter() {
 				symbol.Push(part)
 			case ")":
 				for sym := symbol.Pop(); sym != "("; sym = symbol.Pop() {
-					s := pr.splicing(sym.(string), &expr)
-					expr.src.Push(s)
+					s := pr.splicing(sym.(string), &express, src)
+					src.Push(s)
 				}
-				expr.src.Push("(" + expr.src.Pop().(string) + ")")
+				src.Push("(" + src.Pop().(string) + ")")
 			case "AND", "OR", "NOT", OpGt.String(), OpLt.String(), OpEq.String(), OpNotEq.String(), OpGtEq.String(), OpLtEq.String(), OpLike.String():
 				// filter 不应该能使用 'like', 转成 '='
 				if part == OpLike.String() {
 					part = OpEq.String()
 				}
+				// 获取前一项符号
 				pre := symbol.Pop().(string)
-
 				for pre != "(" && operatorPriority[part] <= operatorPriority[pre] {
-					s := pr.splicing(pre, &expr)
-					expr.src.Push(s)
+					s := pr.splicing(pre, &express, src)
+					src.Push(s)
 					pre = symbol.Pop().(string)
 				}
 				symbol.Push(pre)
@@ -178,23 +168,25 @@ func (pr *PageRequest) handleFilter() {
 			default:
 				part = strings.TrimPrefix(part, "'")
 				part = strings.TrimSuffix(part, "'")
-				expr.src.Push(part)
+				src.Push(part)
 			}
 		}
-		expr.expr = expr.src.Pop().(string)
-		expr.expr = expr.expr[1 : len(expr.expr)-1]
-		// 加入 expr
-		pr.expr = append(pr.expr, expr)
+		express.expr = src.Pop().(string)
+		express.expr = strings.TrimPrefix(express.expr, "(")
+		express.expr = strings.TrimSuffix(express.expr, ")")
+		// 加入 express
+		pr.expr = append(pr.expr, express)
 	}
 }
 
 func (pr *PageRequest) handleSearch() {
 	var (
 		symbol = util.NewStack()
+		src    = util.NewStack()
 	)
 	pr.Search = strings.TrimSpace(pr.Search)
 	if pr.Search != "" {
-		expr := Express{}
+		express := Express{}
 		pr.Search = "( " + pr.Search + " )"
 		parts := strings.Split(pr.Search, " ")
 		for _, part := range parts {
@@ -203,30 +195,31 @@ func (pr *PageRequest) handleSearch() {
 				symbol.Push(part)
 			case ")":
 				for sym := symbol.Pop(); sym != "("; sym = symbol.Pop() {
-					s := pr.splicing(sym.(string), &expr)
-					expr.src.Push(s)
+					s := pr.splicing(sym.(string), &express, src)
+					src.Push(s)
 				}
-				expr.src.Push("(" + expr.src.Pop().(string) + ")")
+				src.Push("(" + src.Pop().(string) + ")")
 			case OpEq.String():
 				// search 的 '=' 起的是 'like' 的作用
 				part = OpLike.String()
-
+				// 获取前一项符号
 				pre := symbol.Pop().(string)
 				for pre != "(" && operatorPriority[part] <= operatorPriority[pre] {
-					s := pr.splicing(pre, &expr)
-					expr.src.Push(s)
+					s := pr.splicing(pre, &express, src)
+					src.Push(s)
 					pre = symbol.Pop().(string)
 				}
 				symbol.Push(pre)
 				symbol.Push(part)
 			default:
-				expr.src.Push(part)
+				src.Push(part)
 			}
 		}
-		expr.expr = expr.src.Pop().(string)
-		expr.expr = expr.expr[1 : len(expr.expr)-1]
-		// 加入 expr
-		pr.expr = append(pr.expr, expr)
+		express.expr = src.Pop().(string)
+		express.expr = strings.TrimPrefix(express.expr, "(")
+		express.expr = strings.TrimSuffix(express.expr, ")")
+		// 加入 express
+		pr.expr = append(pr.expr, express)
 	}
 }
 
@@ -253,28 +246,60 @@ func (pr *PageRequest) handleSort() {
 	}
 }
 
-func (pr *PageRequest) Build() {
+// SetFilterFields 设置允许的查询字段，默认全部不允许，并转换为数据库支持的蛇形字段
+func (pr *PageRequest) setFilterFields(allowedFieldsSet util.Set[string]) *PageRequest {
+	for k := range allowedFieldsSet {
+		allowedFieldsSet.Remove(k)
+		allowedFieldsSet.Add(strcase.ToSnake(k))
+	}
+	pr.filterFields = allowedFieldsSet
+	return pr
+}
+
+func (pr *PageRequest) Build(allowedFieldsSet util.Set[string]) *PageBuilder {
+	pr.setFilterFields(allowedFieldsSet)
 	// 处理 filter
 	pr.handleFilter()
 	// 处理 search
 	pr.handleSearch()
 	// 处理 Sort
 	pr.handleSort()
+
+	return &PageBuilder{
+		page:  pr.Page,
+		size:  pr.Size,
+		expr:  pr.expr,
+		order: pr.order,
+	}
 }
 
-func (pr *PageRequest) ToFilterDB(db *gorm.DB) *gorm.DB {
+type PageBuilder struct {
+	page int
+	size int
+
+	expr  []Express
+	order []Express
+}
+
+func (pb *PageBuilder) ToFilterDB(db *gorm.DB) *gorm.DB {
 	filterDB := db
-	for _, v := range pr.expr {
+	for _, v := range pb.expr {
 		filterDB = filterDB.Where(v.expr, v.vars...)
 	}
-	for _, v := range pr.order {
+	return filterDB
+}
+
+func (pb *PageBuilder) ToSortDB(db *gorm.DB) *gorm.DB {
+	filterDB := db
+	for _, v := range pb.order {
 		filterDB = filterDB.Order(v.expr)
 	}
 	return filterDB
 }
 
-func (pr *PageRequest) ToPageDB(db *gorm.DB) *gorm.DB {
-	resp := pr.ToFilterDB(db)
-	resp = resp.Limit(pr.Size).Offset(pr.Page * pr.Size)
+func (pb *PageBuilder) ToPageDB(db *gorm.DB) *gorm.DB {
+	resp := pb.ToFilterDB(db)
+	resp = pb.ToSortDB(db)
+	resp = resp.Limit(pb.size).Offset(pb.page * pb.size)
 	return resp
 }

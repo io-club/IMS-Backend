@@ -34,7 +34,7 @@ func newErrCode(code int, en, zh string) ErrCode {
 var (
 	ErrQueueCallFailed = newErrCode(-4, "message queue call failed", "消息队列调用失败")
 	ErrFfmpegError     = newErrCode(-3, "ffmpeg call failed", "ffmpeg 调用失败")
-	ErrDBError         = newErrCode(-3, "db call failed", "数据库调用失败")
+	ErrDBError         = newErrCode(-3, "db call failed", "调用数据异常") // 数据库调用失败
 	ErrUnimplemented   = newErrCode(-2, "not implemented", "接口未实现")
 	ErrSystemError     = newErrCode(-1, "system error", "系统繁忙，此时请稍候再试")
 
