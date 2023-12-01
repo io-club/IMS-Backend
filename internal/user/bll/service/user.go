@@ -30,19 +30,17 @@ func (u *userService) GetUserByID(ctx context.Context, req *param.GetUserByIDReq
 	}, nil
 }
 
-// MGetUserByID  根据用户 ID 列表获取多个用户信息
+// MGetUserByIDs  根据用户 ID 列表获取多个用户信息
 func (u *userService) MGetUserByIDs(ctx context.Context, req *param.MGetUserByIDsRequest) (*param.MGetUserByIDsResponse, error) {
 	res, err := repo.NewUserRepo().MGet(ctx, req.IDs)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
 
-	resp := []param.GetUserByIDResponse{}
+	resp := []param.UserResponse{}
 	for _, user := range res {
 		info := pack.ToUserResponse(&user)
-		resp = append(resp, param.GetUserByIDResponse{
-			UserResponse: info,
-		})
+		resp = append(resp, info)
 	}
 
 	return &param.MGetUserByIDsResponse{
@@ -50,7 +48,27 @@ func (u *userService) MGetUserByIDs(ctx context.Context, req *param.MGetUserByID
 	}, nil
 }
 
-// UpdateUserById 根据 ID 更新用户
+func (u *userService) GetUsers(ctx context.Context, req *param.GetUsersRequest) (*param.GetUsersResponse, error) {
+	// 设置允许的过滤字段
+	req.SetFilterFields(util.NewSet("id", "Name", "CreateAt"))
+
+	res, err := repo.NewUserRepo().Pageable(ctx, req.PageRequest)
+	if err != nil {
+		return nil, egoerror.ErrNotFound
+	}
+
+	resp := []param.UserResponse{}
+	for _, user := range res {
+		info := pack.ToUserResponse(&user)
+		resp = append(resp, info)
+	}
+
+	return &param.GetUsersResponse{
+		List: resp,
+	}, nil
+}
+
+// UpdateUserByID 根据 ID 更新用户
 func (u *userService) UpdateUserByID(ctx context.Context, req *param.UpdateUserByIDRequest) (*param.UpdateUserByIDResponse, error) {
 	_, err := repo.NewUserRepo().Get(ctx, req.ID) // 根据请求中的用户 ID 获取用户信息
 	if err != nil {

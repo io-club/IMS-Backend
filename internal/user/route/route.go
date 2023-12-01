@@ -16,6 +16,7 @@ var Routes = []ioginx.Route{
 	{Func: api.MGetUserByIDs(), FuncName: "MGetUserByIDs", Methods: []string{http.MethodGet, http.MethodPost},
 		Permission: util.NewSet(ioconsts.UserTypeAdmin, ioconsts.UserTypeInsider, ioconsts.UserTypeOutsiders),
 	},
+	{Func: api.GetUsers(), FuncName: "GetUsers", Methods: []string{http.MethodGet, http.MethodPost}, Permission: nil},
 	{Func: api.UpdateUserByID(), FuncName: "UpdateUserByID", Methods: []string{http.MethodPost}, Permission: nil},
 	{Func: api.DeleteUserByID(), FuncName: "DeleteUserByID", Methods: []string{http.MethodPost}, Permission: nil},
 

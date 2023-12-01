@@ -38,7 +38,6 @@ func main() {
 		// MaxAge: 12 * time.Hour,
 	}))
 
-	// TODO:试试能不能变成统一添加中间件
 	// 为了实现简单权限检查，得先运行中间件
 	svc.Use(ioginx.TimeMW(), ioginx.JwtAuthMW())
 

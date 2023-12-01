@@ -96,6 +96,26 @@ func (r IRepo[T]) List(ctx context.Context, page uint, size uint) ([]T, error) {
 	return res, err
 }
 
+func (r IRepo[T]) Count(ctx context.Context, req iodb.PageRequest) (int64, error) {
+	var count int64
+	req.Build()
+	err := req.ToFilterDB(r.DB().WithContext(ctx)).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r IRepo[T]) Pageable(ctx context.Context, req iodb.PageRequest) ([]T, error) {
+	res := []T{}
+	req.Build()
+	err := req.ToPageDB(r.DB().WithContext(ctx)).Find(&res).Error
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 func (r IRepo[T]) ListAll(ctx context.Context) ([]T, error) {
 	res := []T{}
 	err := r.DB().WithContext(ctx).Find(&res).Error
