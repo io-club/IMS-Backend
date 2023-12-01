@@ -18,6 +18,9 @@ const (
 	OpGtEq  Op = ">="
 	OpLtEq  Op = "<="
 	OpLike  Op = "like"
+	OpAnd   Op = "and"
+	OpNot   Op = "not"
+	OpOr    Op = "or"
 )
 
 func (o Op) String() string {
@@ -38,6 +41,12 @@ var OpMap = map[string]Op{
 	"lte":  OpLtEq,
 	"<=":   OpGtEq,
 	"like": OpLike,
+	"and":  OpAnd,
+	"AND":  OpAnd,
+	"not":  OpNot,
+	"NOT":  OpNot,
+	"or":   OpOr,
+	"OR":   OpOr,
 }
 
 // 操作符的优先级
