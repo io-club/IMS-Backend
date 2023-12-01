@@ -5,7 +5,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 	iodb "ims-server/pkg/db"
-	egoerror "ims-server/pkg/error"
 )
 
 type IRepo[T schema.Tabler] struct {
@@ -27,7 +26,7 @@ func (r IRepo[T]) Create(ctx context.Context, t *T) error {
 func (r IRepo[T]) CreateWithDB(ctx context.Context, tx *gorm.DB, t *T) error {
 	err := tx.WithContext(ctx).Create(t).Error
 	if err != nil {
-		return egoerror.ErrInvalidParam
+		return err
 	}
 	return nil
 }
@@ -43,7 +42,7 @@ func (r IRepo[T]) MCreateWithDB(ctx context.Context, tx *gorm.DB, ts []*T) error
 	}
 	err := tx.WithContext(ctx).Create(ts).Error
 	if err != nil {
-		return egoerror.ErrInvalidParam
+		return err
 	}
 	return nil
 }
@@ -67,7 +66,7 @@ func (r IRepo[T]) GetWithDBRaw(ctx context.Context, tx *gorm.DB, id uint) (*T, e
 	conn := tx.WithContext(ctx).Model(&res)
 	err := conn.First(&res, id).Error
 	if err != nil {
-		return nil, egoerror.ErrNotFound
+		return nil, err
 	}
 	return &res, nil
 }
@@ -81,7 +80,7 @@ func (r IRepo[T]) MGetWithDB(ctx context.Context, tx *gorm.DB, ids []uint) ([]T,
 	res := []T{}
 	err := tx.WithContext(ctx).Where(" id IN ? ", ids).Find(&res).Error
 	if err != nil {
-		return nil, egoerror.ErrNotFound
+		return nil, err
 	}
 	return res, nil
 }
@@ -146,7 +145,7 @@ func (r IRepo[T]) MUpdateWithDB(ctx context.Context, tx *gorm.DB, ids []uint, fi
 	var t []T
 	err := tx.WithContext(ctx).Model(&t).Where("id IN ?", ids).Updates(fields).Error
 	if err != nil {
-		return nil, egoerror.ErrInvalidParam
+		return nil, err
 	}
 	return t, nil
 }
@@ -159,7 +158,7 @@ func (r IRepo[T]) DeleteWithDB(ctx context.Context, tx *gorm.DB, id uint) error 
 	var t T
 	err := tx.WithContext(ctx).Delete(&t, id).Error
 	if err != nil {
-		return egoerror.ErrInvalidParam
+		return err
 	}
 	return nil
 }
@@ -172,7 +171,7 @@ func (r IRepo[T]) MDeleteWithDB(ctx context.Context, tx *gorm.DB, ids []uint) er
 	var t T
 	err := tx.WithContext(ctx).Where("id IN ?", ids).Delete(&t).Error
 	if err != nil {
-		return egoerror.ErrInvalidParam
+		return err
 	}
 	return nil
 }

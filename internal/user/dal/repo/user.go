@@ -6,9 +6,8 @@ import (
 	ioconfig "ims-server/pkg/config"
 	ioconst "ims-server/pkg/consts"
 	"ims-server/pkg/encryption"
-	egoerror "ims-server/pkg/error"
 	ioginx "ims-server/pkg/ginx"
-	"log"
+	iologger "ims-server/pkg/logger"
 )
 
 var userSelect = []string{
@@ -32,7 +31,7 @@ func NewUserRepo() *userRepo {
 func (r *userRepo) EncryptedPassword(ctx context.Context, password string) (string, error) {
 	encrypt, err := encryption.Encrypt([]byte(password), encryption.AES, ioconfig.GetEncryptionConf().AesKey)
 	if err != nil {
-		log.Printf("encrypt failed, err: %v", err)
+		iologger.Warn("encrypt failed, err: %v", err)
 		return "", err
 	}
 	return string(encrypt), nil
@@ -41,7 +40,7 @@ func (r *userRepo) EncryptedPassword(ctx context.Context, password string) (stri
 func (r *userRepo) DecryptedPassword(ctx context.Context, password string) (string, error) {
 	decrypt, err := encryption.Decrypt([]byte(password), encryption.AES, ioconfig.GetEncryptionConf().AesKey)
 	if err != nil {
-		log.Printf("encrypt failed, err: %v", err)
+		iologger.Warn("encrypt failed, err: %v", err)
 		return "", err
 	}
 	return string(decrypt), nil
@@ -54,7 +53,7 @@ func (r *userRepo) CreateEmptyAccount(ctx context.Context, password string, acco
 	}
 	err := r.Create(ctx, &user)
 	if err != nil {
-		return nil, egoerror.ErrInvalidParam
+		return nil, err
 	}
 	return &user, nil
 }
@@ -62,7 +61,7 @@ func (r *userRepo) CreateEmptyAccount(ctx context.Context, password string, acco
 func (r *userRepo) CreateUserAccount(ctx context.Context, name, password string, accountType ioconst.UserType) (*model.User, error) {
 	_, err := r.GetByName(ctx, name)
 	if err == nil {
-		return nil, egoerror.ErrRepeatedEntry
+		return nil, err
 	}
 	user := model.User{
 		Type:     accountType,
@@ -72,19 +71,16 @@ func (r *userRepo) CreateUserAccount(ctx context.Context, name, password string,
 	}
 	err = r.Create(ctx, &user)
 	if err != nil {
-		return nil, egoerror.ErrInvalidParam
+		return nil, err
 	}
 	return &user, nil
 }
 
 func (r *userRepo) GetByName(ctx context.Context, name string) (*model.User, error) {
-	if name == "" {
-		return nil, egoerror.ErrNotFound
-	}
 	var user model.User
 	err := r.DB().WithContext(ctx).Select(append(userSelect, "password")).Where("name = ?", name).First(&user).Error
 	if err != nil {
-		return nil, egoerror.ErrNotFound
+		return nil, err
 	}
 	return &user, nil
 }
@@ -93,7 +89,7 @@ func (u *userRepo) GetByEmail(ctx context.Context, email string) (*model.User, e
 	var user model.User
 	err := u.DB().WithContext(ctx).Select(append(userSelect, "password")).Where("email = ?", email).First(&user).Error
 	if err != nil {
-		return nil, egoerror.ErrNotFound
+		return nil, err
 	}
 	return &user, nil
 }
