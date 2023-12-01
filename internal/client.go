@@ -38,9 +38,8 @@ func main() {
 		// MaxAge: 12 * time.Hour,
 	}))
 
-	// TODO:试试能不能变成统一添加中间件
 	// 为了实现简单权限检查，得先运行中间件
-	svc.Use(ioginx.LimitMW(), ioginx.TimeMW(), ioginx.JwtAuthMW())
+	svc.Use(ioginx.TimeMW(), ioginx.JwtAuthMW())
 
 	svc.Any("/:service/:func", func(c *gin.Context) {
 		service := c.Param("service")
@@ -89,8 +88,7 @@ func main() {
 			panic(err)
 		}
 
-		// todo:2023/11/29 21:21:31 http: proxy error: EOF
-		// todo:[GIN] 2023/11/29 - 21:21:31 | 502 |   15.9804887s |   192.168.0.127 | POST     "/user/SendVerification"
+		// TODO:2023/11/29 21:21:31 http: proxy error: EOF   POST     "/user/SendVerification"
 		proxy := httputil.NewSingleHostReverseProxy(remote)
 		// Define the director func
 		// This is a good place to log, for example

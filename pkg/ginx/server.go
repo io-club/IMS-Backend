@@ -42,12 +42,12 @@ type IOServer struct {
 // The function reads the value of the `Mode` configuration property and sets the Gin mode
 // accordingly. Possible values for `Mode` are "debug", "release", and "test".
 //
-// The function then configures the middleware.
-//
 // The function returns a pointer to the newly created `IOServer` instance.
 func NewIOServer(router *gin.Engine) *IOServer {
 	if router == nil {
 		router = gin.Default()
+		// Configure middleware
+		router.Use(LimitMW(), TimeMW()) // The farther forward, the deeper the layers
 	}
 
 	switch strings.ToLower(ioconfig.V.GetString("mode")) {
@@ -58,9 +58,6 @@ func NewIOServer(router *gin.Engine) *IOServer {
 	case ioconst.ModeTest.String():
 		gin.SetMode(gin.TestMode)
 	}
-
-	// Configure middleware
-	router.Use(LimitMW(), TimeMW(), JwtAuthMW()) // The farther forward, the deeper the layers
 
 	return &IOServer{
 		router: router,

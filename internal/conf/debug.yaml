@@ -2,7 +2,7 @@ mode: debug
 
 encryption:
   aesKey: "hejunrutianjinpn" # AES 算法 key 必须为 128bit，不要轻易变，会使老数据不再能解密
-  desKey: "hejunrut" # DES 算法 key 必须为 64bit
+  desKey: "hejunrut" # DES 算法 key 必须为 64bit，不要轻易变，会使老数据不再能解密
 
 database:
   db: "sqlite"

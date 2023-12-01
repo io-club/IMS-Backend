@@ -12,7 +12,6 @@ const (
 	AES
 )
 
-// TODO: 好像还有错误
 // 加密
 func Encrypt(src []byte, algo int, key []byte) ([]byte, error) {
 	var block cipher.Block
