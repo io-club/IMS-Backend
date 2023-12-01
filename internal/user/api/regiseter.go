@@ -44,11 +44,9 @@ func NameLogin() func(ctx *gin.Context) {
 		// 处理请求
 		resp, err := service.NewUserService().NameLogin(c, &req)
 		if err != nil {
-			iologger.Debug("bind Params failed,err: %v", err)
-			// TODO：错误类型的检验好像存在一定问题
 			var ioErr ioerror.ErrCode
 			ok := errors.As(err, &ioErr)
-			if ok {
+			if !ok {
 				ioErr = ioerror.ErrSystemError
 			}
 			c.JSON(http.StatusBadRequest, ioErr)
@@ -93,10 +91,10 @@ func EmailLogin() func(ctx *gin.Context) {
 		if err != nil {
 			var ioErr ioerror.ErrCode
 			ok := errors.As(err, &ioErr)
-			if ok {
+			if !ok {
 				ioErr = ioerror.ErrSystemError
 			}
-			c.JSON(http.StatusBadRequest, ioErr)
+			c.JSON(http.StatusBadRequest, ioginx.NewErr(c, ioErr))
 			return
 		}
 		// 生成 refresh token
