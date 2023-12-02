@@ -10,7 +10,7 @@ import (
 	iologger "ims-server/pkg/logger"
 )
 
-var userSelect = []string{
+var UserSelect = []string{
 	"id",
 	"type",
 	"name",
@@ -76,18 +76,20 @@ func (r *userRepo) CreateUserAccount(ctx context.Context, name, password string,
 	return &user, nil
 }
 
-func (r *userRepo) GetByName(ctx context.Context, name string) (*model.User, error) {
+func (r *userRepo) GetByName(ctx context.Context, name string, selectField ...string) (*model.User, error) {
 	var user model.User
-	err := r.DB().WithContext(ctx).Select(append(userSelect, "password")).Where("name = ?", name).First(&user).Error
+	selectField = append(selectField, "password")
+	err := r.DB().WithContext(ctx).Select(append(UserSelect, selectField...)).Where("name = ?", name).First(&user).Error
 	if err != nil {
 		return nil, err
 	}
 	return &user, nil
 }
 
-func (u *userRepo) GetByEmail(ctx context.Context, email string) (*model.User, error) {
+func (u *userRepo) GetByEmail(ctx context.Context, email string, selectField ...string) (*model.User, error) {
 	var user model.User
-	err := u.DB().WithContext(ctx).Select(append(userSelect, "password")).Where("email = ?", email).First(&user).Error
+	selectField = append(selectField, "password")
+	err := u.DB().WithContext(ctx).Select(append(UserSelect, selectField...)).Where("email = ?", email).First(&user).Error
 	if err != nil {
 		return nil, err
 	}

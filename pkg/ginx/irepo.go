@@ -53,17 +53,17 @@ func (r IRepo[T]) Last() *T {
 	return &t
 }
 
-func (r IRepo[T]) Get(ctx context.Context, id uint) (*T, error) {
-	return r.GetWithDBRaw(ctx, r.DB(), id)
+func (r IRepo[T]) Get(ctx context.Context, id uint, selectField ...string) (*T, error) {
+	return r.GetWithDBRaw(ctx, r.DB(), id, selectField...)
 }
 
-func (r IRepo[T]) GetWithDB(ctx context.Context, tx *gorm.DB, id uint) (*T, error) {
-	return r.GetWithDBRaw(ctx, tx, id)
+func (r IRepo[T]) GetWithDB(ctx context.Context, tx *gorm.DB, id uint, selectField ...string) (*T, error) {
+	return r.GetWithDBRaw(ctx, tx, id, selectField...)
 }
 
-func (r IRepo[T]) GetWithDBRaw(ctx context.Context, tx *gorm.DB, id uint) (*T, error) {
+func (r IRepo[T]) GetWithDBRaw(ctx context.Context, tx *gorm.DB, id uint, selectField ...string) (*T, error) {
 	var res T
-	conn := tx.WithContext(ctx).Model(&res)
+	conn := tx.WithContext(ctx).Model(&res).Select(selectField)
 	err := conn.First(&res, id).Error
 	if err != nil {
 		return nil, err
@@ -72,13 +72,13 @@ func (r IRepo[T]) GetWithDBRaw(ctx context.Context, tx *gorm.DB, id uint) (*T, e
 }
 
 // MGet 批量获取
-func (r IRepo[T]) MGet(ctx context.Context, ids []uint) ([]T, error) {
-	return r.MGetWithDB(ctx, r.DB(), ids)
+func (r IRepo[T]) MGet(ctx context.Context, ids []uint, selectField ...string) ([]T, error) {
+	return r.MGetWithDB(ctx, r.DB(), ids, selectField...)
 }
 
-func (r IRepo[T]) MGetWithDB(ctx context.Context, tx *gorm.DB, ids []uint) ([]T, error) {
+func (r IRepo[T]) MGetWithDB(ctx context.Context, tx *gorm.DB, ids []uint, selectField ...string) ([]T, error) {
 	res := []T{}
-	err := tx.WithContext(ctx).Where(" id IN ? ", ids).Find(&res).Error
+	err := tx.WithContext(ctx).Select(selectField).Where(" id IN ? ", ids).Find(&res).Error
 	if err != nil {
 		return nil, err
 	}
@@ -86,12 +86,12 @@ func (r IRepo[T]) MGetWithDB(ctx context.Context, tx *gorm.DB, ids []uint) ([]T,
 }
 
 // List 简单分页，从第 0 页开始
-func (r IRepo[T]) List(ctx context.Context, page uint, size uint) ([]T, error) {
+func (r IRepo[T]) List(ctx context.Context, page uint, size uint, selectField ...string) ([]T, error) {
 	res := []T{}
 	if size > 50 {
 		size = 50
 	}
-	err := r.DB().WithContext(ctx).Offset(int(page) * int(size)).Limit(int(size)).Find(&res).Error
+	err := r.DB().WithContext(ctx).Select(selectField).Offset(int(page) * int(size)).Limit(int(size)).Find(&res).Error
 	return res, err
 }
 
@@ -105,18 +105,18 @@ func (r IRepo[T]) Count(ctx context.Context, req *iodb.PageBuilder) (int64, erro
 	return count, nil
 }
 
-func (r IRepo[T]) Pageable(ctx context.Context, req *iodb.PageBuilder) ([]T, error) {
+func (r IRepo[T]) Pageable(ctx context.Context, req *iodb.PageBuilder, selectField ...string) ([]T, error) {
 	res := []T{}
-	err := req.ToPageDB(r.DB().WithContext(ctx)).Find(&res).Error
+	err := req.ToPageDB(r.DB().WithContext(ctx).Select(selectField)).Find(&res).Error
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-func (r IRepo[T]) ListAll(ctx context.Context) ([]T, error) {
+func (r IRepo[T]) ListAll(ctx context.Context, selectField ...string) ([]T, error) {
 	res := []T{}
-	err := r.DB().WithContext(ctx).Find(&res).Error
+	err := r.DB().WithContext(ctx).Select(selectField).Find(&res).Error
 	return res, err
 }
 
