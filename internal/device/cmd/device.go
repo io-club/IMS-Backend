@@ -19,12 +19,12 @@ func main() {
 
 	iologger.SetLogger(serviceName)
 
-	// 获取本机 IP
+	// Get the local IP
 	selfIP, err := util.GetLocalIPWithNet()
 	if err != nil {
 		panic(err)
 	}
-	// 向服务中心注册自己
+	// Register itself with the service registry
 	heartBeat := int64(3 * time.Second)
 	endpoint := selfIP + ":" + config.Port
 
@@ -35,7 +35,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// 周期性上报服务
+	// Periodically send service registration
 	go func() {
 		for {
 			hub.RegisterService(registery.DeviceService, endpoint, leaseID)
@@ -43,7 +43,7 @@ func main() {
 		}
 	}()
 
-	// 启动服务
+	// Start the service
 	ioginx.NewIOServer(nil).
 		InitDB(func(db *gorm.DB) error {
 			return db.AutoMigrate(model.Models...)

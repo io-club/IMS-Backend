@@ -39,15 +39,15 @@ func JwtAuthMW() gin.HandlerFunc {
 			c.Next()
 			return
 		}
-		// 查看是否过期
+		// Check if the token has expired
 		if payload.Expiration >= time.Now().Unix() {
-			// 如果未过期，取出业务的自定义 kv 对
+			// If not expired, extract custom key-value pairs from the payload
 			for k, v := range payload.UserDefined {
 				c.Set(k, v)
 			}
 			c.Next()
 		}
-		// 如果已过期，尝试刷新 accessToken
+		// If expired, try refreshing the accessToken
 		refreshToken := c.GetHeader("refresh-Token")
 		_, payload, err = util.VerifyJwt(refreshToken)
 		if err != nil {
@@ -55,7 +55,7 @@ func JwtAuthMW() gin.HandlerFunc {
 			c.Next()
 			return
 		}
-		// 如果 refreshToken 未过期，重新生成 accessToken
+		// If refreshToken is not expired, generate a new accessToken
 		if payload.Expiration >= time.Now().Unix() {
 			payload.Subject = "access-Token"
 			payload.Expiration = time.Now().Add(1 * time.Hour).Unix()
@@ -64,7 +64,7 @@ func JwtAuthMW() gin.HandlerFunc {
 				return
 			}
 			c.Header("access-Token", accessToken)
-			// 同时获取业务的自定义 kv 对
+			// Also retrieve the custom key-value pairs
 			for k, v := range payload.UserDefined {
 				c.Set(k, v)
 			}

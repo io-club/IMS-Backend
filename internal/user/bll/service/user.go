@@ -19,7 +19,7 @@ func NewUserService() *userService {
 // GetUserByID 根据 ID 查询用户
 func (u *userService) GetUserByID(ctx context.Context, req *param.GetUserByIDRequest) (*param.GetUserByIDResponse, error) {
 	id := req.ID
-	user, err := repo.NewUserRepo().Get(ctx, id)
+	user, err := repo.NewUserRepo().Get(ctx, id, repo.UserSelect...)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -32,7 +32,7 @@ func (u *userService) GetUserByID(ctx context.Context, req *param.GetUserByIDReq
 
 // MGetUserByIDs  根据用户 ID 列表获取多个用户信息
 func (u *userService) MGetUserByIDs(ctx context.Context, req *param.MGetUserByIDsRequest) (*param.MGetUserByIDsResponse, error) {
-	res, err := repo.NewUserRepo().MGet(ctx, req.IDs)
+	res, err := repo.NewUserRepo().MGet(ctx, req.IDs, repo.UserSelect...)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -50,13 +50,13 @@ func (u *userService) MGetUserByIDs(ctx context.Context, req *param.MGetUserByID
 
 func (u *userService) GetUsers(ctx context.Context, req *param.GetUsersRequest) (*param.GetUsersResponse, error) {
 	// 设置允许的过滤字段
-	pageBuilder := req.Build(util.NewSet("id", "Name", "CreateAt"))
+	pageBuilder := req.Build("id", "Name", "CreateAt")
 
 	total, err := repo.NewUserRepo().Count(ctx, pageBuilder)
 	if err != nil {
 		return nil, egoerror.ErrDBError
 	}
-	res, err := repo.NewUserRepo().Pageable(ctx, pageBuilder)
+	res, err := repo.NewUserRepo().Pageable(ctx, pageBuilder, repo.UserSelect...)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -75,7 +75,7 @@ func (u *userService) GetUsers(ctx context.Context, req *param.GetUsersRequest) 
 
 // UpdateUserByID 根据 ID 更新用户
 func (u *userService) UpdateUserByID(ctx context.Context, req *param.UpdateUserByIDRequest) (*param.UpdateUserByIDResponse, error) {
-	_, err := repo.NewUserRepo().Get(ctx, req.ID) // 根据请求中的用户 ID 获取用户信息
+	_, err := repo.NewUserRepo().Get(ctx, req.ID, repo.UserSelect...) // 根据请求中的用户 ID 获取用户信息
 	if err != nil {
 		return nil, egoerror.ErrNotFound // 如果用户不存在，则返回错误信息
 	}
@@ -95,7 +95,7 @@ func (u *userService) UpdateUserByID(ctx context.Context, req *param.UpdateUserB
 
 // DeleteUserByID 根据 ID 删除用户
 func (u *userService) DeleteUserByID(ctx context.Context, r *param.DeleteUserByIDRequest) (*param.DeleteUserByIDResponse, error) {
-	_, err := repo.NewUserRepo().Get(ctx, r.ID)
+	_, err := repo.NewUserRepo().Get(ctx, r.ID, "id")
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}

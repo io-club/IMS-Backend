@@ -39,7 +39,7 @@ func (u *userService) SendVerification(ctx context.Context, req *param.SendVerif
 // Register 注册用户
 func (u *userService) Register(ctx context.Context, req *param.RegisterRequest) (*param.RegisterResponse, error) {
 	// 检查该邮箱是否已被注册
-	_, err := repo.NewUserRepo().GetByEmail(ctx, req.Email)
+	_, err := repo.NewUserRepo().GetByEmail(ctx, req.Email, "id")
 	if err == nil {
 		return nil, egoerror.ErrEmailExist
 	}
@@ -83,7 +83,7 @@ func (u *userService) Register(ctx context.Context, req *param.RegisterRequest) 
 
 func (u *userService) NameLogin(ctx context.Context, req *param.NameLoginRequest) (*param.NameLoginResponse, error) {
 	// 检查用户是否存在
-	user, err := repo.NewUserRepo().GetByName(ctx, req.Name)
+	user, err := repo.NewUserRepo().GetByName(ctx, req.Name, repo.UserSelect...)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -104,7 +104,7 @@ func (u *userService) NameLogin(ctx context.Context, req *param.NameLoginRequest
 
 func (u *userService) EmailLogin(ctx context.Context, req *param.EmailLoginRequest) (*param.EmailLoginResponse, error) {
 	// 检查用户是否存在
-	user, err := repo.NewUserRepo().GetByEmail(ctx, req.Email)
+	user, err := repo.NewUserRepo().GetByEmail(ctx, req.Email, repo.UserSelect...)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -130,7 +130,7 @@ func (u *userService) EmailLogin(ctx context.Context, req *param.EmailLoginReque
 
 func (u *userService) RetrievePassword(ctx context.Context, req *param.RetrievePasswordRequest) (*param.RetrievePasswordResponse, error) {
 	// 检查用户是否存在
-	user, err := repo.NewUserRepo().GetByEmail(ctx, req.Email)
+	user, err := repo.NewUserRepo().GetByEmail(ctx, req.Email, repo.UserSelect...)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}

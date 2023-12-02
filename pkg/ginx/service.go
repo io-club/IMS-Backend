@@ -2,13 +2,22 @@ package ioginx
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"github.com/bytedance/sonic"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/go-resty/resty/v2"
 	ioerror "ims-server/pkg/error"
 	iologger "ims-server/pkg/logger"
+	"ims-server/pkg/registery"
+	"ims-server/pkg/util"
+	"math/rand"
 	"net/http"
 	"reflect"
+	"strings"
+	"time"
 )
 
 func BindRequest(c *gin.Context, svc interface{}) (interface{}, ioerror.ErrCode) {
@@ -108,4 +117,81 @@ func ToHandle(fn interface{}) func(c *gin.Context) {
 		c.JSON(http.StatusOK, NewOk(c, res))
 	}
 	return handler
+}
+
+func post(ctx context.Context, url string, data interface{}, headers map[string]string) (*Response, error) {
+	restyRes, err := resty.New().R().
+		SetHeaders(headers).
+		SetContext(ctx).
+		SetBody(data).
+		SetResult(&Response{}).
+		Post(url)
+	if err != nil {
+		return nil, err
+	}
+	statusCode := restyRes.StatusCode()
+	if statusCode != 200 {
+		return nil, errors.New("response status code is not 200")
+	}
+	if res, ok := restyRes.Result().(*Response); ok {
+		return res, nil
+	}
+	return nil, errors.New("failed to parse response")
+}
+
+func Call[T interface{}](ctx context.Context, serviceName string, req T) (*T, error) {
+	// Service discovery
+	hub := registery.GetServiceClient()
+	servers := hub.GetServiceEndpointsWithCache(registery.UserService)
+	// TODO: Implement a more efficient load balancing algorithm
+	// Load balancing: select a service node
+	idx := rand.Intn(len(servers))
+	addr := servers[idx]
+	// Extract function name
+	reqType := reflect.TypeOf(req)
+	if reqType.Kind() == reflect.Ptr {
+		reqType = reqType.Elem()
+	}
+	reqName := reqType.Name()
+	reqName = strings.ToLower(reqName)
+	fn := strings.TrimSuffix(reqName, "request")
+	// Build URL
+	url := fmt.Sprintf("http://%s/%s", addr, fn)
+	// Build headers
+	payload := util.JwtPayload{
+		Issue:       "ims",
+		Audience:    "ims",
+		Subject:     "refresh-Token",
+		IssueAt:     time.Now().Unix(),
+		Expiration:  time.Now().Add(3 * 24 * time.Hour).Unix(),
+		UserDefined: map[string]any{"uid": ctx.Value("uid"), "uname": ctx.Value("uname"), "utype": ctx.Value("utype")},
+	}
+	accessToken, err := util.GenJwt(util.DefautHeader, payload)
+	if err != nil {
+		return nil, errors.New("failed to generate token")
+	}
+	headers := map[string]string{
+		"access-Token": accessToken,
+	}
+	iologger.Info("call url: %s", url)
+	resp, err := post(ctx, url, req, headers)
+	if err != nil {
+		return nil, err
+	}
+	if resp.Code != 0 {
+		iologger.Debug("error returned from remote interface: %s", resp.Msg)
+		return nil, errors.New("error returned from remote interface")
+	}
+	s, err := sonic.Marshal(resp.Data)
+	if err != nil {
+		iologger.Warn("failed to serialize the returned data, err: %v", err)
+		return nil, errors.New("failed to serialize the returned data")
+	}
+	var res T
+	err = sonic.Unmarshal(s, &res)
+	if err != nil {
+		iologger.Warn("failed to deserialize the returned data, err: %v", err)
+		return nil, errors.New("failed to deserialize the returned data")
+	}
+	return &res, nil
 }
