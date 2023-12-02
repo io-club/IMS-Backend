@@ -58,3 +58,14 @@ services:
       file_name: "user.log" # Log file name
       heartbeat: 24 # Log heartbeat interval (in hours)
       max_age: 24 # Log retention time (in hours)
+
+  device:
+    name: "device"
+    host: "0.0.0.0"
+    port: 10010
+    logger:
+      level: "debug"
+      path: "log/device/"
+      file_name: "device.log"
+      heartbeat: 24
+      max_age: 24
