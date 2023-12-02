@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	ioconfig "ims-server/pkg/config"
 	ioconsts "ims-server/pkg/consts"
@@ -24,14 +23,6 @@ func main() {
 	iologger.SetLogger(config.Name)
 
 	svc := gin.Default()
-	// Enable proxy service
-	svc.Use(cors.New(cors.Config{
-		AllowAllOrigins:  true,
-		AllowMethods:     []string{"*"},
-		AllowHeaders:     []string{"*"},
-		ExposeHeaders:    []string{"*"},
-		AllowCredentials: true,
-	}))
 
 	// To implement simple permission checks, middleware needs to be run first
 	svc.Use(ioginx.TimeMW(), ioginx.JwtAuthMW())

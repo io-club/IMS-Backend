@@ -3,6 +3,7 @@ package ioginx
 import (
 	"context"
 	"errors"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	ioconfig "ims-server/pkg/config"
@@ -49,6 +50,15 @@ func NewIOServer(router *gin.Engine) *IOServer {
 		// Configure middleware
 		router.Use(LimitMW(), TimeMW(), JwtAuthMW()) // The farther forward, the deeper the layers
 	}
+	// Enable proxy service
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,          // Allow all origins
+		AllowMethods:     []string{"*"}, // Allowed HTTP methods
+		AllowHeaders:     []string{"*"}, // Allowed HTTP request headers
+		ExposeHeaders:    []string{"*"}, // Response headers that clients can access
+		AllowCredentials: true,          // Allow requests with credentials, such as Cookies
+		MaxAge:           600,           // Maximum age for the preflight request
+	}))
 
 	switch strings.ToLower(ioconfig.V.GetString("mode")) {
 	case ioconst.ModeDebug.String():
