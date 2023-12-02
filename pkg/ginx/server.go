@@ -47,7 +47,7 @@ func NewIOServer(router *gin.Engine) *IOServer {
 	if router == nil {
 		router = gin.Default()
 		// Configure middleware
-		router.Use(LimitMW(), TimeMW()) // The farther forward, the deeper the layers
+		router.Use(LimitMW(), TimeMW(), JwtAuthMW()) // The farther forward, the deeper the layers
 	}
 
 	switch strings.ToLower(ioconfig.V.GetString("mode")) {

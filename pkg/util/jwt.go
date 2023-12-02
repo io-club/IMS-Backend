@@ -36,19 +36,19 @@ type JwtPayload struct {
 
 func GenJwt(header JwtHeader, payLoad JwtPayload) (string, error) {
 	var head, load, signature string
-	// 生成 header(jwt 标识)
+	// Generate the header (jwt identifier)
 	if part, err := json.Marshal(header); err != nil {
 		return "", err
 	} else {
-		head = base64.RawURLEncoding.EncodeToString(part) // 使用 RawURLEncoding 去除=+/等 url 中的特殊字符
+		head = base64.RawURLEncoding.EncodeToString(part) // Use RawURLEncoding to remove special characters like =+/ in the URL
 	}
-	// 生成 payload
+	// Generate the payload
 	if part, err := json.Marshal(payLoad); err != nil {
 		return "", err
 	} else {
 		load = base64.RawURLEncoding.EncodeToString(part)
 	}
-	// 通过 header 和 payload 生成 signature
+	// Generate the signature using the header and payload
 	h := hmac.New(sha256.New, []byte(JwtSecret))
 	h.Write([]byte(head + "." + load))
 	signature = base64.RawURLEncoding.EncodeToString(h.Sum(nil))
@@ -58,15 +58,15 @@ func GenJwt(header JwtHeader, payLoad JwtPayload) (string, error) {
 func VerifyJwt(token string) (*JwtHeader, *JwtPayload, error) {
 	part := strings.Split(token, ".")
 	if len(part) != 3 {
-		return nil, nil, errors.New("虚假 token")
+		return nil, nil, errors.New("Fake token")
 	}
 	h := hmac.New(sha256.New, []byte(JwtSecret))
 	h.Write([]byte(part[0] + "." + part[1]))
 	signature := base64.RawURLEncoding.EncodeToString(h.Sum(nil))
 	if signature != part[2] {
-		return nil, nil, errors.New("token 验证失败")
+		return nil, nil, errors.New("Token verification failed")
 	}
-	// 尝试解析 header
+	// Try to parse the header
 	var header JwtHeader
 	part1, err := base64.RawURLEncoding.DecodeString(part[0])
 	if err != nil {
@@ -75,7 +75,7 @@ func VerifyJwt(token string) (*JwtHeader, *JwtPayload, error) {
 	if err = json.Unmarshal(part1, &header); err != nil {
 		return nil, nil, err
 	}
-	// 尝试解析 payload
+	// Try to parse the payload
 	var payload JwtPayload
 	part2, err := base64.RawURLEncoding.DecodeString(part[1])
 	if err != nil {

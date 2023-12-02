@@ -2,7 +2,7 @@ package ioginx
 
 import (
 	"context"
-	egoerror "ims-server/pkg/error"
+	ioerror "ims-server/pkg/error"
 )
 
 type Response struct {
@@ -13,18 +13,18 @@ type Response struct {
 
 func NewOk(ctx context.Context, data interface{}) Response {
 	return Response{
-		Code: egoerror.Ok.Code,
+		Code: ioerror.OK.Code,
 		Data: data,
-		Msg:  egoerror.Ok.Zh,
+		Msg:  ioerror.OK.Zh,
 	}
 }
 
-func NewErr(ctx context.Context, e egoerror.ErrCode) Response {
+func NewErr(ctx context.Context, e ioerror.ErrCode) Response {
 	if e == nil {
 		return Response{
-			Code: egoerror.ErrSystemError.Code,
+			Code: ioerror.ErrSystemError.Code,
 			Data: nil,
-			Msg:  egoerror.ErrSystemError.Zh,
+			Msg:  ioerror.ErrSystemError.Zh,
 		}
 	}
 	return Response{

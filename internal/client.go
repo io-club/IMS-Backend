@@ -24,21 +24,16 @@ func main() {
 	iologger.SetLogger(config.Name)
 
 	svc := gin.Default()
-	// 启用代理服务
+	// Enable proxy service
 	svc.Use(cors.New(cors.Config{
-		AllowAllOrigins: true,
-		// AllowOrigins:     []string{"*"},
+		AllowAllOrigins:  true,
 		AllowMethods:     []string{"*"},
 		AllowHeaders:     []string{"*"},
 		ExposeHeaders:    []string{"*"},
 		AllowCredentials: true,
-		// AllowOriginFunc: func(origin string) bool {
-		// 	return origin == "https://github.com"
-		// },
-		// MaxAge: 12 * time.Hour,
 	}))
 
-	// 为了实现简单权限检查，得先运行中间件
+	// To implement simple permission checks, middleware needs to be run first
 	svc.Use(ioginx.TimeMW(), ioginx.JwtAuthMW())
 
 	svc.Any("/:service/:func", func(c *gin.Context) {
@@ -46,14 +41,14 @@ func main() {
 		fn := c.Param("func")
 
 		publicMap := GetPublicRouteMap(NmsRoutesMap)
-		// 禁止访问私有服务
+		// Deny access to private services
 		route, ok := publicMap[service][strings.ToLower(fn)]
 		if !ok {
-			iologger.Warn("用户异常访问内部服务, service: %s, fn: %s", service, fn)
+			iologger.Warn("User accessed internal service abnormally, service: %s, fn: %s", service, fn)
 			c.String(http.StatusMethodNotAllowed, "")
 			return
 		}
-		// 检查权限
+		// Check permissions
 		if route.Permission != nil && !route.Permission.IsEmpty() {
 			utype, ok := c.Get("utype")
 			if !ok {
@@ -62,26 +57,26 @@ func main() {
 			}
 			userType := ioconsts.UserType(utype.(string))
 			if _, ok := route.Permission[userType]; !ok {
-				iologger.Debug("用户权限不足, service: %s, fn: %s", service, fn)
+				iologger.Debug("Insufficient user permissions, service: %s, fn: %s", service, fn)
 				c.JSON(http.StatusUnauthorized, ioginx.NewErr(c, egoerror.ErrNotPermitted))
 				return
 			}
 		}
-		// 生成 trace 信息
+		// Generate trace information
 		c.Request.Header.Set("traceID", fmt.Sprintf("%d", rand.Int63()))
 		c.Request.Header.Set("spanID", fmt.Sprintf("%d", rand.Int63()))
 
-		// 服务发现
+		// Service discovery
 		hub := registery.GetServiceClient()
 		servers := hub.GetServiceEndpointsWithCache(registery.UserService)
-		// TODO：实现更高效的负载均衡算法
-		// 负载均衡（随机法）
+		// TODO: Implement a more efficient load balancing algorithm
+		// Load balancing (random method)
 		idx := rand.Intn(len(servers))
 		addr := servers[idx]
-		// 重定向服务
+		// Redirect service
 		fn = strings.ToLower(fn)
 		urlAddr := fmt.Sprintf("http://%s/%s", addr, fn)
-		iologger.Info("redirect to " + urlAddr)
+		iologger.Info("Redirect to " + urlAddr)
 
 		remote, err := url.Parse(urlAddr)
 		if err != nil {
