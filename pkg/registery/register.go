@@ -13,6 +13,7 @@ import (
 const (
 	ServiceRootPath = "/ims/http" // prefix for etcd key
 	UserService     = "user"
+	DeviceService   = "device"
 )
 
 // The following global variables are not visible outside the package and can only be accessed through GetServiceHub()

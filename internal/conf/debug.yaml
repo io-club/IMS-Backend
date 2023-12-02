@@ -29,6 +29,13 @@ redis:
   password: "" # no password set
   db: 0 # use default DB
 
+mqtt:
+  host: "127.0.0.1"
+  port: 1883
+  username: ""
+  password: ""
+  client_id: "ims_go_mqtt_client"
+
 email:
   # TODO: 应该改为正式账号
   mailUserName: "1326112622@qq.com"    # 邮箱账号
@@ -58,3 +65,14 @@ services:
       file_name: "user.log" # Log file name
       heartbeat: 24 # Log heartbeat interval (in hours)
       max_age: 24 # Log retention time (in hours)
+
+  device:
+    name: "device"
+    host: "0.0.0.0"
+    port: 10010
+    logger:
+      level: "debug"
+      path: "log/device/"
+      file_name: "device.log"
+      heartbeat: 24
+      max_age: 24
