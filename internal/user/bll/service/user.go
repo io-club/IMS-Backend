@@ -50,7 +50,7 @@ func (u *userService) MGetUserByIDs(ctx context.Context, req *param.MGetUserByID
 
 func (u *userService) GetUsers(ctx context.Context, req *param.GetUsersRequest) (*param.GetUsersResponse, error) {
 	// 设置允许的过滤字段
-	pageBuilder := req.Build(util.NewSet("id", "Name", "CreateAt"))
+	pageBuilder := req.Build("id", "Name", "CreateAt")
 
 	total, err := repo.NewUserRepo().Count(ctx, pageBuilder)
 	if err != nil {

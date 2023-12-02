@@ -265,8 +265,9 @@ func (pr *PageRequest) setFilterFields(allowedFieldsSet util.Set[string]) *PageR
 	return pr
 }
 
-func (pr *PageRequest) Build(allowedFieldsSet util.Set[string]) *PageBuilder {
-	pr.setFilterFields(allowedFieldsSet)
+// Build 构建 PageBuilder，如果 allowedFieldsSet 为空，则不允许任何字段查询
+func (pr *PageRequest) Build(allowedFieldsSet ...string) *PageBuilder {
+	pr.setFilterFields(util.NewSet(allowedFieldsSet...))
 	// 处理 filter
 	pr.handleFilter()
 	// 处理 search
