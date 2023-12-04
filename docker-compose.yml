@@ -12,31 +12,40 @@ services:
     ports:
      - "10000:10000"
     volumes:
-      - "/localhost/data/log:/var/lib/IO-IMS/log"
+      - "./log:/var/lib/IO-IMS/log"
 
   redis:
     image: "redis:7.2.3-alpine3.18"
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - 6379:6379
+      - "6379:6379"
     networks:
       - app-tier
     volumes:
-      - "/localhost/data/redis:/var/lib/redis"
+      - "./redis/data/redis:/var/lib/redis"
 
   mysql:
-    image: "mysql:latest"
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: example
+    # 指定容器的名称
+    container_name: mysql
+    # 指定镜像和版本
+    image: mysql:latest
     ports:
-      - 3306:3306
-    networks:
-      - app-tier
+      - "3306:3306"
+    restart: always
+    # 容器日志大小配置
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '5g'
+    environment:
+      # 配置 root 密码
+      MYSQL_ROOT_PASSWORD: 123456
     volumes:
-      - "/localhost/data/mysql:/var/lib/mysql"
+      # 挂载数据目录
+      - "./mysql/data:/var/lib/mysql"
+      # 挂载配置文件目录
+      - "./mysql/config:/etc/mysql/conf.d"
 
   etcd:
     image: 'bitnami/etcd:latest'
@@ -49,7 +58,7 @@ services:
     networks:
       - app-tier
     volumes:
-      - "/localhost/data/etcd:/var/lib/etcd"
+      - "./etcd/data/etcd:/var/lib/etcd"
 
 networks:
   app-tier:
