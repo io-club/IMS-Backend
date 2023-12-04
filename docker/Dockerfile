@@ -17,13 +17,13 @@ ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn \
     mode=release
 
-# RUN bash -c "ls && pwd && tree ."
+RUN bash -c "ls && pwd && tree ."
 
 # Download dependencies
 RUN go mod download
 
-# Build
-RUN make build
+# Run
+RUN make run
 
 # Expose port
 EXPOSE 10000
