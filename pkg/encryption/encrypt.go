@@ -12,8 +12,7 @@ const (
 	AES
 )
 
-// TODO: 好像还有错误
-// 加密
+// Encrypt
 func Encrypt(src []byte, algo int, key []byte) ([]byte, error) {
 	var block cipher.Block
 	var err error
@@ -23,32 +22,31 @@ func Encrypt(src []byte, algo int, key []byte) ([]byte, error) {
 	case DES:
 		block, err = des.NewCipher(key)
 	default:
-		return nil, fmt.Errorf("unsurported encrypt algo %d", algo)
+		return nil, fmt.Errorf("unsupported encrypt algo %d", algo)
 	}
-	// 统一处理错误
+	// Handle errors uniformly
 	if err != nil {
-		fmt.Printf("加密失败，err:%v\n", err)
+		fmt.Printf("Encryption failed, err: %v\n", err)
 		return nil, err
 	}
-	// 填充补充位
-	pksc, err := NewPkcs7(block.BlockSize())
+	// Padding
+	pkcs, err := NewPkcs7(block.BlockSize())
 	if err != nil {
-		fmt.Printf("加密失败，err:%v\n", err)
+		fmt.Printf("Encryption failed, err: %v\n", err)
 		return nil, err
 	}
-	src, err = pksc.Padding(src)
+	src, err = pkcs.Padding(src)
 	if err != nil {
-		fmt.Printf("加密失败，err:%v\n", err)
+		fmt.Printf("Encryption failed, err: %v\n", err)
 		return nil, err
 	}
-	encrypting := cipher.NewCBCEncrypter(block, key) // 采用 CBC 分组模式加密
-	// 加密
-	dest := make([]byte, len(src)) // 密文与明文长度相同
+	encrypting := cipher.NewCBCEncrypter(block, key) // Use CBC mode for encryption
+	dest := make([]byte, len(src))                   // Cipher text has the same length as plain text
 	encrypting.CryptBlocks(dest, src)
 	return dest, nil
 }
 
-// 解密
+// Decrypt
 func Decrypt(in []byte, algo int, key []byte) ([]byte, error) {
 	var block cipher.Block
 	var err error
@@ -58,22 +56,22 @@ func Decrypt(in []byte, algo int, key []byte) ([]byte, error) {
 	case DES:
 		block, err = des.NewCipher(key)
 	default:
-		return nil, fmt.Errorf("unsurported encrypt algo %d", algo)
+		return nil, fmt.Errorf("unsupported encrypt algo %d", algo)
 	}
-	// 统一处理错误
+	// Handle errors uniformly
 	if err != nil {
 		return nil, err
 	}
-	// 解密
-	encrypting := cipher.NewCBCDecrypter(block, key) //采用 CBC 分组模式解密
+	// Decryption
+	decrypting := cipher.NewCBCDecrypter(block, key) // Use CBC mode for decryption
 	transition := make([]byte, len(in))
-	encrypting.CryptBlocks(transition, in)
-	// 去除填充
-	pksc, err := NewPkcs7(block.BlockSize())
+	decrypting.CryptBlocks(transition, in)
+	// Remove padding
+	pkcs, err := NewPkcs7(block.BlockSize())
 	if err != nil {
 		return nil, err
 	}
-	out, err := pksc.UnPadding(transition)
+	out, err := pkcs.UnPadding(transition)
 	if err != nil {
 		return nil, err
 	}

@@ -55,7 +55,7 @@ func NewMySQLProxy() *gorm.DB {
 
 func NewSQLiteProxy() *gorm.DB {
 	conf := ioconfig.GetDBConf().SQLite
-	proxy, err := gorm.Open(sqlite.Open(conf.Master), &gorm.Config{})
+	proxy, err := gorm.Open(sqlite.Open(conf.Master), &gorm.Config{PrepareStmt: true})
 	if err != nil {
 		log.Panicf("db connect fail,err:%v", err)
 	}

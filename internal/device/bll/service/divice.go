@@ -2,24 +2,20 @@ package service
 
 import (
 	"context"
-	"ims-server/internal/user/bll/pack"
-	"ims-server/internal/user/dal/model"
-	"ims-server/internal/user/param"
+	"ims-server/internal/device/bll/pack"
+	"ims-server/internal/device/dal/model"
+
+	"ims-server/internal/device/param"
+
 	egoerror "ims-server/pkg/error"
-	ioginx "ims-server/pkg/ginx"
+	"ims-server/internal/device/dal/repo"
 	"ims-server/pkg/util"
 )
 
 type sensorService struct {
 }
 
-type sensorRepo struct {
-	ioginx.IRepo[model.Sensor]
-}
 
-func NewSensorRepo() *sensorRepo {
-	return &sensorRepo{}
-}
 
 func (s *sensorService) CreateMqttDate(ctx context.Context, msg string, req *param.MqDateRequest) (*param.CreateMqDateRes, error) {
 	sensorDate := &model.Sensor{
@@ -27,7 +23,7 @@ func (s *sensorService) CreateMqttDate(ctx context.Context, msg string, req *par
 		SensorDate: req.SensorDate,
 		TerminalID: req.TerminalID,
 	}
-	err := NewSensorRepo().Create(ctx, sensorDate)
+	err := repo.NewSensorRepo().Create(ctx, sensorDate)
 	if err != nil {
 		return nil, egoerror.ErrInvalidParam
 	}
@@ -39,7 +35,7 @@ func (s *sensorService) CreateMqttDate(ctx context.Context, msg string, req *par
 
 func (s *sensorService) GetMqttDateByID(ctx context.Context, req *param.GetMqDateByID) (*param.GetMqDateByIDRes, error) {
 	id := req.ID
-	sensorDate, err := NewSensorRepo().Get(ctx, id)
+	sensorDate, err := repo.NewSensorRepo().Get(ctx, id)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -51,7 +47,7 @@ func (s *sensorService) GetMqttDateByID(ctx context.Context, req *param.GetMqDat
 }
 
 func (s *sensorService) MGetSensorByIDs(ctx context.Context, req *param.MGetMqDateByIDsReq) (*param.MGetMqDateByIDsRes, error) {
-	res, err := NewSensorRepo().MGet(ctx, req.IDs)
+	res, err := repo.NewSensorRepo().MGet(ctx, req.IDs)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -70,14 +66,14 @@ func (s *sensorService) MGetSensorByIDs(ctx context.Context, req *param.MGetMqDa
 }
 
 func (s *sensorService) UpdateMqDateByID(ctx context.Context, req *param.UpdateMqDateByIDReq) (*param.UpdateMqDateByIDRes, error) {
-	_, err1 := NewSensorRepo().Get(ctx, req.ID)
+	_, err1 := repo.NewSensorRepo().Get(ctx, req.ID)
 	if err1 != nil {
 		return nil, egoerror.ErrNotFound
 	}
 
 	mqDateMap := util.RequestToSnakeMapWithIgnoreZeroValueAndIDKey(req)
 
-	update, err2 := NewSensorRepo().Update(ctx, req.ID, mqDateMap)
+	update, err2 := repo.NewSensorRepo().Update(ctx, req.ID, mqDateMap)
 	if err2 != nil {
 		return nil, egoerror.ErrInvalidParam
 	}
@@ -89,11 +85,11 @@ func (s *sensorService) UpdateMqDateByID(ctx context.Context, req *param.UpdateM
 }
 
 func (s *sensorService) DeleteMqDaterByID(ctx context.Context, req *param.DeleteMqDateByIDReq) (*param.DeleteMqDateByIDRes, error) {
-	_, err := NewSensorRepo().Get(ctx, req.ID)
+	_, err := repo.NewSensorRepo().Get(ctx, req.ID)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
-	err = NewSensorRepo().Delete(ctx, req.ID)
+	err = repo.NewSensorRepo().Delete(ctx, req.ID)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}

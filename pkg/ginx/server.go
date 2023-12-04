@@ -3,6 +3,7 @@ package ioginx
 import (
 	"context"
 	"errors"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	ioconfig "ims-server/pkg/config"
@@ -42,13 +43,22 @@ type IOServer struct {
 // The function reads the value of the `Mode` configuration property and sets the Gin mode
 // accordingly. Possible values for `Mode` are "debug", "release", and "test".
 //
-// The function then configures the middleware.
-//
 // The function returns a pointer to the newly created `IOServer` instance.
 func NewIOServer(router *gin.Engine) *IOServer {
 	if router == nil {
 		router = gin.Default()
+		// Configure middleware
+		router.Use(LimitMW(), TimeMW(), JwtAuthMW()) // The farther forward, the deeper the layers
 	}
+	// Enable proxy service
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,          // Allow all origins
+		AllowMethods:     []string{"*"}, // Allowed HTTP methods
+		AllowHeaders:     []string{"*"}, // Allowed HTTP request headers
+		ExposeHeaders:    []string{"*"}, // Response headers that clients can access
+		AllowCredentials: true,          // Allow requests with credentials, such as Cookies
+		MaxAge:           600,           // Maximum age for the preflight request
+	}))
 
 	switch strings.ToLower(ioconfig.V.GetString("mode")) {
 	case ioconst.ModeDebug.String():
@@ -58,9 +68,6 @@ func NewIOServer(router *gin.Engine) *IOServer {
 	case ioconst.ModeTest.String():
 		gin.SetMode(gin.TestMode)
 	}
-
-	// Configure middleware
-	router.Use(LimitMW(), TimeMW(), JwtAuthMW()) // The farther forward, the deeper the layers
 
 	return &IOServer{
 		router: router,

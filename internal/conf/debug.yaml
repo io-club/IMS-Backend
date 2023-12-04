@@ -2,7 +2,7 @@ mode: debug
 
 encryption:
   aesKey: "hejunrutianjinpn" # AES 算法 key 必须为 128bit，不要轻易变，会使老数据不再能解密
-  desKey: "hejunrut" # DES 算法 key 必须为 64bit
+  desKey: "hejunrut" # DES 算法 key 必须为 64bit，不要轻易变，会使老数据不再能解密
 
 database:
   db: "sqlite"
@@ -28,6 +28,13 @@ redis:
   addr: "localhost:6379"
   password: "" # no password set
   db: 0 # use default DB
+
+mqtt:
+  host: "broker.emqx.io"
+  port: 1883
+  username: ""
+  password: ""
+  client_id: "ims_go_mqtt_client"
 
 email:
   # TODO: 应该改为正式账号
@@ -58,3 +65,14 @@ services:
       file_name: "user.log" # Log file name
       heartbeat: 24 # Log heartbeat interval (in hours)
       max_age: 24 # Log retention time (in hours)
+
+  device:
+    name: "device"
+    host: "0.0.0.0"
+    port: 10010
+    logger:
+      level: "debug"
+      path: "log/device/"
+      file_name: "device.log"
+      heartbeat: 24
+      max_age: 24

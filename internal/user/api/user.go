@@ -14,6 +14,10 @@ func MGetUserByIDs() func(ctx *gin.Context) {
 	return ioginx.ToHandle(service.NewUserService().MGetUserByIDs)
 }
 
+func GetUsers() func(ctx *gin.Context) {
+	return ioginx.ToHandle(service.NewUserService().GetUsers)
+}
+
 func UpdateUserByID() func(ctx *gin.Context) {
 	return ioginx.ToHandle(service.NewUserService().UpdateUserByID)
 }

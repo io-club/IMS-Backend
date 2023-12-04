@@ -1,13 +1,13 @@
 package param
 
 import (
-	MqCo "ims-server/pkg/Mqtt"
+	"ims-server/internal/device/job"
 )
 
 type MqDateRequest struct {
-	Type       MqCo.SensorType `json:"type" form:"type" binding:"required"`
-	SensorDate interface{}     `json:"SensorDate" form:"SensorDate" binding:"required"`
-	TerminalID string          `json:"TerminalID" form:"TerminalID" binding:"required"`
+	Type       job.SensorType `json:"type" form:"type" binding:"required"`
+	SensorDate interface{}    `json:"SensorDate" form:"SensorDate" binding:"required"`
+	TerminalID string         `json:"TerminalID" form:"TerminalID" binding:"required"`
 }
 
 type CreateMqDateRes struct {
@@ -31,10 +31,10 @@ type MGetMqDateByIDsRes struct {
 }
 
 type UpdateMqDateByIDReq struct {
-	ID         uint            `json:"id" form:"id" binding:"required"`
-	Type       MqCo.SensorType `json:"type" form:"type"`
-	TerminalID string          `json:"TerminalID" form:"TerminalID"`
-	SensorDate interface{}     `json:"SensorDate" form:"SensorDate"`
+	ID         uint           `json:"id" form:"id" binding:"required"`
+	Type       job.SensorType `json:"type" form:"type"`
+	TerminalID string         `json:"TerminalID" form:"TerminalID"`
+	SensorDate interface{}    `json:"SensorDate" form:"SensorDate"`
 }
 
 type UpdateMqDateByIDRes struct {
@@ -47,4 +47,3 @@ type DeleteMqDateByIDReq struct {
 
 type DeleteMqDateByIDRes struct {
 }
-

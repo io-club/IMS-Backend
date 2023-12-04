@@ -3,6 +3,7 @@ package param
 import (
 	"context"
 	ioconsts "ims-server/pkg/consts"
+	iodb "ims-server/pkg/db"
 )
 
 type UserResponse struct {
@@ -32,8 +33,16 @@ type MGetUserByIDsRequest struct {
 }
 
 type MGetUserByIDsResponse struct {
-	// TODO: 加上 total?
-	List []GetUserByIDResponse `json:"list"`
+	List []UserResponse `json:"list"`
+}
+
+type GetUsersRequest struct {
+	iodb.PageRequest
+}
+
+type GetUsersResponse struct {
+	Total int64          `json:"total"`
+	List  []UserResponse `json:"list"`
 }
 
 type UpdateUserByIDRequest struct {
