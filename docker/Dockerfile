@@ -9,7 +9,7 @@ RUN apk add --no-cache bash make
 
 WORKDIR /IO-IMS
 # Copy all files from the current directory to the working directory
-ADD . ./
+ADD .. ./
 
 # Set the Go language environment variables
 # Enable Go Module mode

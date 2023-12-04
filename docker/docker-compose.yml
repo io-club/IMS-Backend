@@ -1,0 +1,53 @@
+# yaml 配置
+version: '3'
+services:
+  web:
+    build: .
+    depends_on:
+      - etcd
+      - mysql
+      - redis
+    ports:
+     - "10000:10000"
+    volumes:
+      - "/localhost/data/log:/var/lib/IO-IMS/log"
+
+  redis:
+    image: "redis:7.2.3-alpine3.18"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 6379:6379
+    networks:
+      - app-tier
+    volumes:
+      - "/localhost/data/redis:/var/lib/redis"
+
+  mysql:
+    image: "mysql:latest"
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+      - 3306:3306
+    networks:
+      - app-tier
+    volumes:
+      - "/localhost/data/mysql:/var/lib/mysql"
+
+  etcd:
+    image: 'bitnami/etcd:latest'
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+    ports:
+      - 2379:2379
+      - 2380:2380
+    networks:
+      - app-tier
+    volumes:
+      - "/localhost/data/etcd:/var/lib/etcd"
+
+networks:
+  app-tier:
