@@ -15,8 +15,11 @@ var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
 	iolog.Error("mqtt connect lost,err: %v", err)
 }
 
-// TODO: 待测试
-func NewClient() (*mqtt.Client, error) {
+type mqttClient struct {
+	client mqtt.Client
+}
+
+func NewClient() (*mqttClient, error) {
 	config := ioconfig.GetMqttConf()
 
 	addr := fmt.Sprintf("tcp://%s:%s", config.Host, config.Port)
@@ -39,5 +42,5 @@ func NewClient() (*mqtt.Client, error) {
 		return nil, token.Error()
 	}
 
-	return &client, nil
+	return &mqttClient{client: client}, nil
 }
