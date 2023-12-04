@@ -30,8 +30,9 @@ type Service struct {
 }
 
 type ServiceConf struct {
-	Nms  Service `mapstructure:"nms"`
-	User Service `mapstructure:"user"`
+	Nms    Service `mapstructure:"nms"`
+	User   Service `mapstructure:"user"`
+	Device Service `mapstructure:"device"`
 }
 
 // GetServiceConf The returned ServieConf will not guarantee that individual services are not empty, but it will ensure that the overall configuration is not empty. This is done to ensure that the configuration is consistent across all services.
@@ -46,6 +47,8 @@ func GetServiceConf() *ServiceConf {
 			serviceConf.Nms.LoggerConf.MaxAge = serviceConf.Nms.LoggerConf.MaxAge * time.Hour
 			serviceConf.User.LoggerConf.HeartBeat = serviceConf.User.LoggerConf.HeartBeat * time.Hour
 			serviceConf.User.LoggerConf.MaxAge = serviceConf.User.LoggerConf.MaxAge * time.Hour
+			serviceConf.Device.LoggerConf.HeartBeat = serviceConf.User.LoggerConf.HeartBeat * time.Hour
+			serviceConf.Device.LoggerConf.MaxAge = serviceConf.User.LoggerConf.MaxAge * time.Hour
 
 			// Convert the struct to a map
 			ServiceConfMap = util.StructToMap(serviceConf)

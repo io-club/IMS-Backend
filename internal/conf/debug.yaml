@@ -30,7 +30,7 @@ redis:
   db: 0 # use default DB
 
 mqtt:
-  host: "127.0.0.1"
+  host: "broker.emqx.io"
   port: 1883
   username: ""
   password: ""
