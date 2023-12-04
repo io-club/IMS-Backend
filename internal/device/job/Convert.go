@@ -41,7 +41,7 @@ func DecodeUartMsgList(msg string) *UartMsg {
 	}
 	res := UartMsg{}
 	msgParts := strings.Split(msg, ":")
-
+//TerminalID : string : Date1 Date2 
 	res.TerminalID = msgParts[0]
 	Data :=msgParts[2]
 	sensor, err := strconv.Atoi(msgParts[1])

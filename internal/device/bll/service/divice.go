@@ -17,7 +17,7 @@ type sensorService struct {
 
 
 
-func (s *sensorService) CreateMqttDate(ctx context.Context, msg string, req *param.MqDateRequest) (*param.CreateMqDateRes, error) {
+func (s *sensorService) CreateMqttDate(ctx context.Context, req *param.MqDateRequest) (*param.CreateMqDateRes, error) {
 	sensorDate := &model.Sensor{
 		Type:       req.Type,
 		SensorDate: req.SensorDate,
