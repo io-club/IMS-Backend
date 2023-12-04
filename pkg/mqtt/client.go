@@ -33,7 +33,7 @@ func NewClient() (*mqttClient, error) {
 	if config.ClientID != "" {
 		opts.SetClientID(config.ClientID)
 	}
-	opts.SetDefaultPublishHandler(messagePubHandler) // 设置默认的接收函数
+	opts.SetDefaultPublishHandler(messagePubHandler) // Set the default message handler
 	opts.OnConnectionLost = connectLostHandler
 
 	client := mqtt.NewClient(opts)

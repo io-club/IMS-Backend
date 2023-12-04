@@ -1,32 +1,32 @@
 FROM golang:1.21.4-alpine3.18
 
-# 镜像换源
+# Change mirror for the image
 RUN echo -e http://mirrors.ustc.edu.cn/alpine/v3.18/main/ > /etc/apk/repositories
 RUN echo -e http://mirrors.ustc.edu.cn/alpine/v3.18/community/ >> /etc/apk/repositories
 
-# 安装所需工具
+# Install necessary tools
 RUN apk add --no-cache bash make
 
 WORKDIR /IO-IMS
-# 将当前目录下所有文件拷贝到工作目录下
+# Copy all files from the current directory to the working directory
 ADD . ./
 
-# 设置Go语言的环境变量
-# 打开Go Module模式
+# Set the Go language environment variables
+# Enable Go Module mode
 ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn \
     mode=release
 
-# 下载依赖
+# Download dependencies
 RUN go mod download
 
-# 编译
+# Build
 RUN make build
 
-# 暴露端口
+# Expose port
 EXPOSE 10000
 
-# 启动服务，并提供终端
+# Start the service and provide the terminal
 ENTRYPOINT ["/bin/sh", "-c", "make run && sh"]
 
 
