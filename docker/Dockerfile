@@ -9,13 +9,15 @@ RUN apk add --no-cache bash make
 
 WORKDIR /IO-IMS
 # Copy all files from the current directory to the working directory
-ADD . ./
+ADD ./ ./
 
 # Set the Go language environment variables
 # Enable Go Module mode
 ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn \
     mode=release
+
+# RUN bash -c "ls && pwd && tree ."
 
 # Download dependencies
 RUN go mod download
