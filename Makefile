@@ -9,11 +9,11 @@ prepare:
 
 	mkdir -p ./target
 
-run: prepare build
+run: prepare
 	@echo "Running service"
-	MODE=${MODE} nohup go run ./target/nms >> ./log/nms/nms.log* 2>&1 &
 	MODE=${MODE} nohup go run ./target/user >> ./log/user/user.log* 2>&1 &
 	MODE=${MODE} nohup go run ./target/device >> ./log/device/device.log* 2>&1 &
+	MODE=${MODE} go run ./target/nms | tee -a ./log/nms/nms.log*
 
 run-fresh: build stop run
 

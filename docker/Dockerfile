@@ -22,13 +22,7 @@ RUN bash -c "ls && pwd && tree ."
 # Download dependencies
 RUN go mod download
 
-# Run
-RUN make run
-
-# Expose port
-EXPOSE 10000
-
 # Start the service and provide the terminal
-ENTRYPOINT ["/bin/sh", "-c", "make run && sh"]
+ENTRYPOINT ["/bin/sh", "-c", "make run"]
 
 
