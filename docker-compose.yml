@@ -16,6 +16,8 @@ services:
 
   redis:
     image: "redis:7.2.3-alpine3.18"
+    # 指定容器的名称
+    container_name: redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
@@ -49,12 +51,13 @@ services:
 
   etcd:
     image: 'bitnami/etcd:latest'
+    # 指定容器的名称
+    container_name: etcd
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
     ports:
       - "2379:2379"
-      - "2380:2380"
     networks:
       - app-tier
     volumes:

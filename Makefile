@@ -1,7 +1,5 @@
 MODE? = debug
 
-
-
 prepare:
 	mkdir -p ./log/nms
 	mkdir -p ./log/user
@@ -9,11 +7,11 @@ prepare:
 
 	mkdir -p ./target
 
-run: prepare
+run: prepare build
 	@echo "Running service"
-	MODE=${MODE} nohup go run ./target/user >> ./log/user/user.log* 2>&1 &
-	MODE=${MODE} nohup go run ./target/device >> ./log/device/device.log* 2>&1 &
-	MODE=${MODE} go run ./target/nms | tee -a ./log/nms/nms.log*
+    MODE=${MODE} nohup ./target/user >> ./log/user/user.log* 2>&1 &
+    MODE=${MODE} nohup ./target/device >> ./log/device/device.log* 2>&1 &
+    MODE=${MODE} ./target/nms | tee -a ./log/nms/nms.log*
 
 run-fresh: build stop run
 
