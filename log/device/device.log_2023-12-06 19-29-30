@@ -1,0 +1,155 @@
+[INFO] 2023/12/06 19:29:32 ManyGo/IMS-Backend/pkg/mqtt/service.go:13 mqtt subscribe success, topic: abc
+[ERROR] 2023/12/06 19:29:32 ManyGo/IMS-Backend/pkg/mqtt/client.go:15 mqtt connect lost,err: EOF
+[ERROR] 2023/12/06 19:40:34 ManyGo/IMS-Backend/pkg/mqtt/client.go:15 mqtt connect lost,err: EOF
+[ERROR] 2023/12/06 19:41:51 ManyGo/IMS-Backend/pkg/mqtt/client.go:15 mqtt connect lost,err: EOF
+[ERROR] 2023/12/06 19:45:23 ManyGo/IMS-Backend/pkg/mqtt/client.go:15 mqtt connect lost,err: EOF
+[ERROR] 2023/12/06 19:49:51 ManyGo/IMS-Backend/pkg/mqtt/client.go:15 mqtt connect lost,err: EOF
+[INFO] 2023/12/06 19:57:16 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: abc
+[ERROR] 2023/12/06 19:57:47 ManyGo/IMS-Backend/pkg/mqtt/service.go:11 mqtt subscribe failed, err: not Connected
+[INFO] 2023/12/06 20:06:01 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: topic
+[ERROR] 2023/12/06 20:06:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:16 mqtt connect lost,err: EOF
+[INFO] 2023/12/06 20:07:04 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: topic
+[ERROR] 2023/12/06 20:07:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:16 mqtt connect lost,err: EOF
+[INFO] 2023/12/06 20:07:26 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: topic
+[INFO] 2023/12/06 20:26:09 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: topic
+[INFO] 2023/12/06 20:26:56 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: topic
+[INFO] 2023/12/06 20:29:04 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: topic
+[INFO] 2023/12/06 20:31:23 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: topic
+[INFO] 2023/12/06 20:32:15 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: abc
+[INFO] 2023/12/06 20:33:53 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: abc
+[INFO] 2023/12/06 20:36:58 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: abc
+[INFO] 2023/12/06 20:37:57 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: abc
+[INFO] 2023/12/06 20:38:11 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: abc
+[INFO] 2023/12/06 20:41:43 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: abc
+[DEBUG] 2023/12/06 20:41:43 ManyGo/IMS-Backend/pkg/mqtt/service.go:30 看看你的
+[INFO] 2023/12/06 20:42:40 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 20:44:04 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[DEBUG] 2023/12/06 20:44:50 IMS-Backend/internal/device/job/analyze.go:26 msg:abc : def : hgy
+[INFO] 2023/12/06 20:44:50 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 20:45:30 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 20:47:28 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 20:48:07 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 20:50:55 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:55 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 20:50:56 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:56 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:56 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:56 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:56 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:56 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:56 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:56 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:56 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:56 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:57 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:57 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:57 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:57 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:57 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:57 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:57 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:57 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:57 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:57 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:58 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:58 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:58 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:58 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:58 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:58 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:58 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:58 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:58 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:58 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:59 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:59 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:59 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:59 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:59 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:59 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:59 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:59 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:59 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:50:59 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:00 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:00 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:00 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:00 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:00 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:00 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:00 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:00 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:00 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:01 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:01 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:01 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:01 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:01 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:01 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:01 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:01 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:01 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:01 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:02 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:03 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:03 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:03 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:03 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:03 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:03 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:03 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:03 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:03 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:03 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:04 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:05 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:05 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:05 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:05 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:05 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:05 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[INFO] 2023/12/06 20:51:05 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: test from topic: ims
+[ERROR] 2023/12/06 20:52:25 ManyGo/IMS-Backend/pkg/mqtt/client.go:17 mqtt connect lost,err: write tcp 192.168.0.86:52870->54.244.173.190:1883: wsasend: An existing connection was forcibly closed by the remote host.
+[INFO] 2023/12/06 20:54:34 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:54:34 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 20:54:34 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:54:34 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:54:34 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:54:35 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:54:35 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:54:35 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:54:35 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:54:35 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:54:35 ManyGo/IMS-Backend/pkg/mqtt/client.go:12 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:59:33 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 20:59:33 IMS-Backend/internal/device/job/analyze.go:14 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:59:33 IMS-Backend/internal/device/job/analyze.go:14 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 20:59:33 IMS-Backend/internal/device/job/analyze.go:14 mqtt received message: abc : def : hgy from topic: ims
+[INFO] 2023/12/06 21:01:47 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 21:01:48 IMS-Backend/internal/device/job/analyze.go:14 mqtt received message: 111 : 222 : 555 from topic: ims
+[INFO] 2023/12/06 21:01:48 IMS-Backend/internal/device/job/analyze.go:14 mqtt received message: 111 : 222 : 555 from topic: ims
+[INFO] 2023/12/06 21:01:48 IMS-Backend/internal/device/job/analyze.go:14 mqtt received message: 111 : 222 : 555 from topic: ims
+[INFO] 2023/12/06 21:03:28 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 21:03:28 IMS-Backend/internal/device/job/analyze.go:14 mqtt received message: 2:111 from topic: ims
+[INFO] 2023/12/06 21:04:16 ManyGo/IMS-Backend/pkg/mqtt/service.go:14 mqtt subscribe success, topic: ims
+[INFO] 2023/12/06 21:04:16 IMS-Backend/internal/device/job/analyze.go:14 mqtt received message: 2:2:111 from topic: ims
+[INFO] 2023/12/06 21:04:16 IMS-Backend/internal/device/job/analyze.go:14 mqtt received message: 2:2:111 from topic: ims
+[INFO] 2023/12/06 21:04:16 IMS-Backend/internal/device/job/analyze.go:14 mqtt received message: 2:2:111 from topic: ims
