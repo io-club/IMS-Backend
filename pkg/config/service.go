@@ -47,8 +47,8 @@ func GetServiceConf() *ServiceConf {
 			serviceConf.Nms.LoggerConf.MaxAge = serviceConf.Nms.LoggerConf.MaxAge * time.Hour
 			serviceConf.User.LoggerConf.HeartBeat = serviceConf.User.LoggerConf.HeartBeat * time.Hour
 			serviceConf.User.LoggerConf.MaxAge = serviceConf.User.LoggerConf.MaxAge * time.Hour
-			serviceConf.Device.LoggerConf.HeartBeat = serviceConf.User.LoggerConf.HeartBeat * time.Hour
-			serviceConf.Device.LoggerConf.MaxAge = serviceConf.User.LoggerConf.MaxAge * time.Hour
+			serviceConf.Device.LoggerConf.HeartBeat = serviceConf.Device.LoggerConf.HeartBeat * time.Hour
+			serviceConf.Device.LoggerConf.MaxAge = serviceConf.Device.LoggerConf.MaxAge * time.Hour
 
 			// Convert the struct to a map
 			ServiceConfMap = util.StructToMap(serviceConf)

@@ -27,9 +27,11 @@ func NewClient() (*mqttClient, error) {
 
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(addr)
-	if config.User != "" && config.Password != "" {
+	if config.User != "" {
 		opts.SetUsername(config.User)
-		opts.SetPassword(config.Password)
+		if config.Password != "" {
+			opts.SetPassword(config.Password)
+		}
 	}
 	if config.ClientID != "" {
 		opts.SetClientID(config.ClientID)

@@ -1,0 +1,78 @@
+mode: release
+
+encryption:
+  aesKey: "hejunrutianjinpn" # AES 算法 key 必须为 128bit，不要轻易变，会使老数据不再能解密
+  desKey: "hejunrut" # DES 算法 key 必须为 64bit，不要轻易变，会使老数据不再能解密
+
+database:
+  db: "mysql"
+
+  mysql:
+    get_slave_strategy: "random"
+    master: "master"
+    slaves: [ "slave1", "slave2", "slave3" ]
+    username: "root"
+    password: "123456"
+    host: "mysql"
+    port: 3306
+    dbname: "ims"
+
+  sqlite:
+    master: "ims.db"
+
+etcd:
+  endpoints: [ "etcd:2379" ]
+  timeout: 3  # In seconds
+
+redis:
+  addr: "redis:6379"
+  password: "" # no password set
+  db: 0 # use default DB
+
+mqtt:
+  host: "broker.emqx.io"
+  port: 1883
+  username: ""
+  password: ""
+  client_id: "ims_go_mqtt_client"
+
+email:
+  # TODO: 应该改为正式账号
+  mailUserName: "1326112622@qq.com" # 邮箱账号
+  mailPassword: "ztohodjmwsaxiegb"  # 邮箱授权码
+  addr: "smtp.qq.com:465"           # TLS 地址
+  host: "smtp.qq.com"               # 邮件服务器地址
+
+services:
+  nms:
+    name: "nms"
+    host: "web"
+    port: 10000
+    logger:
+      level: "info" # Minimum log level
+      path: "log/nms/" # Log file storage location (preceded by the project root directory)
+      file_name: "nms.log" # Log file name
+      heartbeat: 24 # Log heartbeat interval (in hours)
+      max_age: 168 # Log retention time (in hours)
+
+  user:
+    name: "user"
+    host: "web"
+    port: 10005
+    logger:
+      level: "info" # Minimum log level
+      path: "log/user/" # Log file storage location (preceded by the project root directory)
+      file_name: "user.log" # Log file name
+      heartbeat: 24 # Log heartbeat interval (in hours)
+      max_age: 168 # Log retention time (in hours)
+
+  device:
+    name: "device"
+    host: "web"
+    port: 10010
+    logger:
+      level: "info"
+      path: "log/device/"
+      file_name: "device.log"
+      heartbeat: 24
+      max_age: 168

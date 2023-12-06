@@ -38,8 +38,8 @@ mqtt:
 
 email:
   # TODO: 应该改为正式账号
-  mailUserName: "1326112622@qq.com"    # 邮箱账号
-  mailPassword: "ztohodjmwsaxiegb" # 邮箱授权码
+  mailUserName: "1326112622@qq.com" # 邮箱账号
+  mailPassword: "ztohodjmwsaxiegb"  # 邮箱授权码
   addr: "smtp.qq.com:465"           # TLS 地址
   host: "smtp.qq.com"               # 邮件服务器地址
 

@@ -5,11 +5,11 @@ RUN echo -e http://mirrors.ustc.edu.cn/alpine/v3.18/main/ > /etc/apk/repositorie
 RUN echo -e http://mirrors.ustc.edu.cn/alpine/v3.18/community/ >> /etc/apk/repositories
 
 # Install necessary tools
-RUN apk add --no-cache bash make
+RUN apk add --no-cache bash make sqlite
 
 WORKDIR /IO-IMS
 # Copy all files from the current directory to the working directory
-ADD . ./
+ADD ./ ./
 
 # Set the Go language environment variables
 # Enable Go Module mode
@@ -20,13 +20,5 @@ ENV GO111MODULE=on \
 # Download dependencies
 RUN go mod download
 
-# Build
-RUN make build
-
-# Expose port
-EXPOSE 10000
-
 # Start the service and provide the terminal
-ENTRYPOINT ["/bin/sh", "-c", "make run && sh"]
-
-
+ENTRYPOINT ["/bin/sh", "-c", "make run"]

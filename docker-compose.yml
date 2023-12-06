@@ -1,0 +1,69 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    depends_on:
+      - etcd
+      - mysql
+      - redis
+    container_name: web
+    ports:
+      - "10000:10000"
+    networks:
+      - app-tier
+    volumes:
+      - "./log:/var/lib/IO-IMS/log"
+
+  redis:
+    image: "redis:7.2.3-alpine3.18"
+    container_name: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    networks:
+      - app-tier
+    volumes:
+      - "./redis/data/redis:/var/lib/redis"
+
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    networks:
+      - app-tier
+    restart: always
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '5g'
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - "./mysql/data:/var/lib/mysql"
+      - "./mysql/config:/etc/mysql/conf.d"
+
+  etcd:
+    image: 'bitnami/etcd:latest'
+    container_name: etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://172.26.66.0:2379
+    ports:
+      - "2379:2379"
+    networks:
+      - app-tier
+    volumes:
+      - "./etcd/data/etcd:/var/lib/etcd"
+
+networks:
+  app-tier:
+    driver: bridge
+    ipam:
+      # 网络配置
+      config:
+        # 分配的子网网段
+        - subnet: 172.26.66.0/18
