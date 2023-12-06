@@ -10,7 +10,7 @@ run: prepare build
 	@echo "Running service"
 	MODE=${MODE} nohup ./target/device >> ./log/device/device.log 2>&1 &
 	MODE=${MODE} nohup ./target/user >> ./log/user/user.log 2>&1 &
-	MODE=${MODE} ./target/nms >> | tee -a ./log/nms/nms.log
+	MODE=${MODE} ./target/nms | tee -a ./log/nms/nms.log
 	@echo "Finish service"
 
 run-fresh: build stop run
