@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	config := ioconfig.GetServiceConf().User
+	config := ioconfig.GetServiceConf().Device
 	addr := config.Host + ":" + config.Port
 	serviceName := config.Name
 
