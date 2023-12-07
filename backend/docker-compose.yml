@@ -1,0 +1,85 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - etcd
+      - mysql
+      - redis
+      - minio
+    container_name: web
+    ports:
+      - "10000:10000"
+    networks:
+      - app-tier
+    volumes:
+      - "./log:/var/lib/IO-IMS/log"
+
+  redis:
+    image: "redis:7.2.3-alpine3.18"
+    container_name: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    networks:
+      - app-tier
+    volumes:
+      - "./redis/data/redis:/var/lib/redis"
+
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    networks:
+      - app-tier
+    restart: always
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '5g'
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - "./mysql/data:/var/lib/mysql"
+      - "./mysql/config:/etc/mysql/conf.d"
+
+  etcd:
+    image: 'bitnami/etcd:latest'
+    container_name: etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://172.26.66.0:2379
+    ports:
+      - "2379:2379"
+    networks:
+      - app-tier
+    volumes:
+      - "./etcd/data/etcd:/var/lib/etcd"
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000" # api 端口
+      - "9001:9001" # 控制台端口
+    environment:
+      MINIO_ACCESS_KEY: admin    #管理后台用户名
+      MINIO_SECRET_KEY: admin123 #管理后台密码，最小 8 个字符
+    volumes:
+      - ./minio/data:/data                     #映射当前目录下的 data 目录至容器内/data 目录
+      - ./minio/config:/root/.minio/           #映射配置目录
+    command: server --console-address ':9001' /data  #指定容器中的目录 /data
+    privileged: true
+
+networks:
+  app-tier:
+    driver: bridge
+    ipam:
+      # 网络配置
+      config:
+        # 分配的子网网段
+        - subnet: 172.26.66.0/18
