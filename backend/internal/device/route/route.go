@@ -4,4 +4,5 @@ import (
 	ioginx "ims-server/pkg/ginx"
 )
 
-var Routes = []ioginx.Route{}
+var Routes = []ioginx.Route{
+}

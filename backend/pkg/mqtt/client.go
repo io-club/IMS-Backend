@@ -2,9 +2,10 @@ package iomqtt
 
 import (
 	"fmt"
-	mqtt "github.com/eclipse/paho.mqtt.golang"
 	ioconfig "ims-server/pkg/config"
 	iolog "ims-server/pkg/logger"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
@@ -16,7 +17,7 @@ var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
 }
 
 type mqttClient struct {
-	client mqtt.Client
+	Client mqtt.Client
 }
 
 func NewClient() (*mqttClient, error) {
@@ -44,5 +45,5 @@ func NewClient() (*mqttClient, error) {
 		return nil, token.Error()
 	}
 
-	return &mqttClient{client: client}, nil
+	return &mqttClient{Client: client}, nil
 }

@@ -1,3 +1,5 @@
 package model
 
-var Models = []interface{}{}
+var Models = []interface{}{
+	&SensorData{},
+}
