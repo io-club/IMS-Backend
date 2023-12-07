@@ -12,7 +12,7 @@ var manualMessagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg m
 	ParsedDate := job.DecodeUartMsgList(string(msg.Payload()))
 	iolog.Debug("%+v", ParsedDate)
 }
-
+// TODO:编写配置
 var topic string = "ioMqtt"
 
 func main() {
