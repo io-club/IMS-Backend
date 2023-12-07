@@ -14,5 +14,5 @@ type SensorData struct {
 }
 
 func (SensorData) TableName() string {
-	return "ims_aaa_sensor"
+	return "ims_imsDevice_SensorDate"
 }

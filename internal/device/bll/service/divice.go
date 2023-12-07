@@ -15,7 +15,7 @@ import (
 type sensorService struct {
 }
 
-func (s *sensorService) CreateMqttDate(ctx context.Context, req *param.MqDateRequest) (*param.CreateMqttDateRes, error) {
+func (s *sensorService) CreateMqttDate(ctx context.Context, req *param.MqttDateRequest) (*param.CreateMqttDateRes, error) {
 	sensorDate := &model.SensorData{
 		Type:       req.Type,
 		SensorData: req.SensorDate,

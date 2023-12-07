@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"ims-server/internal/device/job"
 	iolog "ims-server/pkg/logger"
@@ -11,6 +10,7 @@ import (
 var manualMessagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	iolog.Info("mqtt received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
 	ParsedDate := job.DecodeUartMsgList(string(msg.Payload()))
+	iolog.Debug("%+v", ParsedDate)
 }
 
 var topic string = "ioMqtt"
