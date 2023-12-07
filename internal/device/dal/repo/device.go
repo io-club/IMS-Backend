@@ -5,10 +5,8 @@ import (
 	ioginx "ims-server/pkg/ginx"
 )
 
-
-
 type sensorRepo struct {
-	ioginx.IRepo[model.Sensor]
+	ioginx.IRepo[model.SensorData]
 }
 
 func NewSensorRepo() *sensorRepo {

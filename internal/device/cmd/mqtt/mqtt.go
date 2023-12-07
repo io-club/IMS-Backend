@@ -1,20 +1,31 @@
 package main
 
 import (
+	// "fmt"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"ims-server/internal/device/job"
-	ioconfig "ims-server/pkg/config"
-	iologger "ims-server/pkg/logger"
-
-	// "golang.org/x/vuln/client"
+	iolog "ims-server/pkg/logger"
+	"ims-server/pkg/mqtt"
 )
 
-func main(){
-	msg := "2:2:111"
-	config := ioconfig.GetServiceConf().Device
+var manualMessagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
+	iolog.Info("mqtt received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
+	ParsedDate := job.DecodeUartMsgList(string(msg.Payload()))
+}
 
-	serviceName := config.Name
-	iologger.SetLogger(serviceName)
+var topic string = "ioMqtt"
 
-	job.Client_test("ims" ,msg)
+func main() {
+	clientSub, err := iomqtt.NewClient()
+	if err != nil {
+		iolog.Warn("err:%v", err)
+		return
+	}
 
+	for {
+		if err := clientSub.Sub(topic, manualMessagePubHandler); err != nil {
+			iolog.Warn("err:%v", err)
+			return
+		}
+	}
 }

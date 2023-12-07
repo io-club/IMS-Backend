@@ -5,11 +5,11 @@ import (
 	"ims-server/internal/device/param"
 )
 
-func ToMqDateResponse(s *model.Sensor) param.MqDateResponse {
-	res := param.MqDateResponse{
+func ToMqttDateResponse(s *model.SensorData) param.MqttDateResponse {
+	res := param.MqttDateResponse{
 		Type:       s.Type,
 		TerminalID: s.TerminalID,
-		SensorDate: s.SensorDate,
+		SensorDate: s.SensorData,
 	}
 	return res
 }

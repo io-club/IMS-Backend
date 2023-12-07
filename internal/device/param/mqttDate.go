@@ -10,40 +10,46 @@ type MqDateRequest struct {
 	TerminalID string         `json:"TerminalID" form:"TerminalID" binding:"required"`
 }
 
-type CreateMqDateRes struct {
-	MqDateResponse
+type MqttDateResponse struct {
+	Type       job.SensorType `json:"type" form:"type" binding:"required"`
+	SensorDate interface{}    `json:"SensorDate" form:"SensorDate" binding:"required"`
+	TerminalID string         `json:"TerminalID" form:"TerminalID" binding:"required"`
 }
 
-type GetMqDateByID struct {
+type CreateMqttDateRes struct {
+	MqttDateResponse
+}
+
+type GetMqttDateByID struct {
 	ID uint `json:"id" form:"id" binding:"required"`
 }
 
-type GetMqDateByIDRes struct {
-	MqDateResponse
+type GetMqttDateByIDRes struct {
+	MqttDateResponse
 }
 
-type MGetMqDateByIDsReq struct {
+type MGetMqttDateByIDsReq struct {
 	IDs []uint `json:"ids" form:"ids" binding:"required"`
 }
 
-type MGetMqDateByIDsRes struct {
-	List []GetMqDateByIDRes `json:"list"`
+type MGetMqttDateByIDsRes struct {
+	List []GetMqttDateByIDRes `json:"list"`
 }
 
-type UpdateMqDateByIDReq struct {
+type UpdateMqttDateByIDReq struct {
 	ID         uint           `json:"id" form:"id" binding:"required"`
 	Type       job.SensorType `json:"type" form:"type"`
 	TerminalID string         `json:"TerminalID" form:"TerminalID"`
 	SensorDate interface{}    `json:"SensorDate" form:"SensorDate"`
 }
 
-type UpdateMqDateByIDRes struct {
-	MqDateResponse
+type UpdateMqttDateByIDRes struct {
+	MqttDateResponse
 }
 
-type DeleteMqDateByIDReq struct {
+type DeleteMqttDateByIDReq struct {
 	ID uint `json:"id" form:"id" binding:"required"`
 }
 
-type DeleteMqDateByIDRes struct {
+type DeleteMqttDateByIDRes struct {
 }
