@@ -8,7 +8,7 @@ body{
   padding: 0;
   overflow: hidden;
   /* display: flex; */
-  background:url(./resources/console.gif);
+  background:url(./resources/flower.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
@@ -101,7 +101,7 @@ body{
   content: '';
   position: absolute;
   inset: 5px;
-  background: url(./resources/console.gif);
+  background: url(./resources/flower.jpg);
   background-attachment: fixed;
   background-size: cover;
   background-position: center;

@@ -149,33 +149,33 @@ export default function Login() {
     // containerElement.style.animation = `falling 1s ease-in-out infinite alternate`;
     setSpeed("0.1");
 
-    // 获取 body 元素
-    const body = document.querySelector('body');
-    if(body){
-    // 设置背景为 GIF 图片 URL
-    body.style.backgroundImage = `url(${warningg})`;
-    }
+    // // 获取 body 元素
+    // const body = document.querySelector('body');
+    // if(body){
+    // // 设置背景为 GIF 图片 URL
+    // body.style.backgroundImage = `url(${warningg})`;
+    // }
     
-    // 创建一个新的 style 元素
-    const styleElement = document.createElement('style');
-    document.head.appendChild(styleElement);
+    // // 创建一个新的 style 元素
+    // const styleElement = document.createElement('style');
+    // document.head.appendChild(styleElement);
     
-    // 定义新的样式规则
-    const newStyleRule = `.container span::before {
-      content: '';
-      position: absolute;
-      inset: 5px;
-      background-image: url(${warningg});
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center;
-      filter: blur(2px);
-    }`;
+    // // 定义新的样式规则
+    // const newStyleRule = `.container span::before {
+    //   content: '';
+    //   position: absolute;
+    //   inset: 5px;
+    //   background-image: url(${warningg});
+    //   background-attachment: fixed;
+    //   background-size: cover;
+    //   background-position: center;
+    //   filter: blur(2px);
+    // }`;
     
-    // 将新的样式规则添加到新创建的 style 元素中
-    if (styleElement.sheet) {
-      styleElement.sheet.insertRule(newStyleRule);
-    }
+    // // 将新的样式规则添加到新创建的 style 元素中
+    // if (styleElement.sheet) {
+    //   styleElement.sheet.insertRule(newStyleRule);
+    // }
     
       });
   }
