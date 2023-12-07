@@ -1,0 +1,27 @@
+{
+  "io": "I/O",
+  "club":"CLUB",
+  "system": "System",
+  "network": "Network",
+  "hardware": "Hardware",
+  "software": "Software",
+  "data": "Data",
+  "file": "File",
+  "folder": "Folder",
+  "file_manager": "File Manager",
+  "file_manager_desc": "File Manager",
+  "file_manager_name": "File Manager",
+  "language": "Language",
+  "overview":"Overview",
+  "energy":"Energy",
+  "map":"Map",
+  "log":"Log",
+  "history":"History",
+  "home":"Home",
+  "media":"Media",
+  "todo":"Todo",
+  "setting":"Setting",
+  "video":"Video",
+  "picture":"Picture"
+}
+  

@@ -1,0 +1,402 @@
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+body{
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  /* display: flex; */
+  background:url(./resources/flower.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
+   position: relative;
+}
+
+
+/* body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:url(./resources/console.gif);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center; 
+}
+  */
+
+
+/*---------*/
+.content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 2em;
+}
+
+@keyframes test {
+  0% {
+    transform: rotate(0deg);
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+  }
+  100% {
+    transform: rotate(360deg);
+    box-shadow: 0 0 15px rgba(0, 0, 255, 0.8);
+  }
+}
+ 
+.container{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 450px;
+  width: 370px;
+  border-radius: 15px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: 0.5s;
+  overflow: hidden;
+} 
+@property --a{
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes halo
+{
+  0%{
+    --a:0deg
+  }
+  100%{
+    --a:360deg
+  }
+}
+.container::before{
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: repeating-conic-gradient(from var(--a),#45f3ff 0%,
+  #45f3ff 10%,transparent 10%,transparent 80%,#45f3ff 100%);
+  border-radius: 20px;
+  animation: halo 2.5s linear infinite;
+}
+.container span{
+  position: absolute;
+  inset: 5px;
+  overflow: hidden;
+  border-radius: 15px;
+}
+.container span::before{
+  content: '';
+  position: absolute;
+  inset: 5px;
+  background: url(./resources/flower.jpg);
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  filter: blur(2px);
+}
+
+/* @keyframes falling{
+  0%{
+    transform: translateY(0);
+  }
+  100%{
+    transform: translateY(300px);
+  }
+} */
+@keyframes falling {
+  0% {
+    transform: translate(-150%, -150%) rotate(0deg);
+  }
+  100% {
+    transform: translate(50%, 50%) rotate(360deg);
+  }
+}
+
+
+
+.form{
+  position: absolute;
+}
+.form h2 {
+  text-align: center;
+}
+
+.form-control {
+  margin-bottom: 15px;
+}
+
+.form-control label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-control input[type="text"],
+.form-control input[type="email"],
+.form-control input[type="verificationCode"],
+.form-control input[type="password"] {
+  width: calc(100% - 10px);
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: #3498db;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+p {
+  text-align: center;
+}
+
+p a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-betwee;
+  align-items: center; /* 垂直居中对齐 */
+}
+
+
+.menu-item {
+  font-size: 20px;
+  align-items: center;
+  color: black; /*设置初始的文字颜色*/
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.menu-item:hover {
+  color: #3498db;
+} 
+
+.menu-item img {
+  width: 32px;
+  height: 32px;
+}
+/*---------------------------------------*/
+.show-menu {
+  width: 50px;
+  height: 50px;
+  margin-left: 20px;
+  background-color: #eee;
+  border-radius: 5px;
+}
+.show-menu:hover{
+  background-color: #ddd;
+}
+.show-menu:active {
+  background-color: #ccc;
+}
+.leftarrow{
+  vertical-align: middle;
+  width: 40px;
+  height: 40px;
+}
+.leftarrow:hover{
+  background-color: #ddd;
+  border-radius: 50%;
+}
+.leftarrow:active {
+  background-color: #ccc;
+}
+
+.media-container{
+  display: flex;
+ height: 100vh;
+ position: relative;
+ z-index: 1;
+}
+.media-box {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  margin-left: 30px;
+  width: 250px;
+  height: 300px;
+  border-radius: 15%;
+  background-color: #E0E0E0;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  border: 2px solid black; 
+}
+
+.media-video-container{
+ height: 100vh;
+ position: relative;
+ z-index: 1;
+}
+.over{
+  position: relative;
+  background-color: #2980b9;
+  z-index: 999;
+}
+.show-main{
+  /* background-color:white; */
+  /* border: 10px solid green; */
+  height: 100vh;
+  width: 100%;
+  justify-self: center;
+  position: relative;
+  z-index: 999;
+  justify-content: center;
+  align-items: center;
+  /* justify-content: center;
+  align-items: center;
+  position: relative; */
+  
+}
+.title{
+    align-items: center;
+    display: flex;
+    height: 10%;
+    width: 100%;
+   background: #cccccc;
+  }
+
+.set-box{
+  border: 2px solid black;
+  width: 600px;
+  height:600px; /* 可以根据需要设置高度 */
+  background-color: lightgray;
+
+}
+
+.set-box p {
+  font-size: 24px; /* 调整字体大小 */
+  margin-bottom: 10px; /* 设置间距 */
+}
+
+.set-box select {
+  position: relative;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 18px; /* 调整字体大小 */
+  width: 200px; /* 调整宽度 */
+  height: 40px; /* 调整高度 */
+  /* 可以根据需要添加其他样式 */
+}
+.box {
+  /* border: 5px solid blue; */
+  height: 90%;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1; /* 可以尝试调整父元素的 z-index 值 */
+}
+
+.todo-box-1 {
+  border: 2px solid black;
+  margin-top: 20px;
+  margin-left: 40px;
+  width: 400px;
+  height:600px;
+}
+.todo-box-1-add{
+  /* border: 2px solid black; */
+  height: 10%;
+  width: 100%;
+}
+.todo-box-1-btn{
+  background-color: gray;
+  border-radius: 0;
+  height: 40px;
+  text-align: left; /* 设置按钮文本靠左对齐 */
+}
+.todo-box-1-btn:hover{
+  background-color:  #666666;
+}
+.todo-box-1-btn:active {
+  background-color: #ccc;
+}
+.todo-box-1-list{
+  /* border: 10px solid red; */
+  height: 90%;
+  width: 100%;
+  overflow-y: auto;
+}
+.todo-modal {
+  z-index: 9999; /* 或者其他足够大的数值，确保模态框位于最上层 */
+}
+.custom-modal .ant-modal-header {
+  background-color: lightgray; /* 设置 Modal 标题的背景色 */
+}
+.custom-modal .ant-modal-content {
+  background-color: lightgray; /* 设置背景颜色 */
+  height: 200px;
+}
+
+/* 确认按钮样式修改 */
+.todo-modal .ant-modal-footer .ant-btn-primary {
+  /* 在此添加你想要的确认按钮样式 */
+  width: 60px;
+  background-color:blue ;
+  margin-top: 20px;
+}
+.empty-input {
+  animation: blink-border 0.5s infinite alternate;
+}
+
+@keyframes blink-border {
+  from {
+    border-color:red;
+  }
+  to {
+    border-color: inherit;
+  }
+}
+
+
+/* 取消按钮样式修改 */
+.todo-modal .ant-modal-footer .ant-btn-default {
+  /* 在此添加你想要的取消按钮样式 */
+  background-color: green;
+}
+
+
+
+.todo-box-2 {
+  border: 2px solid black;
+  margin-top: 20px;
+  margin-left: 20px;
+  width: 1000px;
+  height:600px;
+  overflow-y: auto; /* 当内容溢出时显示垂直滚动条 */
+}
+.test-modal{
+  border: 10px solid red;
+  background: blue;
+}
+
