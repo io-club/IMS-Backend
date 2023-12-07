@@ -1,0 +1,20 @@
+{
+  "io":"I/O",
+  "club":"CLUB",
+  "language": "语言",
+  "overview": "概览",
+  "energy": "能源",
+  "map": "地图",
+  "log": "日志",
+  "history": "历史",
+  "home": "小屋",
+  "media": "媒体",
+  "todo": "待办事项",
+  "setting":"设置",
+  "profile":"个人资料",
+  "video":"视频",
+  "picture":"图片",
+   "createlist":"创建列表",
+   "enterlistname":"输入列表名字",
+   "listnametip":"列表名字不能为空"
+}
