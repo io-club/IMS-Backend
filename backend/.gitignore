@@ -12,7 +12,7 @@
 vendor/
 
 # IDE/编辑器 文件夹
-.idea/
+../.idea/
 .vscode/
 *.swp
 *.swo
