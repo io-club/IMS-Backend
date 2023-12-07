@@ -4,19 +4,13 @@ import (
 	"ims-server/internal/device/job"
 )
 
-type MqttDateRequest struct {
-	Type       job.SensorType `json:"type" form:"type" binding:"required"`
-	SensorDate interface{}    `json:"SensorDate" form:"SensorDate" binding:"required"`
-	TerminalID string         `json:"TerminalID" form:"TerminalID" binding:"required"`
-}
-
 type MqttDateResponse struct {
 	Type       job.SensorType `json:"type" form:"type" binding:"required"`
 	SensorDate interface{}    `json:"SensorDate" form:"SensorDate" binding:"required"`
 	TerminalID string         `json:"TerminalID" form:"TerminalID" binding:"required"`
 }
 
-type CreateMqttDateRes struct {
+type CreateMqttDateResponse struct {
 	MqttDateResponse
 }
 
@@ -24,32 +18,32 @@ type GetMqttDateByID struct {
 	ID uint `json:"id" form:"id" binding:"required"`
 }
 
-type GetMqttDateByIDRes struct {
+type GetMqttDateByIDResponse struct {
 	MqttDateResponse
 }
 
-type MGetMqttDateByIDsReq struct {
+type MGetMqttDateByIDsRequest struct {
 	IDs []uint `json:"ids" form:"ids" binding:"required"`
 }
 
-type MGetMqttDateByIDsRes struct {
-	List []GetMqttDateByIDRes `json:"list"`
+type MGetMqttDateByIDsResponse struct {
+	List []GetMqttDateByIDResponse `json:"list"`
 }
 
-type UpdateMqttDateByIDReq struct {
+type UpdateMqttDateByIDRequest struct {
 	ID         uint           `json:"id" form:"id" binding:"required"`
 	Type       job.SensorType `json:"type" form:"type"`
 	TerminalID string         `json:"TerminalID" form:"TerminalID"`
 	SensorDate interface{}    `json:"SensorDate" form:"SensorDate"`
 }
 
-type UpdateMqttDateByIDRes struct {
+type UpdateMqttDateByIDResponse struct {
 	MqttDateResponse
 }
 
-type DeleteMqttDateByIDReq struct {
+type DeleteMqttDateByIDRequest struct {
 	ID uint `json:"id" form:"id" binding:"required"`
 }
 
-type DeleteMqttDateByIDRes struct {
+type DeleteMqttDateByIDResponse struct {
 }

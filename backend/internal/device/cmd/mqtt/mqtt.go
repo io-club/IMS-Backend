@@ -18,13 +18,13 @@ var topic string = "ioMqtt"
 func main() {
 	clientSub, err := iomqtt.NewClient()
 	if err != nil {
-		iolog.Warn("err:%v", err)
+		iolog.Warn("NewClient Error:%v", err)
 		return
 	}
 
 	for {
 		if err := clientSub.Sub(topic, manualMessagePubHandler); err != nil {
-			iolog.Warn("err:%v", err)
+			iolog.Warn("Subscription Error:%v", err)
 			return
 		}
 	}

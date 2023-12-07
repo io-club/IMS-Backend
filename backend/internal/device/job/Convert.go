@@ -32,7 +32,7 @@ type UnknownSensor struct { // 未知传感器
 
 type UartMsg struct {
 	TerminalID string
-	Sensor interface{} //以上之一的传感器类型
+	Sensor     interface{} //以上之一的传感器类型
 }
 
 func DecodeUartMsgList(msg string) *UartMsg {
@@ -41,9 +41,9 @@ func DecodeUartMsgList(msg string) *UartMsg {
 	}
 	res := UartMsg{}
 	msgParts := strings.Split(msg, ":")
-//TerminalID : string : Date1 Date2 
+	//TerminalID : sensor : Date1 Date2 ...
 	res.TerminalID = msgParts[0]
-	Data :=msgParts[2]
+	Data := msgParts[2]
 	sensor, err := strconv.Atoi(msgParts[1])
 	if err != nil {
 		return nil
@@ -62,7 +62,7 @@ func DecodeUartMsgList(msg string) *UartMsg {
 		}
 		res.Sensor = &TAndHSensor{
 			Temperature: temperature,
-			Humidity: humidity,
+			Humidity:    humidity,
 		}
 	case SensorTypeGas:
 		dataInt, err := strconv.Atoi(Data)

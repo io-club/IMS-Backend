@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"ims-server/internal/device/bll/pack"
-	"ims-server/internal/device/dal/model"
 
 	"ims-server/internal/device/param"
 
@@ -15,23 +14,7 @@ import (
 type sensorService struct {
 }
 
-func (s *sensorService) CreateMqttDate(ctx context.Context, req *param.MqttDateRequest) (*param.CreateMqttDateRes, error) {
-	sensorDate := &model.SensorData{
-		Type:       req.Type,
-		SensorData: req.SensorDate,
-		TerminalID: req.TerminalID,
-	}
-	err := repo.NewSensorRepo().Create(ctx, sensorDate)
-	if err != nil {
-		return nil, egoerror.ErrInvalidParam
-	}
-	res := pack.ToMqttDateResponse(sensorDate)
-	return &param.CreateMqttDateRes{
-		MqttDateResponse: res,
-	}, nil
-}
-
-func (s *sensorService) GetMqttDateByID(ctx context.Context, req *param.GetMqttDateByID) (*param.GetMqttDateByIDRes, error) {
+func (s *sensorService) GetMqttDateByID(ctx context.Context, req *param.GetMqttDateByID) (*param.GetMqttDateByIDResponse, error) {
 	id := req.ID
 	sensorDate, err := repo.NewSensorRepo().Get(ctx, id)
 	if err != nil {
@@ -39,31 +22,31 @@ func (s *sensorService) GetMqttDateByID(ctx context.Context, req *param.GetMqttD
 	}
 
 	resp := pack.ToMqttDateResponse(sensorDate)
-	return &param.GetMqttDateByIDRes{
+	return &param.GetMqttDateByIDResponse{
 		MqttDateResponse: resp,
 	}, nil
 }
 
-func (s *sensorService) MGetSensorByIDs(ctx context.Context, req *param.MGetMqttDateByIDsReq) (*param.MGetMqttDateByIDsRes, error) {
+func (s *sensorService) MGetSensorByIDs(ctx context.Context, req *param.MGetMqttDateByIDsRequest) (*param.MGetMqttDateByIDsResponse, error) {
 	res, err := repo.NewSensorRepo().MGet(ctx, req.IDs)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
 
-	resp := []param.GetMqttDateByIDRes{}
+	resp := []param.GetMqttDateByIDResponse{}
 	for _, sensorDate := range res {
 		info := pack.ToMqttDateResponse(&sensorDate)
-		resp = append(resp, param.GetMqttDateByIDRes{
+		resp = append(resp, param.GetMqttDateByIDResponse{
 			MqttDateResponse: info,
 		})
 	}
 
-	return &param.MGetMqttDateByIDsRes{
+	return &param.MGetMqttDateByIDsResponse{
 		List: resp,
 	}, nil
 }
 
-func (s *sensorService) UpdateMqDateByID(ctx context.Context, req *param.UpdateMqttDateByIDReq) (*param.UpdateMqttDateByIDRes, error) {
+func (s *sensorService) UpdateMqDateByID(ctx context.Context, req *param.UpdateMqttDateByIDRequest) (*param.UpdateMqttDateByIDResponse, error) {
 	_, err1 := repo.NewSensorRepo().Get(ctx, req.ID)
 	if err1 != nil {
 		return nil, egoerror.ErrNotFound
@@ -77,12 +60,12 @@ func (s *sensorService) UpdateMqDateByID(ctx context.Context, req *param.UpdateM
 	}
 
 	resp := pack.ToMqttDateResponse(update)
-	return &param.UpdateMqttDateByIDRes{
+	return &param.UpdateMqttDateByIDResponse{
 		MqttDateResponse: resp,
 	}, nil
 }
 
-func (s *sensorService) DeleteMqDaterByID(ctx context.Context, req *param.DeleteMqttDateByIDReq) (*param.DeleteMqttDateByIDRes, error) {
+func (s *sensorService) DeleteMqDaterByID(ctx context.Context, req *param.DeleteMqttDateByIDRequest) (*param.DeleteMqttDateByIDResponse, error) {
 	_, err := repo.NewSensorRepo().Get(ctx, req.ID)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
@@ -91,5 +74,5 @@ func (s *sensorService) DeleteMqDaterByID(ctx context.Context, req *param.Delete
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
-	return &param.DeleteMqttDateByIDRes{}, nil
+	return &param.DeleteMqttDateByIDResponse{}, nil
 }
