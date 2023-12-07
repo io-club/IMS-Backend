@@ -20,13 +20,13 @@ func TestMqtt(t *testing.T) {
 	}
 
 	go func() {
-		err := Sub(*client, "io-ims-test", nil)
+		err := client.Sub("io-ims-test", nil)
 		if err != nil {
 			log.Printf("mqtt subscribe failed, err: %v", err)
 		}
 	}()
 
 	for {
-		Publish(*client, "io-ims-test", "hello")
+		client.Publish("io-ims-test", "hello")
 	}
 }
