@@ -1,0 +1,50 @@
+# 二进制对象文件
+*.o
+*.a
+*.so
+
+# 二进制文件
+*.exe
+*.test
+*.prof
+
+# 依赖目录
+vendor/
+
+# IDE/编辑器 文件夹
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# Go 编译文件
+*.8
+*.6
+*.3
+*.2
+*.out
+*.o
+*.a
+*.prof
+
+# Go 运行时产生的文件
+*.exe~
+*.test~
+*.prof~
+
+# Go build 输出目录
+/bin
+/target
+
+# 日志文件
+*.log_*
+
+# 数据库文件
+*.db
+
+# 生成的文件
+*.gen.go

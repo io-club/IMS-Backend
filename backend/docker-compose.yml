@@ -67,8 +67,9 @@ services:
       - "9000:9000" # api 端口
       - "9001:9001" # 控制台端口
     environment:
-      MINIO_ACCESS_KEY: admin    #管理后台用户名
-      MINIO_SECRET_KEY: admin123 #管理后台密码，最小 8 个字符
+      MINIO_ACCESS_KEY: admin    # 管理后台用户名
+      MINIO_SECRET_KEY: admin123 # 管理后台密码，最小 8 个字符
+      MINIO_UTF8_CHARSET: UTF-8,GBK # 设置字符集
     volumes:
       - ./minio/data:/data                     #映射当前目录下的 data 目录至容器内/data 目录
       - ./minio/config:/root/.minio/           #映射配置目录
