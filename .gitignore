@@ -21,24 +21,10 @@ vendor/
 .DS_Store
 Thumbs.db
 
-# Go 编译文件
-*.8
-*.6
-*.3
-*.2
-*.out
-*.o
-*.a
-*.prof
-
-# Go 运行时产生的文件
+# 运行时产生的文件
 *.exe~
 *.test~
 *.prof~
-
-# Go build 输出目录
-/bin
-/target
 
 # 日志文件
 *.log_*
