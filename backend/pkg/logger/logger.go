@@ -76,6 +76,9 @@ func SetLogger(serviceName string) {
 			continue
 		}
 		fileName := fileInfo.Name()
+		if len(fileName) < 20 {
+			continue
+		}
 		timeSuffix := fileName[len(fileName)-19 : len(fileName)]
 		creationTime, err := time.Parse(TimeFormat, timeSuffix)
 		if err != nil {
