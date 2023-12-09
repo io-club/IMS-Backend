@@ -52,7 +52,7 @@ services:
     container_name: etcd
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://172.26.66.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
     ports:
       - "2379:2379"
     networks:
@@ -61,7 +61,7 @@ services:
       - "./etcd/data/etcd:/var/lib/etcd"
 
   minio:
-    image: minio/minio:latest
+    image: 'minio/minio:latest'
     container_name: minio
     ports:
       - "9000:9000" # api 端口

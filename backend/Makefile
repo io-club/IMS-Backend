@@ -17,8 +17,8 @@ run-fresh: build stop run
 
 build:
 	go build -o ./target/nms ./main.go
-	go build -o ./target/user ./microservices/user/internal/main.go
-	go build -o ./target/device ./microservices/device/internal/main.go
+	go build -o ./target/user ./microservices/user/main.go
+	go build -o ./target/device ./microservices/device/main.go
 
 stop:
 	pkill nms || exit 0
