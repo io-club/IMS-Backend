@@ -26,8 +26,6 @@ type RegisterRequest struct {
 	VerificationCode string `json:"verificationCode" form:"verificationCode" binding:"required"`
 
 	PhoneNumber string `json:"phoneNumber" form:"phoneNumber"`
-
-	Avatar string `json:"avatar" form:"avatar"`
 }
 
 type RegisterResponse struct {

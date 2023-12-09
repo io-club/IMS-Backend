@@ -72,8 +72,9 @@ func JwtAuthMW() gin.HandlerFunc {
 			for k, v := range payload.UserDefined {
 				c.Set(k, v)
 			}
+		} else {
+			iologger.Debug("refreshToken has expired")
 		}
-		iologger.Debug("refreshToken has expired")
 		c.Next()
 		return
 	}

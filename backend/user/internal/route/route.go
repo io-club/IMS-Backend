@@ -18,6 +18,9 @@ var Routes = []ioginx.Route{
 	},
 	{Func: api.GetUsers(), FuncName: "GetUsers", Methods: []string{http.MethodGet, http.MethodPost}, Permission: nil},
 	{Func: api.UpdateUserByID(), FuncName: "UpdateUserByID", Methods: []string{http.MethodPost}, Permission: nil},
+	{Func: api.UploadAvatar(), FuncName: "UploadAvatar", Methods: []string{http.MethodPost},
+		Permission: util.NewSet(ioconsts.UserTypeAdmin, ioconsts.UserTypeInsider, ioconsts.UserTypeOutsiders),
+	},
 	{Func: api.DeleteUserByID(), FuncName: "DeleteUserByID", Methods: []string{http.MethodPost}, Permission: nil},
 
 	// Register

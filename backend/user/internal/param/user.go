@@ -4,6 +4,7 @@ import (
 	"context"
 	ioconsts "ims-server/pkg/consts"
 	iodb "ims-server/pkg/db"
+	"mime/multipart"
 )
 
 type UserResponse struct {
@@ -61,6 +62,12 @@ type UpdateUserByIDResponse struct {
 }
 
 // TODO: 更新头像
+type UploadAvatarRequest struct {
+	ID     uint                  `json:"id" form:"id" binding:"required"`
+	Avatar *multipart.FileHeader `json:"avatar" form:"avatar" binding:"required"`
+}
+
+type UploadAvatarResponse struct{}
 
 type DeleteUserByIDRequest struct {
 	ID uint `json:"id" form:"id" binding:"required"`

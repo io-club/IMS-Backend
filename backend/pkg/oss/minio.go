@@ -1,4 +1,4 @@
-package oss
+package iooss
 
 import (
 	"context"
@@ -64,24 +64,24 @@ func (mc *MinioClient) DeleteBucket(name string) error {
 }
 
 // PutObject 上传小文件
-func (mc *MinioClient) PutObject(ctx context.Context, bucketName string, name string, fileHeader *multipart.FileHeader) error {
+func (mc *MinioClient) PutObject(ctx context.Context, bucketName string, name string, fileHeader *multipart.FileHeader) (*string, error) {
 	size := fileHeader.Size
 	if size > 8*1024*1024*1024 {
 		// 大于 1G，不让传
-		return errors.New("file too large")
+		return nil, errors.New("file too large")
 	}
 
 	file, err := fileHeader.Open()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	name = "io-ims" + name
-	_, err = mc.client.PutObject(ctx, bucketName, name, file, fileHeader.Size, minio.PutObjectOptions{})
+	name = time.Now().Format(time.RFC3339) + name
+	_, err = mc.client.PutObject(ctx, bucketName, name, file, fileHeader.Size, minio.PutObjectOptions{ContentType: fileHeader.Header.Get("Content-Type")})
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return err
+	return &name, err
 }
 
 // GetObject 下载文件

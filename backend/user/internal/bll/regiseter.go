@@ -68,14 +68,13 @@ func (u *userService) Register(ctx context.Context, req *param.RegisterRequest) 
 		Name:        req.Name,
 		PhoneNumber: req.PhoneNumber,
 		Email:       req.Email,
-		Avatar:      req.Avatar,
 		Status:      ioconsts.AccountStatusNormal,
 	}
 	err = repo.NewUserRepo().Create(ctx, user)
 	if err != nil {
 		return nil, egoerror.ErrInvalidParam
 	}
-	resp := pack.ToUserResponse(user)
+	resp := pack.ToUserResponse(ctx, user)
 	return &param.RegisterResponse{
 		UserResponse: resp,
 	}, nil
@@ -96,7 +95,7 @@ func (u *userService) NameLogin(ctx context.Context, req *param.NameLoginRequest
 		return nil, egoerror.ErrPasswordError
 	}
 
-	resp := pack.ToUserResponse(user)
+	resp := pack.ToUserResponse(ctx, user)
 	return &param.NameLoginResponse{
 		UserResponse: resp,
 	}, nil
@@ -122,7 +121,7 @@ func (u *userService) EmailLogin(ctx context.Context, req *param.EmailLoginReque
 	if req.VerificationCode != code {
 		return nil, egoerror.ErrInvalidVerifyCode
 	}
-	resp := pack.ToUserResponse(user)
+	resp := pack.ToUserResponse(ctx, user)
 	return &param.EmailLoginResponse{
 		UserResponse: resp,
 	}, nil

@@ -22,6 +22,10 @@ func UpdateUserByID() func(ctx *gin.Context) {
 	return ioginx.ToHandle(bll.NewUserService().UpdateUserByID)
 }
 
+func UploadAvatar() func(ctx *gin.Context) {
+	return ioginx.ToHandle(bll.NewUserService().UploadAvatar)
+}
+
 func DeleteUserByID() func(ctx *gin.Context) {
 	return ioginx.ToHandle(bll.NewUserService().DeleteUserByID)
 }

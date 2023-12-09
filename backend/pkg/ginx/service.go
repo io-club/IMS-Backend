@@ -90,7 +90,6 @@ func ToHandle(fn interface{}) func(c *gin.Context) {
 			}
 		}
 
-		ctx := context.Background()
 		// Parse request parameters
 		req, err := BindRequest(c, fn)
 		if err != nil {
@@ -100,7 +99,7 @@ func ToHandle(fn interface{}) func(c *gin.Context) {
 		iologger.Info("request: %#v", req)
 
 		// Call the handler function
-		rets, err := CallaService(ctx, req, fn)
+		rets, err := CallaService(c, req, fn)
 		if err != nil {
 			iologger.Debug("CallaService Failed")
 			c.JSON(http.StatusBadRequest, NewErr(c, err))

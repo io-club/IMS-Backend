@@ -3,6 +3,8 @@ package bll
 import (
 	"context"
 	egoerror "ims-server/pkg/error"
+	iologger "ims-server/pkg/logger"
+	iooss "ims-server/pkg/oss"
 	"ims-server/pkg/util"
 	"ims-server/user/internal/dal/repo"
 	"ims-server/user/internal/param"
@@ -24,7 +26,7 @@ func (u *userService) GetUserByID(ctx context.Context, req *param.GetUserByIDReq
 		return nil, egoerror.ErrNotFound
 	}
 
-	resp := pack.ToUserResponse(user)
+	resp := pack.ToUserResponse(ctx, user)
 	return &param.GetUserByIDResponse{
 		UserResponse: resp,
 	}, nil
@@ -39,7 +41,7 @@ func (u *userService) MGetUserByIDs(ctx context.Context, req *param.MGetUserByID
 
 	resp := []param.UserResponse{}
 	for _, user := range res {
-		info := pack.ToUserResponse(&user)
+		info := pack.ToUserResponse(ctx, &user)
 		resp = append(resp, info)
 	}
 
@@ -63,7 +65,7 @@ func (u *userService) GetUsers(ctx context.Context, req *param.GetUsersRequest) 
 
 	resp := []param.UserResponse{}
 	for _, user := range res {
-		info := pack.ToUserResponse(&user)
+		info := pack.ToUserResponse(ctx, &user)
 		resp = append(resp, info)
 	}
 
@@ -75,9 +77,15 @@ func (u *userService) GetUsers(ctx context.Context, req *param.GetUsersRequest) 
 
 // UpdateUserByID 根据 ID 更新用户
 func (u *userService) UpdateUserByID(ctx context.Context, req *param.UpdateUserByIDRequest) (*param.UpdateUserByIDResponse, error) {
+	// 确保用户存在
 	_, err := repo.NewUserRepo().Get(ctx, req.ID, repo.UserSelect...) // 根据请求中的用户 ID 获取用户信息
 	if err != nil {
 		return nil, egoerror.ErrNotFound // 如果用户不存在，则返回错误信息
+	}
+	// 只有用户本身才能修改自己的头像
+	userID := ctx.Value("uid").(float64)
+	if req.ID != uint(userID) {
+		return nil, egoerror.ErrNotPermitted
 	}
 
 	userMap := util.RequestToSnakeMapWithIgnoreZeroValueAndIDKey(req)
@@ -87,14 +95,50 @@ func (u *userService) UpdateUserByID(ctx context.Context, req *param.UpdateUserB
 		return nil, egoerror.ErrInvalidParam // 如果更新失败，则返回无效参数的错误信息
 	}
 
-	resp := pack.ToUserResponse(update)
+	resp := pack.ToUserResponse(ctx, update)
 	return &param.UpdateUserByIDResponse{
 		UserResponse: resp,
 	}, nil
 }
 
+func (u *userService) UploadAvatar(ctx context.Context, req *param.UploadAvatarRequest) (*param.UploadAvatarResponse, error) {
+	// 只有用户本身才能修改自己的头像
+	userID := ctx.Value("uid").(float64)
+	if req.ID != uint(userID) {
+		return nil, egoerror.ErrNotPermitted
+	}
+	user, err := repo.NewUserRepo().Get(ctx, req.ID, "avatar")
+	if err != nil {
+		return nil, egoerror.ErrNotFound
+	}
+	// Upload avatar
+	client, err := iooss.NewMinioClient()
+	if err != nil {
+		return nil, egoerror.ErrInvalidParam
+	}
+	fileName, err := client.PutObject(ctx, iooss.DefaultBucketName, req.Avatar.Filename, req.Avatar)
+	if err != nil {
+		return nil, egoerror.ErrInvalidParam
+	}
+	// Update user avatar
+	_, err = repo.NewUserRepo().Update(ctx, req.ID, map[string]interface{}{
+		"avatar": fileName,
+	})
+	if err != nil {
+		return nil, egoerror.ErrInvalidParam // 如果更新失败，则返回无效参数的错误信息
+	}
+	// 更新成功则删除老图片
+	err = client.DeleteObject(ctx, iooss.DefaultBucketName, user.Avatar)
+	if err != nil {
+		iologger.Info("delete old avatar failed, fileName: %s, err: %s", user.Avatar, err.Error())
+	}
+
+	return &param.UploadAvatarResponse{}, nil
+}
+
 // DeleteUserByID 根据 ID 删除用户
 func (u *userService) DeleteUserByID(ctx context.Context, r *param.DeleteUserByIDRequest) (*param.DeleteUserByIDResponse, error) {
+	// TODO：删除用户后同时删除头像？
 	_, err := repo.NewUserRepo().Get(ctx, r.ID, "id")
 	if err != nil {
 		return nil, egoerror.ErrNotFound
