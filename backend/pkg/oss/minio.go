@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+const DefaultBucketName = "io-ims-storage"
+
 type MinioClient struct {
 	client *minio.Client
 }
@@ -73,6 +75,8 @@ func (mc *MinioClient) PutObject(ctx context.Context, bucketName string, name st
 	if err != nil {
 		return err
 	}
+
+	name = "io-ims" + name
 	_, err = mc.client.PutObject(ctx, bucketName, name, file, fileHeader.Size, minio.PutObjectOptions{})
 	if err != nil {
 		return err
