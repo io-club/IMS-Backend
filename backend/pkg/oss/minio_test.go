@@ -20,8 +20,8 @@ func TestMinio(t *testing.T) {
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
-		Secure: useSSL},
-	)
+		Secure: useSSL,
+	})
 	if err != nil || minioClient == nil {
 		log.Printf("create minio client failed ,error: %s\n", err)
 		return

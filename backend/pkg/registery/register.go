@@ -8,6 +8,7 @@ import (
 	iologger "ims-server/pkg/logger"
 	"strings"
 	"sync"
+	"time"
 )
 
 const (
@@ -81,4 +82,19 @@ func (hub *ServiceHub) UnRegisterService(service string, endpoint string) error 
 	}
 	iologger.Info("Unregistered service %s at endpoint %s", service, endpoint)
 	return nil
+}
+
+func RegisterAndReport(serviceName string, endpoint string, heartBeat int64) {
+	hub := GetServiceHub(heartBeat)
+	defer hub.UnRegisterService(serviceName, endpoint)
+
+	leaseID, err := hub.RegisterService(serviceName, endpoint, 0)
+	if err != nil {
+		panic(err)
+	}
+	// 周期性上报服务
+	for {
+		hub.RegisterService(serviceName, endpoint, leaseID)
+		time.Sleep(time.Duration(heartBeat) * time.Second)
+	}
 }

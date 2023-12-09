@@ -21,6 +21,22 @@ type Route struct {
 	Methods    []string // Method types,such as: get, post...
 }
 
+func GetPublicRouteMap(routes []Route) map[string]Route {
+	publicRouteMap := map[string]Route{}
+	for _, route := range routes {
+		if route.Private {
+			continue
+		}
+
+		if err := ParseRoute(&route); err != nil {
+			panic(err)
+		}
+
+		publicRouteMap[strings.ToLower(route.FuncName)] = route
+	}
+	return publicRouteMap
+}
+
 func ParseRoute(route *Route) error {
 	fn := route.Func
 

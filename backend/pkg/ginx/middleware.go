@@ -3,8 +3,12 @@ package ioginx
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	ioconsts "ims-server/pkg/consts"
+	egoerror "ims-server/pkg/error"
 	iologger "ims-server/pkg/logger"
 	"ims-server/pkg/util"
+	"net/http"
+	"strings"
 	"time"
 )
 
@@ -72,5 +76,34 @@ func JwtAuthMW() gin.HandlerFunc {
 		iologger.Debug("refreshToken has expired")
 		c.Next()
 		return
+	}
+}
+
+func PermissionMW(routeMap map[string]Route) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		path := strings.Split(c.Request.URL.Path, "/")
+		fn := path[len(path)-1]
+
+		// Deny access to private services
+		route, ok := routeMap[strings.ToLower(fn)]
+		if !ok {
+			iologger.Warn("User accessed internal service abnormally, fn: %s", fn)
+			c.String(http.StatusMethodNotAllowed, "")
+			return
+		}
+		// Check permissions
+		if route.Permission != nil && !route.Permission.IsEmpty() {
+			utype, ok := c.Get("utype")
+			if !ok {
+				c.JSON(http.StatusUnauthorized, NewErr(c, egoerror.ErrUnauthorized))
+				return
+			}
+			userType := ioconsts.UserType(utype.(string))
+			if _, ok := route.Permission[userType]; !ok {
+				iologger.Debug("Insufficient user permissions, fn: %s", fn)
+				c.JSON(http.StatusUnauthorized, NewErr(c, egoerror.ErrNotPermitted))
+				return
+			}
+		}
 	}
 }

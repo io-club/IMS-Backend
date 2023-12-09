@@ -63,7 +63,7 @@ func (p *pkcs5) UnPadding(src []byte) ([]byte, error) {
 	srcLen := len(src)
 	paddingLen := int(src[srcLen-1])
 	if srcLen < paddingLen || blockSize < paddingLen {
-		return nil, errors.New("The data passed is not pkcs5 standard")
+		return nil, errors.New("the data passed is not pkcs5 standard")
 	}
 	return src[:srcLen-paddingLen], nil
 }

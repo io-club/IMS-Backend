@@ -26,9 +26,9 @@ func NewConfigReader(fileName string) *viper.Viper {
 		log.Panicf("fileName must have two parts which splited by dot")
 	}
 	configFile, configType := arr[0], arr[1]
-	config.SetConfigName(configFile)                 // Set the config file name
-	config.SetConfigType(configType)                 // Set the config file type
-	config.AddConfigPath(RootPath + "internal/conf") // Set the directory path where the config file is located
+	config.SetConfigName(configFile)        // Set the config file name
+	config.SetConfigType(configType)        // Set the config file type
+	config.AddConfigPath(RootPath + "conf") // Set the directory path where the config file is located
 
 	// Try to find the config file
 	if err := config.ReadInConfig(); err != nil {

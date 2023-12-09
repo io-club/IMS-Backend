@@ -128,7 +128,13 @@ func (s *IOServer) ServiceRegister() {
 	}
 }
 
-func (s *IOServer) Run(addr string, serviceName string) {
+func (s *IOServer) Run(addr string, serviceName string, routes []Route) {
+	// 权限检查中间件
+	if routes != nil && len(routes) > 0 {
+		publicMap := GetPublicRouteMap(routes)
+		s.router.Use(PermissionMW(publicMap))
+	}
+
 	s.ServiceRegister()
 
 	server := &http.Server{

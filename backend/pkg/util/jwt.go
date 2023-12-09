@@ -58,13 +58,13 @@ func GenJwt(header JwtHeader, payLoad JwtPayload) (string, error) {
 func VerifyJwt(token string) (*JwtHeader, *JwtPayload, error) {
 	part := strings.Split(token, ".")
 	if len(part) != 3 {
-		return nil, nil, errors.New("Fake token")
+		return nil, nil, errors.New("fake token")
 	}
 	h := hmac.New(sha256.New, []byte(JwtSecret))
 	h.Write([]byte(part[0] + "." + part[1]))
 	signature := base64.RawURLEncoding.EncodeToString(h.Sum(nil))
 	if signature != part[2] {
-		return nil, nil, errors.New("Token verification failed")
+		return nil, nil, errors.New("token verification failed")
 	}
 	// Try to parse the header
 	var header JwtHeader
