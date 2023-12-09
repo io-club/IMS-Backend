@@ -141,7 +141,7 @@ func post(ctx context.Context, url string, data interface{}, headers map[string]
 func Call[T interface{}](ctx context.Context, serviceName string, req T) (*T, error) {
 	// Service discovery
 	hub := registery.GetServiceClient()
-	servers := hub.GetServiceEndpointsWithCache(registery.UserService)
+	servers := hub.GetServiceEndpointsWithCache(serviceName)
 	// TODO: Implement a more efficient load balancing algorithm
 	// Load balancing: select a service node
 	idx := rand.Intn(len(servers))
