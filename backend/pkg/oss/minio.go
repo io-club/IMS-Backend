@@ -96,13 +96,13 @@ func (mc *MinioClient) GetObject(ctx context.Context, bucketName string, name st
 
 // PresignedGetObject 生成获取文件的预签名 url，不清楚需要什么样的请求头，可将 reqParams 传入 nil（注意：即使桶是私有的仍可获取）
 func (mc *MinioClient) PresignedGetObject(ctx context.Context, bucketName, objectName string, expiry time.Duration, reqParams url.Values) (*url.URL, error) {
-	// Generates a presigned url which expires in a day.
-	url, err := mc.client.PresignedGetObject(ctx, bucketName, objectName, expiry, reqParams)
+	// Generates a presigned path which expires in a day.
+	path, err := mc.client.PresignedGetObject(ctx, bucketName, objectName, expiry, reqParams)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
-	return url, nil
+	return path, nil
 }
 
 func (mc *MinioClient) ListObjects(ctx context.Context, bucketName string, prefix string) []minio.ObjectInfo {

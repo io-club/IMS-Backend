@@ -36,6 +36,7 @@ func LimitMW() gin.HandlerFunc {
 
 func JwtAuthMW() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		fmt.Printf("jwt auth\n")
 		accessToken := c.GetHeader("access-Token")
 		_, payload, err := util.VerifyJwt(accessToken)
 		if err != nil {
@@ -82,6 +83,7 @@ func JwtAuthMW() gin.HandlerFunc {
 
 func PermissionMW(routeMap map[string]Route) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		fmt.Printf("permission mw\n")
 		path := strings.Split(c.Request.URL.Path, "/")
 		fn := path[len(path)-1]
 
@@ -90,20 +92,22 @@ func PermissionMW(routeMap map[string]Route) gin.HandlerFunc {
 		if !ok {
 			iologger.Warn("User accessed internal service abnormally, fn: %s", fn)
 			c.String(http.StatusMethodNotAllowed, "")
-			return
+			c.Abort()
 		}
 		// Check permissions
 		if route.Permission != nil && !route.Permission.IsEmpty() {
 			utype, ok := c.Get("utype")
 			if !ok {
+				fmt.Printf("utype not found\n")
 				c.JSON(http.StatusUnauthorized, NewErr(c, egoerror.ErrUnauthorized))
-				return
+				c.Abort()
+
 			}
 			userType := ioconsts.UserType(utype.(string))
 			if _, ok := route.Permission[userType]; !ok {
 				iologger.Debug("Insufficient user permissions, fn: %s", fn)
 				c.JSON(http.StatusUnauthorized, NewErr(c, egoerror.ErrNotPermitted))
-				return
+				c.Abort()
 			}
 		}
 	}
