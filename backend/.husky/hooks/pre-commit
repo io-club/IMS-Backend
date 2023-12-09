@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+set -u
+
+cp ./backend/husky/hooks/* .git/hooks/
+
+# # 从中过滤出未修改过的文件夹，
+# arr=$(git status -s | awk '{print $2}' | grep -o -E '^(ego-api|ego-teach|ego-oj|ego-user|ego-device|ego-job)' | uniq)
+
+# 脚本运行的开始时间
+start=$(date +%s%N)
+
+function p() {
+    printf "\r\033[K%s" "$1"
+}
+
+# if go test failed, exit
+# if ! output="$(go test -timeout 30s -run ^TestRoutes$ ego-api)"; then
+#     echo "$output"
+#     echo "    API 注册失败, 请检查上述服务或 Middleware 的函数参数，返回值！"
+#     exit 1
+# fi
+
+# for proj in $arr; do
+# echo "正在检查 $proj ..."
+
+# cd "$proj" || exit 1
+p "当前路径: $(pwd)"
+p "Step-1 正在检查依赖..."
+output="$(cd ./backend && go mod tidy -v 2>&1)"
+if [ -n "$output" ]; then
+    echo "Step-1 (go mod tidy) 需要更新 go.mod 和 go.sum"
+    echo "    go.mod 和 go.sum 已被修改，请重新使用 git add 添加相关文件！"
+    exit 1
+fi
+p "当前路径: $(pwd)"
+p "Step-2 正在检查语法..."
+output="$(go vet ./... 2>&1)"
+if [ -n "$output" ]; then
+    echo "Step-2 (go vet) 失败:"
+    echo "    $output"
+    exit 1
+fi
+
+p "Step-3 正在检查代码格式化..."
+output="$(gofmt -l -w . 2>&1)"
+if [ -n "$output" ]; then
+    echo "Step-3 (gofmt) 失败，下列文件已被格式化:"
+    echo "    - $output"
+    echo "上述文件已被格式化, 请使用 git add 重新添加相关文件！"
+    exit 1
+fi
+
+# p "Step-4 正在尝试编译检查..."
+# if ! output="$(go build -v . 2>&1)"; then
+#     p "Step-4 (go build) 编译失败:"
+#     p "    - $proj/$output"
+#     exit 1
+# fi
+
+# p "Step-5 正在运行测试..."
+# if ! output="$(go test -tags=unit -timeout 30s -short -v ./... 2>&1)"; then
+#     echo "Step-5 测试运行失败, 请检查!"
+#     echo "$output"
+#     exit 1
+# fi
+
+p ""
+cd ..
+# done
+
+end=$(date +%s%N)
+
+# 计算时间差，单位为秒
+det=$((("$end" - "$start") / 1000000000))
+p "🎉 全部检查通过, 总耗时: $det 秒"
