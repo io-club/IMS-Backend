@@ -36,7 +36,6 @@ func LimitMW() gin.HandlerFunc {
 
 func JwtAuthMW() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Printf("jwt auth\n")
 		accessToken := c.GetHeader("access-Token")
 		_, payload, err := util.VerifyJwt(accessToken)
 		if err != nil {
@@ -51,6 +50,7 @@ func JwtAuthMW() gin.HandlerFunc {
 				c.Set(k, v)
 			}
 			c.Next()
+			return
 		}
 		// If expired, try refreshing the accessToken
 		refreshToken := c.GetHeader("refresh-Token")
@@ -72,6 +72,8 @@ func JwtAuthMW() gin.HandlerFunc {
 			// Also retrieve the custom key-value pairs
 			for k, v := range payload.UserDefined {
 				c.Set(k, v)
+				c.Next()
+				return
 			}
 		} else {
 			iologger.Debug("refreshToken has expired")
@@ -83,7 +85,6 @@ func JwtAuthMW() gin.HandlerFunc {
 
 func PermissionMW(routeMap map[string]Route) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Printf("permission mw\n")
 		path := strings.Split(c.Request.URL.Path, "/")
 		fn := path[len(path)-1]
 

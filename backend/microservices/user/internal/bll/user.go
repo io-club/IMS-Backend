@@ -128,11 +128,12 @@ func (u *userService) UploadAvatar(ctx context.Context, req *param.UploadAvatarR
 		return nil, egoerror.ErrInvalidParam // 如果更新失败，则返回无效参数的错误信息
 	}
 	// 更新成功则删除老图片
-	err = client.DeleteObject(ctx, iooss.DefaultBucketName, user.Avatar)
-	if err != nil {
-		iologger.Info("delete old avatar failed, fileName: %s, err: %s", user.Avatar, err.Error())
+	if user.Avatar != "" {
+		err = client.DeleteObject(ctx, iooss.DefaultBucketName, user.Avatar)
+		if err != nil {
+			iologger.Info("delete old avatar failed, fileName: %s, err: %s", user.Avatar, err.Error())
+		}
 	}
-
 	return &param.UploadAvatarResponse{}, nil
 }
 

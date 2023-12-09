@@ -10,9 +10,7 @@ import (
 
 var Routes = []ioginx.Route{
 	// User
-	{Func: api2.GetUserByID(), FuncName: "GetUserByID", Methods: []string{http.MethodGet, http.MethodPost},
-		Permission: util.NewSet(ioconsts.UserTypeAdmin, ioconsts.UserTypeInsider, ioconsts.UserTypeOutsiders),
-	},
+	{Func: api2.GetUserByID(), FuncName: "GetUserByID", Methods: []string{http.MethodGet, http.MethodPost}, Permission: nil},
 	{Func: api2.MGetUserByIDs(), FuncName: "MGetUserByIDs", Methods: []string{http.MethodGet, http.MethodPost},
 		Permission: util.NewSet(ioconsts.UserTypeAdmin, ioconsts.UserTypeInsider, ioconsts.UserTypeOutsiders),
 	},

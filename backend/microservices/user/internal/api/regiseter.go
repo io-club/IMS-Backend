@@ -54,17 +54,17 @@ func NameLogin() func(ctx *gin.Context) {
 		}
 		// 生成 refresh token
 		payload := util.JwtPayload{
-			Issue:      "ims",
-			Audience:   "ims",
-			Subject:    "refresh-Token",
-			IssueAt:    time.Now().Unix(),
-			Expiration: time.Now().Add(3 * 24 * time.Hour).Unix(),
+			Issue:       "ims",
+			Audience:    "ims",
+			Subject:     "refresh-Token",
+			IssueAt:     time.Now().Unix(),
+			Expiration:  time.Now().Add(3 * 24 * time.Hour).Unix(),
+			UserDefined: map[string]any{"uid": resp.ID, "uname": resp.Name, "utype": resp.Type},
 		}
 		refreshToken, err := util.GenJwt(util.DefautHeader, payload)
 		// 生成 access token
 		payload.Subject = "access-Token"
 		payload.Expiration = time.Now().Add(1 * time.Hour).Unix()
-		payload.UserDefined = map[string]any{"uid": resp.ID, "uname": resp.Name, "utype": resp.Type}
 		accessToken, err := util.GenJwt(util.DefautHeader, payload)
 
 		c.Header("access-Token", accessToken)
@@ -99,17 +99,17 @@ func EmailLogin() func(ctx *gin.Context) {
 		}
 		// 生成 refresh token
 		payload := util.JwtPayload{
-			Issue:      "ims",
-			Audience:   "ims",
-			Subject:    "refresh-Token",
-			IssueAt:    time.Now().Unix(),
-			Expiration: time.Now().Add(3 * 24 * time.Hour).Unix(),
+			Issue:       "ims",
+			Audience:    "ims",
+			Subject:     "refresh-Token",
+			IssueAt:     time.Now().Unix(),
+			Expiration:  time.Now().Add(3 * 24 * time.Hour).Unix(),
+			UserDefined: map[string]any{"uid": resp.ID, "uname": resp.Name, "utype": resp.Type},
 		}
 		refreshToken, err := util.GenJwt(util.DefautHeader, payload)
 		// 生成 access token
 		payload.Subject = "access-Token"
 		payload.Expiration = time.Now().Add(1 * time.Hour).Unix()
-		payload.UserDefined = map[string]any{"uid": resp.ID, "uname": resp.Name, "utype": resp.Type}
 		accessToken, err := util.GenJwt(util.DefautHeader, payload)
 
 		c.Header("access-Token", accessToken)
