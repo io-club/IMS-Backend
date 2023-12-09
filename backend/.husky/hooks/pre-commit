@@ -25,15 +25,16 @@ function p() {
 # echo "正在检查 $proj ..."
 
 # cd "$proj" || exit 1
-p "当前路径: $(pwd)"
+cd backend
+
 p "Step-1 正在检查依赖..."
-output="$(cd ./backend && go mod tidy -v 2>&1)"
+output="$(go mod tidy -v 2>&1)"
 if [ -n "$output" ]; then
     echo "Step-1 (go mod tidy) 需要更新 go.mod 和 go.sum"
     echo "    go.mod 和 go.sum 已被修改，请重新使用 git add 添加相关文件！"
     exit 1
 fi
-p "当前路径: $(pwd)"
+
 p "Step-2 正在检查语法..."
 output="$(go vet ./... 2>&1)"
 if [ -n "$output" ]; then

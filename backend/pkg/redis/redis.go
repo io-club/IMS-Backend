@@ -20,7 +20,8 @@ func NewClient() *redis.Client {
 		})
 		connectDoneCh <- struct{}{}
 	}()
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	select {
 	case <-ctx.Done():
 		iologger.Fatalf("redis client connect timeout")
