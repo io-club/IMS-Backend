@@ -5,9 +5,9 @@ import (
 )
 
 type DataResponse struct {
-	Type       job.SensorType `json:"type" form:"type" binding:"required"`
-	SensorDate interface{}    `json:"SensorDate" form:"SensorDate" binding:"required"`
-	TerminalID string         `json:"TerminalID" form:"TerminalID" binding:"required"`
+	SensorType string      `json:"sensorType" form:"sensorType"`
+	Date       interface{} `json:"date" form:"date"`
+	TerminalID string      `json:"terminalID" form:"terminalID"`
 }
 
 type CreateDataResponse struct {
@@ -32,9 +32,9 @@ type MGetDataByIDsResponse struct {
 
 type UpdateDataByIDRequest struct {
 	ID         uint           `json:"id" form:"id" binding:"required"`
-	Type       job.SensorType `json:"type" form:"type"`
-	TerminalID string         `json:"TerminalID" form:"TerminalID"`
-	SensorDate interface{}    `json:"SensorDate" form:"SensorDate"`
+	SensorType job.SensorType `json:"sensorType" form:"sensorType"`
+	TerminalID string         `json:"terminalID" form:"terminalID"`
+	Date       interface{}    `json:"date" form:"date"`
 }
 
 type UpdateDataByIDResponse struct {

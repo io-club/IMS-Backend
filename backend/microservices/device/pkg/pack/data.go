@@ -7,9 +7,9 @@ import (
 
 func ToDataResponse(s *model.Data) param.DataResponse {
 	res := param.DataResponse{
-		Type:       s.Type,
+		SensorType: s.SensorType,
 		TerminalID: s.TerminalID,
-		SensorDate: s.SensorData,
+		Date:       s.Data,
 	}
 	return res
 }

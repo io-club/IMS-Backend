@@ -20,7 +20,7 @@ func NewDataService() *dataService {
 // TODO：以下全待测：@姚礼兴
 func (s *dataService) GetDataByID(ctx context.Context, req *param.GetDataByID) (*param.GetDataByIDResponse, error) {
 	id := req.ID
-	sensorDate, err := repo.NewSensorRepo().Get(ctx, id)
+	sensorDate, err := repo.NewDataRepo().Get(ctx, id)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -32,7 +32,7 @@ func (s *dataService) GetDataByID(ctx context.Context, req *param.GetDataByID) (
 }
 
 func (s *dataService) MGetSensorByIDs(ctx context.Context, req *param.MGetDataByIDsRequest) (*param.MGetDataByIDsResponse, error) {
-	res, err := repo.NewSensorRepo().MGet(ctx, req.IDs)
+	res, err := repo.NewDataRepo().MGet(ctx, req.IDs)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
@@ -51,14 +51,14 @@ func (s *dataService) MGetSensorByIDs(ctx context.Context, req *param.MGetDataBy
 }
 
 func (s *dataService) UpdateMqDateByID(ctx context.Context, req *param.UpdateDataByIDRequest) (*param.UpdateDataByIDResponse, error) {
-	_, err1 := repo.NewSensorRepo().Get(ctx, req.ID)
+	_, err1 := repo.NewDataRepo().Get(ctx, req.ID)
 	if err1 != nil {
 		return nil, egoerror.ErrNotFound
 	}
 
 	mqDateMap := util.RequestToSnakeMapWithIgnoreZeroValueAndIDKey(req)
 
-	update, err2 := repo.NewSensorRepo().Update(ctx, req.ID, mqDateMap)
+	update, err2 := repo.NewDataRepo().Update(ctx, req.ID, mqDateMap)
 	if err2 != nil {
 		return nil, egoerror.ErrInvalidParam
 	}
@@ -70,11 +70,11 @@ func (s *dataService) UpdateMqDateByID(ctx context.Context, req *param.UpdateDat
 }
 
 func (s *dataService) DeleteMqDaterByID(ctx context.Context, req *param.DeleteDataByIDRequest) (*param.DeleteDataByIDResponse, error) {
-	_, err := repo.NewSensorRepo().Get(ctx, req.ID)
+	_, err := repo.NewDataRepo().Get(ctx, req.ID)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
-	err = repo.NewSensorRepo().Delete(ctx, req.ID)
+	err = repo.NewDataRepo().Delete(ctx, req.ID)
 	if err != nil {
 		return nil, egoerror.ErrNotFound
 	}
