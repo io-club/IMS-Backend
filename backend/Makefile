@@ -10,6 +10,7 @@ run: prepare build
 	@echo "Running service"
 	MODE=${MODE} nohup ./target/device >> ./log/device/device.log 2>&1 &
 	MODE=${MODE} nohup ./target/user >> ./log/user/user.log 2>&1 &
+	MODE=${MODE} nohup ./target/work >> ./log/work/work.log 2>&1 &
 	#MODE=${MODE} nohup ./target/nms >> ./log/nms/nms.log 2>&1 &
 	#MODE=${MODE} ./target/user | tee -a ./log/user/user.log
 	MODE=${MODE} ./target/nms | tee -a ./log/nms/nms.log
@@ -21,6 +22,7 @@ build:
 	go build -o ./target/nms ./main.go
 	go build -o ./target/user ./microservices/user/main.go
 	go build -o ./target/device ./microservices/device/main.go
+	go build -o ./target/work ./microservices/work/main.go
 
 stop:
 	pkill nms || exit 0
