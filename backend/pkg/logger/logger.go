@@ -65,8 +65,7 @@ func SetLogger(serviceName string) {
 	// Try to find a file that has not exceeded the maximum age for writing
 	files, err := os.ReadDir(config.Path)
 	if err != nil {
-		os.Stderr.WriteString(fmt.Sprintf("Unable to open folder, error: %v\n", err))
-		return
+		panic(fmt.Sprintf("Unable to open folder, error: %v\n", err))
 	}
 	for _, file := range files {
 		path := filepath.Join(config.Path, file.Name())
@@ -148,8 +147,7 @@ func checkLogRotation() {
 	// Judge whether the creation time exceeds the maximum allowable time difference and delete expired files
 	files, err := os.ReadDir(config.Path)
 	if err != nil {
-		os.Stderr.WriteString(fmt.Sprintf("Unable to open folder, error information: %v\n", err))
-		return
+		panic(fmt.Sprintf("Unable to open folder, error: %v\n", err))
 	}
 	for _, file := range files {
 		// Get file information

@@ -17,7 +17,7 @@ type User struct {
 	PhoneNumber string `gorm:"type:char(20);comment:手机号"`
 	Avatar      string `gorm:"type:string;comment:头像"`
 
-	Status ioconsts.AccountStatus `gorm:"type:char(10);comment:用户状态"`
+	Status ioconsts.AccountStatus `gorm:"type:char(10);comment:用户状态;not null"`
 }
 
 func (User) TableName() string {

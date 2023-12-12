@@ -83,3 +83,14 @@ services:
       file_name: "device.log"
       heartbeat: 24
       max_age: 168
+
+  work:
+    name: "work"
+    host: "web"
+    port: 10015
+    logger:
+      level: "info"
+      path: "log/work/"
+      file_name: "work.log"
+      heartbeat: 24
+      max_age: 168
