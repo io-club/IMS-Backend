@@ -12,7 +12,7 @@ import (
 	"os/signal"
 )
 
-const DefaultTopic = "io-club-ims"
+const DEFAULT_TOPIC = "io-club-ims"
 
 var manualMessagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	typeof, rawData := job.DecodeUartMsgList(string(msg.Payload()))
@@ -36,13 +36,13 @@ func main() {
 		iolog.Panicf("NewClient Error:%v", err)
 	}
 
-	if err := client.Sub(DefaultTopic, manualMessagePubHandler); err != nil {
+	if err := client.Sub(DEFAULT_TOPIC, manualMessagePubHandler); err != nil {
 		iolog.Warn("Subscription Error:%v", err)
 		return
 	}
 	// TODO：测试用，之后删除
 	//for {
-	//	client.Publish(DefaultTopic, "1:1:1 1")
+	//	client.Publish(DEFAULT_TOPIC, "1:1:1 1")
 	//	fmt.Printf("publish: 1:1:1 1\n")
 	//	time.Sleep(30 * time.Second)
 	//}

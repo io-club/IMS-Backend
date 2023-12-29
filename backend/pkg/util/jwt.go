@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-const JwtSecret = "ioclubhjr" // jwt 密匙，不能外泄
+const JWT_SECRET = "ioclubhjr" // jwt 密匙，不能外泄
 
 var (
 	DefautHeader = JwtHeader{
@@ -49,7 +49,7 @@ func GenJwt(header JwtHeader, payLoad JwtPayload) (string, error) {
 		load = base64.RawURLEncoding.EncodeToString(part)
 	}
 	// Generate the signature using the header and payload
-	h := hmac.New(sha256.New, []byte(JwtSecret))
+	h := hmac.New(sha256.New, []byte(JWT_SECRET))
 	h.Write([]byte(head + "." + load))
 	signature = base64.RawURLEncoding.EncodeToString(h.Sum(nil))
 	return head + "." + load + "." + signature, nil
@@ -60,7 +60,7 @@ func VerifyJwt(token string) (*JwtHeader, *JwtPayload, error) {
 	if len(part) != 3 {
 		return nil, nil, errors.New("fake token")
 	}
-	h := hmac.New(sha256.New, []byte(JwtSecret))
+	h := hmac.New(sha256.New, []byte(JWT_SECRET))
 	h.Write([]byte(part[0] + "." + part[1]))
 	signature := base64.RawURLEncoding.EncodeToString(h.Sum(nil))
 	if signature != part[2] {

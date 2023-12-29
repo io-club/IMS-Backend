@@ -23,7 +23,7 @@ func ToUserResponse(ctx context.Context, u *model.User) param.UserResponse {
 		if client, err := iooss.NewMinioClient(); err != nil {
 			return res
 		} else {
-			signed, err := client.PresignedGetObject(ctx, iooss.DefaultBucketName, u.Avatar, 3*24*time.Hour, nil)
+			signed, err := client.PresignedGetObject(ctx, iooss.DEFAULT_BUCKET_NAME, u.Avatar, 3*24*time.Hour, nil)
 			if err != nil {
 				return res
 			}

@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const DefaultBucketName = "io-ims-storage"
+const DEFAULT_BUCKET_NAME = "io-ims-storage"
 
 type MinioClient struct {
 	client *minio.Client

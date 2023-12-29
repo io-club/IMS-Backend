@@ -7,14 +7,14 @@ prepare:
 	mkdir -p ./target
 
 run: prepare build
-	@echo "Running service"
-	MODE=${MODE} nohup ./target/device >> ./log/device/device.log 2>&1 &
-	MODE=${MODE} nohup ./target/user >> ./log/user/user.log 2>&1 &
-	MODE=${MODE} nohup ./target/work >> ./log/work/work.log 2>&1 &
-	#MODE=${MODE} nohup ./target/nms >> ./log/nms/nms.log 2>&1 &
-	#MODE=${MODE} ./target/user | tee -a ./log/user/user.log
-	MODE=${MODE} ./target/nms | tee -a ./log/nms/nms.log
-	@echo "Finish service"
+	@echo "Start service"
+	MODE=${MODE} nohup ./target/device &
+	MODE=${MODE} nohup ./target/user &
+	MODE=${MODE} nohup ./target/work &
+	#MODE=${MODE} nohup ./target/nms &
+	# MODE=${MODE} ./target/user | tee -a ./log/user/user.log
+	# MODE=${MODE} ./target/nms
+	@echo "Service has started"
 
 run-fresh: build stop run
 
