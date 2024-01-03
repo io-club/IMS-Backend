@@ -15,7 +15,7 @@ var (
 func init() {
 	RootPath = util.GetCurrentPath() + "/../../" // Set the root directory path
 
-	V = NewConfigReader("release.yaml")
+	V = NewConfigReader("debug.yaml")
 }
 
 func NewConfigReader(fileName string) *viper.Viper {

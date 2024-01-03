@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-const TimeFormat = "2006-01-02 15-04-05"
+const TIME_FORMAT = "2006-01-02 15-04-05"
 
 var (
 	debugLogger *log.Logger
@@ -60,7 +60,7 @@ func SetLogger(serviceName string) {
 	var filePath string
 	// Assign the file from the configuration by default
 	logFile = config.FileName
-	postFix := "_" + time.Now().Format(TimeFormat)
+	postFix := "_" + time.Now().Format(TIME_FORMAT)
 	filePath = filepath.Join(config.Path, logFile+postFix)
 	// Try to find a file that has not exceeded the maximum age for writing
 	files, err := os.ReadDir(config.Path)
@@ -78,8 +78,8 @@ func SetLogger(serviceName string) {
 		if len(fileName) < 20 {
 			continue
 		}
-		timeSuffix := fileName[len(fileName)-19 : len(fileName)]
-		creationTime, err := time.Parse(TimeFormat, timeSuffix)
+		timeSuffix := fileName[len(fileName)-19:]
+		creationTime, err := time.Parse(TIME_FORMAT, timeSuffix)
 		if err != nil {
 			os.Stderr.WriteString(fmt.Sprintf("Failed to parse creation time for file %s, error information: %v\n", file.Name(), err))
 			continue
@@ -131,7 +131,7 @@ func checkLogRotation() {
 	}
 
 	// Switch log files
-	postFix := "_" + now.Format(TimeFormat)
+	postFix := "_" + now.Format(TIME_FORMAT)
 	logPath := filepath.Join(config.Path, logFile+postFix)
 	logOut, err = os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0664)
 	if err != nil {
@@ -158,8 +158,8 @@ func checkLogRotation() {
 			continue
 		}
 		fileName := fileInfo.Name()
-		timeSuffix := fileName[len(fileName)-19 : len(fileName)]
-		creationTime, err := time.Parse(TimeFormat, timeSuffix)
+		timeSuffix := fileName[len(fileName)-19:]
+		creationTime, err := time.Parse(TIME_FORMAT, timeSuffix)
 		if err != nil {
 			os.Stderr.WriteString(fmt.Sprintf("Failed to parse creation time for file %s, error information: %v\n", file.Name(), err))
 			continue
