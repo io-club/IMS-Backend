@@ -78,7 +78,7 @@ func SetLogger(serviceName string) {
 		if len(fileName) < 20 {
 			continue
 		}
-		timeSuffix := fileName[len(fileName)-19 : len(fileName)]
+		timeSuffix := fileName[len(fileName)-19:]
 		creationTime, err := time.Parse(TIME_FORMAT, timeSuffix)
 		if err != nil {
 			os.Stderr.WriteString(fmt.Sprintf("Failed to parse creation time for file %s, error information: %v\n", file.Name(), err))
@@ -158,7 +158,7 @@ func checkLogRotation() {
 			continue
 		}
 		fileName := fileInfo.Name()
-		timeSuffix := fileName[len(fileName)-19 : len(fileName)]
+		timeSuffix := fileName[len(fileName)-19:]
 		creationTime, err := time.Parse(TIME_FORMAT, timeSuffix)
 		if err != nil {
 			os.Stderr.WriteString(fmt.Sprintf("Failed to parse creation time for file %s, error information: %v\n", file.Name(), err))
