@@ -2,7 +2,6 @@ package job
 
 import (
 	"context"
-	"fmt"
 	"github.com/bytedance/sonic"
 	"github.com/gocolly/colly/v2"
 	"ims-server/microservices/work/internal/dal/model"
@@ -13,7 +12,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type Weather struct {
@@ -113,8 +111,9 @@ func SaveWeatherData(ctx context.Context) func(e *colly.HTMLElement) {
 	}
 }
 
-func CrawlWeather(ctx context.Context) {
-	collector := colly.NewCollector(
+func CreateWeatherCollector() *colly.Collector {
+	c := colly.NewCollector(
+		colly.DetectCharset(), // 自动编码，防止乱码
 		// 限制域名
 		colly.AllowedDomains("www.weather.com.cn"),
 		// 用正则限制爬取范围
@@ -127,25 +126,8 @@ func CrawlWeather(ctx context.Context) {
 		iocolly.RotateUserAgent(),
 		// 限制并发数与间隔，避免被线下重拳出击
 		iocolly.SetRateLimit("*", 3, rand.Intn(4)+1),
-		// TODO：增加随机 IP，进一步防止被重拳出击
+		// 使用随机 IP，进一步防止被重拳出击
+		// iocolly.SetProxy(),
 	)
-	client := iocolly.SetRedisStorage(collector, "weather_storage", 2*time.Hour)
-	defer client.Close()
-
-	// 访问失败时打印日志
-	collector.OnError(func(r *colly.Response, err error) {
-		iolog.Warn(fmt.Sprintf("网页爬取失败: %s", err))
-	})
-
-	collector.OnHTML("body", SaveWeatherData(ctx))
-	// 找到带有 href 属性的标签 a
-	collector.OnHTML(`a[href]`, func(e *colly.HTMLElement) {
-		link := e.Attr("href")
-		collector.Visit(e.Request.AbsoluteURL(link))
-	})
-
-	if err := collector.Visit("http://www.weather.com.cn/weather1d/101030500.shtml"); err != nil {
-		iolog.Info("访问链接失败: %v", err)
-	}
-	return
+	return c
 }
