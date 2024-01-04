@@ -10,13 +10,13 @@ prepare:
 run: prepare build
 	@echo "Start service"
 	# 启动 user
-	MODE=${MODE} nohup ./target/user &
+	MODE=${MODE}  ./target/user &
 	# 启动 device
-	MODE=${MODE} nohup ./target/mqtt &
-	MODE=${MODE} nohup ./target/device &
+	MODE=${MODE}  ./target/mqtt &
+	MODE=${MODE}  ./target/device &
 	# 启动 work
-	MODE=${MODE} nohup ./target/weather &
-	MODE=${MODE} nohup ./target/work &
+	MODE=${MODE}  ./target/weather &
+	MODE=${MODE}  ./target/work &
 	# 启动 nms
 	MODE=${MODE} ./target/nms
 	@echo "Service has started"
