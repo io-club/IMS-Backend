@@ -158,8 +158,8 @@ func (s *IOServer) Run(addr string, serviceName string, routes []Route) {
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	iologger.Info("Shutdown Server %s ...", serviceName)
-	// Try to gracefully shut down the server within 3 seconds
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	// Give 5 seconds to process the remaining requests. If the processing time exceeds 5 seconds, the program will be forcibly terminated.
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
 		iologger.Fatalf("Failed to shutdown server: %v", err)

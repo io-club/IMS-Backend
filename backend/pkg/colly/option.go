@@ -2,8 +2,12 @@ package iocolly
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/gocolly/colly/v2"
 	"github.com/gocolly/colly/v2/extensions"
+	"github.com/gocolly/colly/v2/proxy"
+	ioconfig "ims-server/pkg/config"
+	"ims-server/pkg/util"
 	"log"
 	"net"
 	"net/http"
@@ -19,20 +23,21 @@ func PrintResponse() colly.CollectorOption {
 	}
 }
 
-// TODO:轮换 socks5 代理
-//func SetProxy() colly.CollectorOption {
-//	return func(c *colly.Collector) {
-//		proxies := make([]string, 0, 500)
-//		for _, ele := range util.ReadAllLines(util.RootPath + "/config/socks5.txt") {
-//			proxies = append(proxies, "socks5://"+ele)
-//		}
-//		rp, err := proxy.RoundRobinProxySwitcher(proxies...)
-//		if err != nil {
-//			log.Fatal(err)
-//		}
-//		c.SetProxyFunc(rp)
-//	}
-//}
+// 使用 socks5 代理
+func SetProxy() colly.CollectorOption {
+	return func(c *colly.Collector) {
+		proxies := make([]string, 0, 300)
+		for _, ip := range util.ReadAllLines(ioconfig.RootPath + "/conf/socks5.txt") {
+			fmt.Printf("ip: %s\n", "socks5://"+ip)
+			proxies = append(proxies, "socks5://"+ip)
+		}
+		roundProxy, err := proxy.RoundRobinProxySwitcher(proxies...)
+		if err != nil {
+			log.Fatal(err)
+		}
+		c.SetProxyFunc(roundProxy)
+	}
+}
 
 // 并发&限速
 func SetRateLimit(DomainGlob string, Parallelism int, RandomDelay int) colly.CollectorOption {
